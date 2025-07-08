@@ -15,7 +15,6 @@ const poppins = Poppins({
 export default function Hero() {
   return (
     <section className="w-full h-screen flex flex-col ">
-      {/* Hero Section */}
       <div className="relative flex-1 flex flex-col justify-center items-center ">
         <Image
           src="/landing-page.png"
@@ -41,7 +40,7 @@ export default function Hero() {
           </p>
         </div>
       </div>
-      <div className="w-full bg-pattern px-5 py-10 relative ">
+      <div className="w-full bg-pattern px-5 py-10 relative flex justify-center  ">
         <Image
           src="/Patterns.png"
           alt="pattern"
@@ -50,8 +49,8 @@ export default function Hero() {
           className="z-0 object-cover"
           priority
         />
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-0">
-          <div className="md:w-1/2  flex items-center ">
+        <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
+          <div className="md:w-1/2  flex items-center z-50 ">
             <h2
               className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}
             >
