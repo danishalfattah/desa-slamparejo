@@ -1,23 +1,25 @@
 type CardProps = {
     title: string;
     description: string;
-    contactInfo: string;
-    link: string;
+//    contactInfo: string;
+//    link: string;
     buttonText: string;
 };
 
 export function Card({
     title,
     description,
-    contactInfo,
-    link,
+//    contactInfo,
+//    link,
     buttonText,
 }: CardProps) {
     return (
     <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
         <div>
-            <h3 className="font-bold text-lg mb-2 text-[#0B4973]">{title}</h3>
-            <p className="text-gray-600 text-sm mb-4">{description}</p>
+            <div className="bg-[#094B7296] rounded-lg w-40 mx-auto justify-center">
+                <h3 className="font-bold text-lg mb-2 text-center text-white">{title}</h3>
+            </div>
+            <p className="text-xs mb-4 text-center text-black">{description}</p>
         </div>
         <a
             href=""

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
+import { Card } from "@/app/(main)/kontak/components/card";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -56,64 +57,19 @@ export default function KontakPage() {
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Kirim email untuk pertanyaan atau permohonan resmi</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Kirim Email
-                    </button>
-                </a>
-            </div>
-            <div key="1" className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Telepon Kantor</h3>
-                    <p className="text-gray-600 text-sm mb-4">Hubungi Langsung untuk informasi terpercaya dengan cepat</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Hubungi Sekarang
-                    </button>
-                </a>
-            </div>
-            <div key="2" className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Instagram</h3>
-                    <p className="text-gray-600 text-sm mb-4">Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Kunjungi Instagram
-                    </button>
-                </a>
-            </div>
-            </div>
+            <Card
+                title="Email Resmi"
+                description="Kirim email untuk pertanyaan atau permohonan resmi"
+                buttonText="Kirim Email"/>
+            <Card 
+                title="Telepon Kantor"
+                description="Hubungi langsung untuk informasi terpercaya dengan cepat"
+                buttonText="Hubungi Sekarang"/>
+            <Card
+                title="Instagram"
+                description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
+                buttonText="Kunjungi Instagram"/>
+          </div>
         </div>
       </section>
     </main>
