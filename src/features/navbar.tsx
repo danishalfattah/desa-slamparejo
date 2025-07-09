@@ -26,12 +26,12 @@ const poppins = Poppins({
 });
 
 const dataNav = [
-  { id: 0, name: "Beranda", href: "/" },
-  { id: 1, name: "Profil", href: "/profil" },
-  { id: 2, name: "Layanan", href: "/layanan" },
-  { id: 3, name: "Usaha Desa", href: "/usaha-desa" },
-  { id: 4, name: "Perangkat Desa", href: "/perangkat-desa" },
-  { id: 5, name: "Kontak", href: "/kontak" },
+  { id: 0, name: "BERANDA", href: "/" },
+  { id: 1, name: "PROFIL", href: "/profil" },
+  { id: 2, name: "LAYANAN", href: "/layanan" },
+  { id: 3, name: "USAHA DESA", href: "/usaha-desa" },
+  { id: 4, name: "PERANGKAT DESA", href: "/perangkat-desa" },
+  { id: 5, name: "KONTAK", href: "/kontak" },
 ];
 
 export default function Navbar() {
