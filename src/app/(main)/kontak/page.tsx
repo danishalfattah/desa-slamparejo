@@ -53,9 +53,9 @@ export default function KontakPage() {
         </div>
       </div>
       {/* Info Section */}
-      <section className="py-12 px-4 md:px-0">
+      <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
                 <div>
                     <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
@@ -75,10 +75,10 @@ export default function KontakPage() {
                     </button>
                 </a>
             </div>
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
+            <div key="1" className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
                 <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
+                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Telepon Kantor</h3>
+                    <p className="text-gray-600 text-sm mb-4">Hubungi Langsung untuk informasi terpercaya dengan cepat</p>
                 </div>
                 <a
                     href=""
@@ -94,10 +94,10 @@ export default function KontakPage() {
                     </button>
                 </a>
             </div>
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
+            <div key="2" className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
                 <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
+                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Instagram</h3>
+                    <p className="text-gray-600 text-sm mb-4">Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo</p>
                 </div>
                 <a
                     href=""
@@ -112,6 +112,7 @@ export default function KontakPage() {
                     Kunjungi Instagram
                     </button>
                 </a>
+            </div>
             </div>
         </div>
       </section>
