@@ -24,11 +24,17 @@ export function Card({
     buttonText,
     children,
 }: CardProps) {
+    const realChildren = React.cloneElement(children, {
+        color:"white",
+//        fill: "yellow",
+    });
     return (
     <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
-        {children}
+        <div className="rounded-full size-[85px] bg-[#094B72] flex items-center justify-center">
+            {realChildren}
+        </div>
         <div className="bg-[#094B7296] rounded-lg w-40">
-            <h3 className="font-bold text-lg mb-2 text-center text-white">{title}</h3>
+            <h3 className="font-bold text-lg my-1 text-center text-white">{title}</h3>
         </div>
         <div className="w-3xs">
             <p className={`${poppins.className} text-[11px] font-semibold leading-[32px] text-center text-black`}>
