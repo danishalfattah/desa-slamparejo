@@ -1,9 +1,22 @@
+
 import Image from "next/image";
+import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
+import { Poppins } from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "400", "700"],
+});
 
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
   const formLinks = [
-    "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 1
+    "https://forms.gle/9D12vcyha6Ue6J3i9", // Button 1
     "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 2
     "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 3
     "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 4
@@ -12,35 +25,60 @@ export default function LayananPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-[350px] md:h-[400px] w-full flex items-center justify-center bg-cover bg-center" style={{backgroundImage: 'url(/landing-page.png)'}}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 text-center text-white">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-wide">LAYANAN</h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto">Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
+      <section className="w-full h-screen flex flex-col ">
+        <div className="relative flex-1 flex flex-col justify-center items-center ">
+          <Image
+            src="/landing-page.png"
+            alt="Desa Slamparejo"
+            fill
+            quality={100}
+            className="z-0 object-cover "
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0  bg-black/40 z-10" />
+          <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+            <h1 className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}>LAYANAN</h1>
+            <p className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}>
+              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Akses Layanan */}
-      <section className="bg-[#0B4973] py-12 px-4 md:px-0">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">Akses Layanan</h2>
-          <p className="text-white mb-8">Pilih layanan yang anda butuhkan, Pengajuan akan di proses secara online melalui formulir resmi</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/*
-              To change the link for each button, just update the links in the `formLinks` array at the top of this file.
-              Example: formLinks[0] is for the first button, formLinks[1] for the second, etc.
-            */}
+      <section
+        className="relative w-full py-16 px-4 md:px-0"
+        style={{
+          backgroundColor: '#0B4973',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Left: Title & Description */}
+          <div className="text-white md:pl-8">
+            <h2 className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}>Akses Layanan</h2>
+            <p className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}>Pilih layanan yang anda butuhkan,<br/>Pengajuan akan di proses secara online melalui formulir resmi</p>
+          </div>
+          {/* Right: 2x2 Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {formLinks.map((link, i) => (
-              <div key={i} className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Kotak Saran</h3>
-                  <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
+              <div key={i} className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
+                <div className="mb-2">
+                  <div className="mb-2">
+                    <Image src="/file.svg" alt="icon" width={32} height={32} />
+                  </div>
+                  <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>Kotak Saran</h3>
+                  <p className={`${poppins.className} text-gray-700 text-sm`}>Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.</p>
                 </div>
-                <a
+                <Link
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-auto"
+                  passHref
                 >
                   <button
                     type="button"
@@ -48,7 +86,7 @@ export default function LayananPage() {
                   >
                     Kirim Formulir
                   </button>
-                </a>
+                </Link>
               </div>
             ))}
           </div>
