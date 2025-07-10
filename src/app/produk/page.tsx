@@ -141,7 +141,16 @@ export default function ProdukPage() {
         </div>
 
         {/* Blue Pattern Section */}
-        <div className="w-full bg-pattern px-5 py-10 relative flex justify-center  ">
+        <div
+          className="w-full px-5 py-10 relative flex justify-center"
+          style={{
+            backgroundColor: '#0B4973',
+            backgroundImage: "url('/Patterns.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: 'auto',
+            backgroundPosition: 'center',
+          }}
+        >
           <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
             <div className="md:w-1/2  flex items-center z-50 ">
               <h2 className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}>
