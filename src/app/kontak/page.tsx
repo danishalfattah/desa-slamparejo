@@ -21,29 +21,37 @@ const poppins = Poppins({
 export default function KontakPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section
-        className="relative h-[350px] md:h-[400px] w-full flex items-center justify-center bg-cover bg-center"
-        style={{ backgroundImage: "url(/landing-page.png)" }}
-      >
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 text-center text-white">
-          <h1
-            className={`${playfair.className} text-4xl md:text-5xl font-medium mb-4 tracking-[9px]`}
-          >
-            KONTAK
-          </h1>
-          <p
-            className={`${poppins.className} text-lg md:text-xl font-thin max-w-2xl mx-auto`}
-          >
-            Layanan Desa Slamparejo dirancang untuk memberikan kemudahan,
-            kenyamanan, dan kejelasan dalam setiap proses pelayanan.
-          </p>
+      <section className="w-full h-screen flex flex-col ">
+        <div className="relative flex-1 flex flex-col justify-center items-center ">
+          <Image
+            src="/landing-page.png"
+            alt="Desa Slamparejo"
+            fill
+            quality={100}
+            className="z-0 object-cover "
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0  bg-black/40 z-10" />
+          <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+            <div className="border-b">
+              <h1
+                className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}
+              >
+                KONTAK
+              </h1>
+            </div>
+            <p
+              className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
+            >
+              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Kontak */}
-      <div className="w-full bg-pattern px-5 py-10 relative flex justify-center  ">
+      <div className="w-full bg-pattern px-5 py-10 relative flex justify-center">
         <Image
           src="/Patterns.png"
           alt="pattern"
@@ -57,7 +65,7 @@ export default function KontakPage() {
             <h2
               className={`${playfair.className} text-white text-2xl md:text-8xl font-normal tracking-[1.5px] mb-4`}
             >
-              Kontak<br></br>Desa
+              Kontak<br/>Desa
             </h2>
           </div>
           <div className="md:w-1/2 flex items-center ">
