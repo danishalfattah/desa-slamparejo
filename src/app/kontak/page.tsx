@@ -1,10 +1,12 @@
 import Image from "next/image";
+
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
-import { Card } from "./components/card";
 
 import { Phone, Mail, Instagram } from "lucide-react";
-import { HourEntry } from "./components/hour-entry";
+
+import { Card } from "@/features/kontak/components/card";
+import { HourEntry } from "@/features/kontak/components/hour-entry";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
