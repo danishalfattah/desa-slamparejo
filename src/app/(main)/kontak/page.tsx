@@ -5,6 +5,7 @@ import { Card } from "./components/card";
 import { Clock } from "lucide-react";
 
 import { Phone, Mail, Instagram } from "lucide-react";
+import { HourEntry } from "./components/hour-entry";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -86,12 +87,36 @@ export default function KontakPage() {
           </div>
         </div>
       </section>
-      <section className="bg-white">
-        <div className="border-b border-black py-5 w-fit">
-          <h1 className={`${playfair.className} font-normal text-5xl`}>Jam Operasional</h1>
-        </div>
-        <p className={`${poppins.className}`}>Kantor Desa Slamparejo melayani masyarakat pada jam berikut</p>
-        <div>
+      <section className="bg-white p-[37px]">
+        <div className="ml-[56px]">
+          <div className="border-b border-black py-5 w-fit">
+            <h1 className={`${playfair.className} font-normal text-5xl`}>Jam Operasional</h1>
+          </div>
+          <div className="h-[78px] my-[13px]">
+            <p className={`${poppins.className}`}>Kantor Desa Slamparejo melayani masyarakat pada jam berikut</p>
+          </div>
+          <div className="grid grid-cols-2 grid-rows-2 mx-[137px] rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+            <HourEntry
+              type={false}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={false}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={true}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={true}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+          </div>
         </div>
       </section>
     </main>
