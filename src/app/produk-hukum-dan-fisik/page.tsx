@@ -40,6 +40,38 @@ const produkHukumData = [
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
     link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
   },
+  {
+    category: "Perdes",
+    year: 2024,
+    fileType: "pdf",
+    title: "Peraturan Desa No.04 Tahun 2024",
+    description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
+    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+  },
+  {
+    category: "Perdes",
+    year: 2024,
+    fileType: "pdf",
+    title: "Peraturan Desa No.04 Tahun 2024",
+    description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
+    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+  },
+  {
+    category: "Perdes",
+    year: 2024,
+    fileType: "pdf",
+    title: "Peraturan Desa No.04 Tahun 2024",
+    description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
+    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+  },
+  {
+    category: "Perdes",
+    year: 2024,
+    fileType: "pdf",
+    title: "Peraturan Desa No.04 Tahun 2024",
+    description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
+    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+  },
 ];
 
 {/* Data Pembangunan */}
@@ -121,47 +153,50 @@ export default function ProdukPage() {
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="w-full h-screen flex flex-col ">
-        <div className="relative flex-1 flex flex-col justify-center items-center ">
+        <div className="relative w-full h-screen flex flex-col justify-center items-center">
           <Image
             src="/landing-page.png"
             alt="Desa Slamparejo"
             fill
             quality={100}
-            className="z-0 object-cover "
+            className="z-0 object-cover"
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0  bg-black/40 z-10" />
+          <div className="absolute inset-0 bg-black/40 z-10" />
           <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
-            <h1 className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}>PRODUK HUKUM & FISIK</h1>
+            <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
+              <h1 className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}>PRODUK HUKUM & FISIK</h1>
+              <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
+            </div>
             <p className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}>
               Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
             </p>
           </div>
         </div>
+      </section>
 
-        {/* Blue Pattern Section */}
-        <div
-          className="w-full px-5 py-10 relative flex justify-center"
-          style={{
-            backgroundColor: '#0B4973',
-            backgroundImage: "url('/Patterns.png')",
-            backgroundRepeat: 'repeat',
-            backgroundSize: 'auto',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
-            <div className="md:w-1/2  flex items-center z-50 ">
-              <h2 className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}>
-                Produk Desa Slamparejo
-              </h2>
-            </div>
-            <div className="md:w-1/2 flex items-center ">
-              <p className={`${poppins.className}  text-white text-base md:text-lg font-normal tracking-wider`}>
-                Akses dokumen resmi dan pantau seluruh proses pembangunan Desa Slamparejo secara transparan, akuntabel, dan terbuka bagi masyarakat, untuk mendorong partisipasi aktif warga dalam pengambilan keputusan serta memastikan setiap tahapan pembangunan berjalan sesuai rencana dan kebutuhan bersama.
-              </p>
-            </div>
+      {/* Blue Pattern Section */}
+      <section
+        className="w-full px-5 py-10 relative flex justify-center"
+        style={{
+          backgroundColor: '#0B4973',
+          backgroundImage: "url('/Patterns.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: 'auto',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
+          <div className="md:w-1/2  flex items-center z-50 ">
+            <h2 className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}>
+              Produk Desa Slamparejo
+            </h2>
+          </div>
+          <div className="md:w-1/2 flex items-center ">
+            <p className={`${poppins.className}  text-white text-base md:text-lg font-normal tracking-wider`}>
+              Akses dokumen resmi dan pantau seluruh proses pembangunan Desa Slamparejo secara transparan, akuntabel, dan terbuka bagi masyarakat, untuk mendorong partisipasi aktif warga dalam pengambilan keputusan serta memastikan setiap tahapan pembangunan berjalan sesuai rencana dan kebutuhan bersama.
+            </p>
           </div>
         </div>
       </section>

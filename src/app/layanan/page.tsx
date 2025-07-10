@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display } from "next/font/google";
@@ -17,8 +16,8 @@ export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
   const formLinks = [
     "https://forms.gle/9D12vcyha6Ue6J3i9", // Button 1
-    "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 2
-    "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 3
+    "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 2
+    "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 3
     "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 4
   ];
   // Example: Replace "https://link1.com" with your actual form link.
@@ -38,7 +37,10 @@ export default function LayananPage() {
           />
           <div className="absolute inset-0  bg-black/40 z-10" />
           <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
-            <h1 className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}>LAYANAN</h1>
+            <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
+              <h1 className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}>LAYANAN</h1>
+              <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
+            </div>
             <p className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}>
               Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
             </p>
