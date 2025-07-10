@@ -92,7 +92,7 @@ export default function KontakPage() {
               <Phone />
             </Card>
             <Card
-              title="Instagram"
+              title="xgram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
               contactInfo="@desa_slamparejo"
               link="https://www.instagram.com/desa_slamparejo/"
