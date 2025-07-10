@@ -82,7 +82,7 @@ export default function KontakPage() {
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="w-full md:p-10">
-          <div className="flex md:flex-row flex-col md:justify-between items-center">
+          <div className="flex flex-wrap md:flex-row flex-col md:justify-between items-center">
             <Card
               title="Email Resmi"
               description="Kirim email untuk pertanyaan atau permohonan resmi"
@@ -102,7 +102,7 @@ export default function KontakPage() {
               <Phone />
             </Card>
             <Card
-              title="xgram"
+              title="instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
               contactInfo="@desa_slamparejo"
               link="https://www.instagram.com/desa_slamparejo/"
@@ -113,8 +113,8 @@ export default function KontakPage() {
           </div>
         </div>
       </section>
-      <section className="bg-white p-[37px]">
-        <div className="ml-[56px]">
+      <section className="bg-white">
+        <div className="p-[37px]">
           <div className="border-b border-black py-5 w-fit">
             <h1 className={`${playfair.className} font-normal text-5xl`}>
               Jam Operasional
@@ -125,7 +125,7 @@ export default function KontakPage() {
               Kantor Desa Slamparejo melayani masyarakat pada jam berikut
             </p>
           </div>
-          <div className="grid grid-cols-2 grid-rows-2 mx-[137px] rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+          <div className="grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 md:mx-[130px] rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
             <HourEntry
               type={false}
               days="Senin - Jumat"
@@ -146,6 +146,20 @@ export default function KontakPage() {
               days="Senin - Jumat"
               hours="08:00 - 15:00 WIB"
             />
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="p-[37px]">
+          <div className="border-b border-black py-5 w-fit">
+            <h1 className={`${playfair.className} font-normal text-5xl`}>
+              Jam Operasional
+            </h1>
+          </div>
+          <div className="h-[78px] my-[13px]">
+            <p className={`${poppins.className}`}>
+              Kantor Desa Slamparejo melayani masyarakat pada jam berikut
+            </p>
           </div>
         </div>
       </section>
