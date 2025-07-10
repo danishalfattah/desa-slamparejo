@@ -55,7 +55,7 @@ export default function KontakPage() {
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="w-full md:p-10">
-          <div className="flex md:flex-row flex-col items-center">
+          <div className="flex md:flex-row flex-col md:justify-between items-center">
             <Card
               icon="/email.svg"
               title="Email Resmi"

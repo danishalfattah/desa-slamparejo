@@ -25,7 +25,7 @@ export function Card({
     icon,
 }: CardProps) {
     return (
-    <div className="max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
+    <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
         <Image
         src= {icon}
         alt=""
