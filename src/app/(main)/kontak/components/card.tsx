@@ -1,35 +1,58 @@
+import Image from "next/image";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "400", "700"],
+});
+
+
 type CardProps = {
     title: string;
     description: string;
-//    contactInfo: string;
-//    link: string;
+    contactInfo: string;
+    link: string;
     buttonText: string;
+    icon: string;
 };
 
 export function Card({
     title,
     description,
-//    contactInfo,
-//    link,
+    contactInfo,
+    link,
     buttonText,
+    icon,
 }: CardProps) {
     return (
-    <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-        <div>
-            <div className="bg-[#094B7296] rounded-lg w-40 mx-auto justify-center">
-                <h3 className="font-bold text-lg mb-2 text-center text-white">{title}</h3>
-            </div>
-            <p className="text-xs mb-4 text-center text-black">{description}</p>
+    <div className="max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
+        <Image
+        src= {icon}
+        alt=""
+        quality={100}
+        width="85"
+        height="85"
+        priority
+        sizes="100vw"
+        />
+        <div className="bg-[#094B7296] rounded-lg w-40">
+            <h3 className="font-bold text-lg mb-2 text-center text-white">{title}</h3>
         </div>
+        <div className="w-3xs">
+            <p className={`${poppins.className} text-[11px] font-semibold leading-[32px] text-center text-black`}>
+                {description}
+            </p>
+        </div>
+        <p className={`${poppins.className} text-black font-semibold text-base text-center`}>{contactInfo}</p>
         <a
-            href=""
+            href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-auto"
+            className="text-center"
         >
             <button
             type="button"
-            className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+            className={`${poppins.className} w-2xs rounded-lg bg-[#0B4973] text-white px-4 py-2 font-bold hover:bg-[#09395a] transition`}
             >
             {buttonText}
             </button>
