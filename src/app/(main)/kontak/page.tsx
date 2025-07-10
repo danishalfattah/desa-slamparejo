@@ -2,10 +2,14 @@ import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
 import { Card } from "./components/card";
+import { Clock } from "lucide-react";
+
+import { Phone, Mail, Instagram } from "lucide-react";
+import { HourEntry } from "./components/hour-entry";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["500", "700"],
+  weight: ["400", "500", "700"],
 });
 
 const poppins = Poppins({
@@ -20,8 +24,8 @@ export default function KontakPage() {
       <section className="relative h-[350px] md:h-[400px] w-full flex items-center justify-center bg-cover bg-center" style={{backgroundImage: 'url(/landing-page.png)'}}>
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center text-white">
-          <h1 className={`${playfair.className} text-4xl md:text-5xl font-bold mb-4 tracking-wide`}>KONTAK</h1>
-          <p className={`${poppins.className} text-lg md:text-xl max-w-2xl mx-auto`}>Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
+          <h1 className={`${playfair.className} text-4xl md:text-5xl font-medium mb-4 tracking-[9px]`}>KONTAK</h1>
+          <p className={`${poppins.className} text-lg md:text-xl font-thin max-w-2xl mx-auto`}>Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
         </div>
       </section>
 
@@ -57,32 +61,63 @@ export default function KontakPage() {
         <div className="w-full md:p-10">
           <div className="flex md:flex-row flex-col md:justify-between items-center">
             <Card
-              icon="/email.svg"
               title="Email Resmi"
               description="Kirim email untuk pertanyaan atau permohonan resmi"
               contactInfo="desa.slamparejo@gmail.com"
               link="mailto:desa.slamparejo@gmail.com"
-              buttonText="Kirim Email"/>
+              buttonText="Kirim Email">
+                <Mail />
+            </Card>
             <Card 
-              icon="/phone.svg"
               title="Telepon Kantor"
               description="Hubungi langsung untuk informasi terpercaya dengan cepat"
               contactInfo="(+62)895-5450-6045"
               link="tel:+6289554506045"
-              buttonText="Hubungi Sekarang"/>
+              buttonText="Hubungi Sekarang">
+                <Phone />
+            </Card>
             <Card
-              icon="/ig.svg"
               title="Instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
               contactInfo="@desa_slamparejo"
               link="https://www.instagram.com/desa_slamparejo/"
-              buttonText="Kunjungi Instagram"/>
+              buttonText="Kunjungi Instagram">
+                <Instagram />
+            </Card>
           </div>
         </div>
       </section>
-      <section className="bg-white">
-        <h1>Jam Operasional</h1>
-        <p>Kantor Desa Slamparejo melayan</p>
+      <section className="bg-white p-[37px]">
+        <div className="ml-[56px]">
+          <div className="border-b border-black py-5 w-fit">
+            <h1 className={`${playfair.className} font-normal text-5xl`}>Jam Operasional</h1>
+          </div>
+          <div className="h-[78px] my-[13px]">
+            <p className={`${poppins.className}`}>Kantor Desa Slamparejo melayani masyarakat pada jam berikut</p>
+          </div>
+          <div className="grid grid-cols-2 grid-rows-2 mx-[137px] rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+            <HourEntry
+              type={false}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={false}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={true}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+            <HourEntry
+              type={true}
+              days="Senin - Jumat"
+              hours="08:00 - 15:00 WIB"
+            />
+          </div>
+        </div>
       </section>
     </main>
   );
