@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
 import { Card } from "./components/card";
+import { Clock } from "lucide-react";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
