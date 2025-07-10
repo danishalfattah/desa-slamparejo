@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
+import { Card } from "./components/card";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -12,7 +13,6 @@ const poppins = Poppins({
   weight: ["100", "400", "700"],
 });
 
-
 export default function KontakPage() {
   return (
     <main className="min-h-screen bg-white">
@@ -20,8 +20,8 @@ export default function KontakPage() {
       <section className="relative h-[350px] md:h-[400px] w-full flex items-center justify-center bg-cover bg-center" style={{backgroundImage: 'url(/landing-page.png)'}}>
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center text-white">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-wide">KONTAK</h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto">Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
+          <h1 className={`${playfair.className} text-4xl md:text-5xl font-bold mb-4 tracking-wide`}>KONTAK</h1>
+          <p className={`${poppins.className} text-lg md:text-xl max-w-2xl mx-auto`}>Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
         </div>
       </section>
 
@@ -38,7 +38,7 @@ export default function KontakPage() {
         <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
           <div className="md:w-1/2  flex items-center z-50 ">
             <h2
-              className={`${playfair.className} text-white text-3xl md:text-6xl font-normal tracking-[1.5px] mb-4`}
+              className={`${playfair.className} text-white text-2xl md:text-8xl font-normal tracking-[1.5px] mb-4`}
             >
                 Kontak<br></br>Desa
             </h2>
@@ -53,67 +53,36 @@ export default function KontakPage() {
         </div>
       </div>
       {/* Info Section */}
-      <section className="py-12 px-4 md:px-0">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Kirim email untuk pertanyaan atau permohonan resmi</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Kirim Email
-                    </button>
-                </a>
-            </div>
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Hubungi Sekarang
-                    </button>
-                </a>
-            </div>
-            <div className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                    <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Email Resmi</h3>
-                    <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
-                </div>
-                <a
-                    href=""
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-auto"
-                >
-                    <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                    >
-                    Kunjungi Instagram
-                    </button>
-                </a>
-            </div>
+      <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
+        <div className="w-full md:p-10">
+          <div className="flex md:flex-row flex-col md:justify-between items-center">
+            <Card
+              icon="/email.svg"
+              title="Email Resmi"
+              description="Kirim email untuk pertanyaan atau permohonan resmi"
+              contactInfo="desa.slamparejo@gmail.com"
+              link="mailto:desa.slamparejo@gmail.com"
+              buttonText="Kirim Email"/>
+            <Card 
+              icon="/phone.svg"
+              title="Telepon Kantor"
+              description="Hubungi langsung untuk informasi terpercaya dengan cepat"
+              contactInfo="(+62)895-5450-6045"
+              link="tel:+6289554506045"
+              buttonText="Hubungi Sekarang"/>
+            <Card
+              icon="/ig.svg"
+              title="Instagram"
+              description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
+              contactInfo="@desa_slamparejo"
+              link="https://www.instagram.com/desa_slamparejo/"
+              buttonText="Kunjungi Instagram"/>
+          </div>
         </div>
+      </section>
+      <section className="bg-white">
+        <h1>Jam Operasional</h1>
+        <p>Kantor Desa Slamparejo melayan</p>
       </section>
     </main>
   );
