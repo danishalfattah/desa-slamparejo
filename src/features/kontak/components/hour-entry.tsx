@@ -20,8 +20,10 @@ export function HourEntry({
 }: HourEntryProps) {
   return (
     <div className="flex flex-row justify-between items-center">
-        <Clock color={type ? "red" : "blue"} />
+      <div className="flex flex-row items-center">
+        <Clock color={type ? "red" : "blue"} size={50} className="mx-[10px]"/>
         <p className={`${poppins.className} font-semibold text-xl`}>{days}</p>
+      </div>
         <p className={`${poppins.className} font-medium`}>{hours}</p>
     </div>
   );

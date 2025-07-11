@@ -125,26 +125,26 @@ export default function KontakPage() {
               Kantor Desa Slamparejo melayani masyarakat pada jam berikut
             </p>
           </div>
-          <div className="grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 md:mx-[130px] rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+          <div className="grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 md:w-[1166px] mx-auto rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
             <HourEntry
               type={false}
-              days="Senin - Jumat"
-              hours="08:00 - 15:00 WIB"
-            />
-            <HourEntry
-              type={false}
-              days="Senin - Jumat"
-              hours="08:00 - 15:00 WIB"
+              days="Senin - Kamis"
+              hours="08:00 - 15:30 WIB"
             />
             <HourEntry
               type={true}
-              days="Senin - Jumat"
-              hours="08:00 - 15:00 WIB"
+              days="Sabtu - Minggu"
+              hours="Tutup"
+            />
+            <HourEntry
+              type={false}
+              days="Jumat"
+              hours="08:00 - 11:30 WIB"
             />
             <HourEntry
               type={true}
-              days="Senin - Jumat"
-              hours="08:00 - 15:00 WIB"
+              days="Hari Libur Nasional"
+              hours="Tutup"
             />
           </div>
         </div>
@@ -163,9 +163,7 @@ export default function KontakPage() {
           </div>
         </div>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus"
-          className="md:w-[1166px] h-[407px] mx-auto  mb-[80px]"
-          allowFullScreen={false} loading="lazy"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus" className="md:w-[1166px] h-[407px] mx-auto  mb-[80px]" allowFullScreen={false} loading="lazy"
           referrerPolicy="no-referrer-when-downgrade">
         </iframe>
       </section>
