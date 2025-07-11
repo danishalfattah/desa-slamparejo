@@ -40,14 +40,15 @@ export default function Navbar() {
 
   return (
     <section className="bg-white px-4 py-2 fixed top-0 left-0 w-full z-50 shadow-sm">
-      <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
-        <Link href="/" className="flex gap-2">
+      <div className="max-w-7xl w-full mx-auto flex items-center justify-between ">
+        <Link href="/" className="flex gap-2 ">
           <Image
-            src="/logo.png"
-            alt="logo"
+            src="/logo-slamparejo.png"
+            alt="logo-slamparejo"
             quality={100}
-            width={40}
-            height={40}
+            width={68}
+            height={60}
+            className=""
           />
           <div>
             <h1
@@ -93,11 +94,11 @@ export default function Navbar() {
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
                 <Image
-                  src="/logo.png"
-                  alt="logo"
+                  src="/logo-slamparejo.png"
+                  alt="logo-slamparejo"
                   quality={100}
-                  width={32}
-                  height={32}
+                  width={48}
+                  height={44}
                 />
                 <p
                   className={`${playfair.className} font-light tracking-wide text-base md:text-base`}
