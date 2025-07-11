@@ -1,6 +1,8 @@
 import { Poppins } from "next/font/google";
 import React from "react";
 
+import { Ban, LucideProps } from "lucide-react";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "400", "700"],
@@ -12,7 +14,7 @@ type CardProps = {
   contactInfo: string;
   link: string;
   buttonText: string;
-  children: React.ReactNode;
+  children: React.ReactElement<LucideProps>;
 };
 
 export function Card({
@@ -23,10 +25,10 @@ export function Card({
   buttonText,
   children,
 }: CardProps) {
-  const realChildren = React.cloneElement(children, {
-    color: "white",
-    //        fill: "yellow",
-  });
+const realChildren = React.isValidElement(children)
+  ? React.cloneElement(children, { color: "white" })
+  : <Ban color="white" />;
+
   return (
     <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
       <div className="rounded-full size-[85px] bg-[#094B72] flex items-center justify-center">
