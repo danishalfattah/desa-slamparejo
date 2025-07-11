@@ -38,11 +38,18 @@ export default function LayananPage() {
           <div className="absolute inset-0  bg-black/40 z-10" />
           <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
             <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
-              <h1 className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}>LAYANAN</h1>
+              <h1
+                className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}
+              >
+                LAYANAN
+              </h1>
               <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
             </div>
-            <p className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}>
-              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+            <p
+              className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
+            >
+              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan,
+              kenyamanan, dan kejelasan dalam setiap proses pelayanan.
             </p>
           </div>
         </div>
@@ -52,28 +59,49 @@ export default function LayananPage() {
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
-          backgroundColor: '#0B4973',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundColor: "#0B4973",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left: Title & Description */}
           <div className="text-white md:pl-8">
-            <h2 className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}>Akses Layanan</h2>
-            <p className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}>Pilih layanan yang anda butuhkan,<br/>Pengajuan akan di proses secara online melalui formulir resmi</p>
+            <h2
+              className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
+            >
+              Akses Layanan
+            </h2>
+            <p
+              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}
+            >
+              Pilih layanan yang anda butuhkan,
+              <br />
+              Pengajuan akan di proses secara online melalui formulir resmi
+            </p>
           </div>
           {/* Right: 2x2 Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {formLinks.map((link, i) => (
-              <div key={i} className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
+              <div
+                key={i}
+                className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]"
+              >
                 <div className="mb-2">
                   <div className="mb-2">
                     <Image src="/file.svg" alt="icon" width={32} height={32} />
                   </div>
-                  <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>Kotak Saran</h3>
-                  <p className={`${poppins.className} text-gray-700 text-sm`}>Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.</p>
+                  <h3
+                    className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
+                  >
+                    Kotak Saran
+                  </h3>
+                  <p className={`${poppins.className} text-gray-700 text-sm`}>
+                    Semua masukan yang masuk akan dibaca dan dipertimbangkan
+                    oleh perangkat desa sebagai bentuk perbaikan dan
+                    keterbukaan.
+                  </p>
                 </div>
                 <Link
                   href={link}
@@ -98,7 +126,9 @@ export default function LayananPage() {
       {/* Info Section */}
       <section className="bg-white py-10 px-4 md:px-0">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}>
+          <div
+            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
+          >
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -123,7 +153,9 @@ export default function LayananPage() {
               Pengajuan diproses dan diverifikasi dengan cepat
             </p>
           </div>
-          <div className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}>
+          <div
+            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
+          >
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +178,9 @@ export default function LayananPage() {
               Pengajuan diproses dan diverifikasi dengan cepat
             </p>
           </div>
-          <div className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}>
+          <div
+            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
+          >
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
