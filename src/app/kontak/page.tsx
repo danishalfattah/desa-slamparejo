@@ -95,7 +95,7 @@ export default function KontakPage() {
             <Card
               title="Telepon Kantor"
               description="Hubungi langsung untuk informasi terpercaya dengan cepat"
-              contactInfo="(+62)895-5450-6045"
+              contactInfo="(+62)87766747814"
               link="tel:+6289554506045"
               buttonText="Hubungi Sekarang"
             >
@@ -104,8 +104,8 @@ export default function KontakPage() {
             <Card
               title="Instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
-              contactInfo="@desa_slamparejo"
-              link="https://www.instagram.com/desa_slamparejo/"
+              contactInfo="@desaslamparejo"
+              link="https://www.instagram.com/desaslamparejo/"
               buttonText="Kunjungi Instagram"
             >
               <Instagram />
