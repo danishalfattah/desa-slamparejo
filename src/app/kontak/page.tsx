@@ -81,7 +81,7 @@ export default function KontakPage() {
       </div>
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
-        <div className="w-full md:p-10">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap md:flex-row flex-col md:justify-between items-center">
             <Card
               title="Email Resmi"
@@ -102,7 +102,7 @@ export default function KontakPage() {
               <Phone />
             </Card>
             <Card
-              title="instagram"
+              title="Instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
               contactInfo="@desa_slamparejo"
               link="https://www.instagram.com/desa_slamparejo/"
