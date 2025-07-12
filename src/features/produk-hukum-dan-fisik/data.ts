@@ -23,38 +23,41 @@ export const produkHukumData = [
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
     link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
   },
+
   {
-    category: "Perdes",
+    category: "Keputusan Desa",
     year: 2024,
     fileType: "pdf",
-    title: "Peraturan Desa No.04 Tahun 2024",
+    title: "Bantuan Insentif Guru Paud dan Guru Ngaji Desa Slamparejo Kecamatan Jabung Tahun 2025",
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
-    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+    link: "https://drive.google.com/uc?export=download&id=10wsNLeCJd8wKbvEsB0C8HfGimYVOLC9N/view?usp=drive_link",
   },
   {
-    category: "Perdes",
+    category: "Keputusan Desa",
     year: 2024,
     fileType: "pdf",
-    title: "Peraturan Desa No.04 Tahun 2024",
+    title: "Bantuan Insentif Guru Silat (Pagar Nusa) Desa Slamparejo Tahun 2025",
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
-    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+    link: "https://drive.google.com/uc?export=download&id=10wjKnKiPCpUorb-aV3lxV_wzReRmkOfx/view?usp=drive_link",
   },
   {
-    category: "Perdes",
+    category: "Keputusan Desa",
     year: 2024,
     fileType: "pdf",
-    title: "Peraturan Desa No.04 Tahun 2024",
+    title: "DAFTAR KELUARGA PENERIMA MANFAAT BANTUAN",
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
-    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+    link: "https://drive.google.com/uc?export=download&id=19AQ6-9KkGpEus7E0tzQ1B65WWAHgOT1D/view?usp=drive_link",
   },
   {
-    category: "Perdes",
+    category: "Keputusan Desa",
     year: 2024,
     fileType: "pdf",
-    title: "Peraturan Desa No.04 Tahun 2024",
+    title: "INTSTITUSI MASYARAKAT PERDESAAN BANGGA",
     description: "Mengatur tata cara pengelolaan sampah rumah tangga dan komersial di wilayah Desa Slamparejo",
-    link: "https://drive.google.com/uc?export=download&id=1lI-9-CMvwNp6elvhUtKOrol_nRT4ITS4/view?usp=drive_link",
+    link: "https://drive.google.com/uc?export=download&id=1rmiAQJ7K9nsOpeY2sJHstIzVGAE4V_2g/view?usp=drive_link",
   },
+
+
 ];
 
 {/* Data Pembangunan */}
