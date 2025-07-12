@@ -81,7 +81,7 @@ export default function KontakPage() {
       </div>
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl md:mx-auto">
           <div className="flex flex-wrap md:flex-row flex-col md:justify-between items-center">
             <Card
               title="Email Resmi"
