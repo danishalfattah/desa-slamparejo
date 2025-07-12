@@ -94,13 +94,13 @@ const HomePage: React.FC = () => {
       <section className="relative min-h-screen bg-cover bg-center py-15 px-5 pb-12 bg-[url('/c20512021615f3918f726e5fb61f5c95c047e233.jpg')]">
         <div className="absolute inset-0 bg-black/50 z-0"></div>
 
-        <div className="relative z-10 rounded-xl w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 text-white p-4 md:p-6 mt-10 mb-10">
+        <div className="relative z-10 rounded-xl w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 text-white p-4 md:p-6 mb-10">
           <div className="space-y-6 w-full order-last md:order-none">
-            <div className="rounded-md overflow-hidden shadow-lg w-full mt-[60px]">
+            <div className="rounded-md overflow-hidden shadow-lg w-full mt-[20px]">
               <div className="relative w-full h-0 pb-[56.25%]">
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15830.49969411649!2d112.7123984!3d-7.2574712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7f9175a0d3b6f%3A0x7d2b8b9b8b9b8b9b!2sSurabaya%2C%20East%20Java!5e0!3m2!1sen!2sid!4v1678888888888!5m2!1sen!2sid" // Ganti dengan embed map Anda
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15806.691498613762!2d112.76887845!3d-7.929193899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e66b4b7aee9%3A0x1dfb4e477cdba610!2sSlamparejo%2C%20Kec.%20Jabung%2C%20Kabupaten%20Malang%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1752224970507!5m2!1sid!2sid" // Ganti dengan embed map Anda
                   style={{ border: 0 }} allowFullScreen={true} loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade">
                 </iframe>
@@ -143,18 +143,18 @@ const HomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col">
             <div>
-              <h1 className={`${playfair.className} text-white font-medium text-3xl md:text-4xl leading-tight tracking-wider mb-4 mt-[60px]`}>
+              <h1 className={`${playfair.className} text-white font-medium text-3xl md:text-4xl leading-tight tracking-wider mb-4 mt-[10px]`}>
                 Demografi<br />Desa Slamparejo
               </h1>
-              <p className={`${poppins.className} text-gray-200 text-sm md:text-base leading-relaxed mb-6 md:mb-10 text-justify`}>
+              <p className={`${poppins.className} text-gray-200 text-sm md:text-base leading-relaxed text-justify`}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore consequat.
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm font-semibold">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-[100px]">
               <div className="bg-white text-red-900 rounded-md p-3 md:p-4 shadow col-span-2">
                 <p className={`${poppins.className} text-xs mb-1`}>Total Penduduk</p>
                 <p className={`${poppins.className} text-lg md:text-xl font-bold`}>5.797 Jiwa</p>
