@@ -10,6 +10,9 @@ const config: Config = {
         poppins: ['Poppins', 'sans-serif'],
         playfair: ['Playfair Display', 'serif'],
       },
+      colors: {
+        'custom-blue': '#094B72', 
+      }
     },
   },
   plugins: [],
