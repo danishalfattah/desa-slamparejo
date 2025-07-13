@@ -1,3 +1,4 @@
+import { LucideProps } from "lucide-react";
 import { Poppins } from "next/font/google";
 import React from "react";
 
@@ -12,7 +13,7 @@ type CardProps = {
   contactInfo: string;
   link: string;
   buttonText: string;
-  children: React.ReactNode;
+  children: React.ReactElement<LucideProps>;
 };
 
 export function Card({
@@ -28,7 +29,7 @@ export function Card({
     //        fill: "yellow",
   });
   return (
-    <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg shadow p-6 flex flex-col justify-around items-center">
+    <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg drop-shadow-lg p-6 flex flex-col justify-around items-center">
       <div className="rounded-full size-[85px] bg-[#094B72] flex items-center justify-center">
         {realChildren}
       </div>
