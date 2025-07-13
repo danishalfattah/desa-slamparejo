@@ -190,7 +190,7 @@ export default function LayananPage() {
               Terpercaya
             </span>
             <p className="text-gray-600 text-sm text-center">
-              Kami menjaga kepercayaan Anda dengan proses yang transparan dan aman
+              Kami menjaga kepercayaan Anda dengan proses yang transparan dan sangat aman
             </p>
           </div>
         </div>
