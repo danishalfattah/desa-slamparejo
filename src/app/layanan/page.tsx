@@ -1,20 +1,18 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Playfair_Display, Poppins } from "next/font/google";
+
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "700"] });
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
   const formLinks = [
-<<<<<<< Updated upstream
-    "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 1
-    "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 2
-    "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 3
-    "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 4
-=======
     {
       url: "/layanan/kepuasan-masyarakat",
       title: "Kuesioner Survei Kepuasan Masyarakat",
       desc: "Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.",
     },
->>>>>>> Stashed changes
   ];
   // Example: Replace "https://link1.com" with your actual form link.
   return (
@@ -29,36 +27,6 @@ export default function LayananPage() {
       </section>
 
       {/* Akses Layanan */}
-<<<<<<< Updated upstream
-      <section className="bg-[#0B4973] py-12 px-4 md:px-0">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">Akses Layanan</h2>
-          <p className="text-white mb-8">Pilih layanan yang anda butuhkan, Pengajuan akan di proses secara online melalui formulir resmi</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/*
-              To change the link for each button, just update the links in the `formLinks` array at the top of this file.
-              Example: formLinks[0] is for the first button, formLinks[1] for the second, etc.
-            */}
-            {formLinks.map((link, i) => (
-              <div key={i} className="bg-white rounded-lg shadow p-6 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-bold text-lg mb-2 text-[#0B4973]">Kotak Saran</h3>
-                  <p className="text-gray-600 text-sm mb-4">Sampaikan aspirasi, kritik, atau saran anda untuk kemajuan Desa Slamparejo melalui kotak saran online ini.</p>
-                </div>
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto"
-                >
-                  <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                  >
-                    Kirim Formulir
-                  </button>
-                </a>
-=======
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
@@ -95,7 +63,6 @@ export default function LayananPage() {
                 <p className={`${poppins.className} text-gray-700 text-sm`}>
                   Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.
                 </p>
->>>>>>> Stashed changes
               </div>
               <Link
                 href="/layanan/kepuasan-masyarakat"
