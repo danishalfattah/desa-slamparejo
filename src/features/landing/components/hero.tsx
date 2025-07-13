@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
+import { Clock } from "lucide-react";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -30,7 +31,7 @@ export default function Hero() {
           <h1
             className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}
           >
-            DESA SLAMPAREJO
+            DESA Sukopuro
           </h1>
           <p
             className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
