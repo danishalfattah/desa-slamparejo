@@ -50,14 +50,14 @@ export default function Hero() {
           priority
         />
         <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
-          <div className="md:w-1/2  flex items-center z-50 ">
+          <div className="md:w-1/2  flex items-center z-20 ">
             <h2
               className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}
             >
               Melayani dengan Hati Membangun dengan Aksi
             </h2>
           </div>
-          <div className="md:w-1/2 flex items-center ">
+          <div className="md:w-1/2 flex items-center z-20 ">
             <p
               className={`${poppins.className}  text-white text-sm md:text-lg font-normal tracking-wider`}
             >
