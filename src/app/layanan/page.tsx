@@ -3,10 +3,18 @@ import Image from "next/image";
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
   const formLinks = [
+<<<<<<< Updated upstream
     "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 1
     "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 2
     "https://www.youtube.com/shorts/fibVfMLVnzo", // Button 3
     "https://forms.gle/fPekJoYEFkP3WCWY8", // Button 4
+=======
+    {
+      url: "/layanan/kepuasan-masyarakat",
+      title: "Kuesioner Survei Kepuasan Masyarakat",
+      desc: "Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.",
+    },
+>>>>>>> Stashed changes
   ];
   // Example: Replace "https://link1.com" with your actual form link.
   return (
@@ -21,6 +29,7 @@ export default function LayananPage() {
       </section>
 
       {/* Akses Layanan */}
+<<<<<<< Updated upstream
       <section className="bg-[#0B4973] py-12 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">Akses Layanan</h2>
@@ -49,8 +58,59 @@ export default function LayananPage() {
                     Kirim Formulir
                   </button>
                 </a>
+=======
+      <section
+        className="relative w-full py-16 px-4 md:px-0"
+        style={{
+          backgroundColor: '#0B4973',
+          backgroundImage: "url('/Patterns.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: 'auto',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Left: Title & Description */}
+          <div className="text-white md:pl-8">
+            <h2
+              className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
+            >
+              Akses Layanan
+            </h2>
+            <p
+              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}
+            >
+              Pilih layanan yang anda butuhkan,
+              <br />
+              Pengajuan akan di proses secara online melalui formulir resmi
+            </p>
+          </div>
+          {/* Right: 2x2 Cards */}
+          <div className="grid grid-cols-1 gap-6">
+            <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
+              <div className="mb-2">
+                <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>
+                  Kuesioner Survei Kepuasan Masyarakat
+                </h3>
+                <p className={`${poppins.className} text-gray-700 text-sm`}>
+                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.
+                </p>
+>>>>>>> Stashed changes
               </div>
-            ))}
+              <Link
+                href="/layanan/kepuasan-masyarakat"
+                rel="noopener noreferrer"
+                className="mt-auto"
+                passHref
+              >
+                <button
+                  type="button"
+                  className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                >
+                  Kirim Formulir
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
