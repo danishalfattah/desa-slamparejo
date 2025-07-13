@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
+import React from "react";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
