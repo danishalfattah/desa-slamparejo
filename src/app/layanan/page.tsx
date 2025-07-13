@@ -18,11 +18,34 @@ export default function LayananPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-[350px] md:h-[400px] w-full flex items-center justify-center bg-cover bg-center" style={{backgroundImage: 'url(/landing-page.png)'}}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 text-center text-white">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-wide">LAYANAN</h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto">Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.</p>
+      <section className="w-full h-screen flex flex-col ">
+        <div className="relative flex-1 flex flex-col justify-center items-center ">
+          <Image
+            src="/landing-page.png"
+            alt="Desa Slamparejo"
+            fill
+            quality={100}
+            className="z-0 object-cover "
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0  bg-black/40 z-10" />
+          <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+            <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
+              <h1
+                className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}
+              >
+                LAYANAN
+              </h1>
+              <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
+            </div>
+            <p
+              className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
+            >
+              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan,
+              kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+            </p>
+          </div>
         </div>
       </section>
 
