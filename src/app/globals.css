@@ -126,14 +126,11 @@
   }
 }
 
-/* Custom styles from your request */
 @layer utilities {
-  .underline-custom {
-    @apply w-[200px] h-[1px] bg-white opacity-100 mx-auto mb-8;
-  }
+
   .video-title {
-    font-family: 'Playfair Display'; /* This will be overridden by next/font if used in JSX */
-    font-weight: 400; /* This will be overridden by next/font if used in JSX */
+    font-family: 'Playfair Display'; 
+    font-weight: 400;
     font-style: normal;
     font-size: 48px;
     line-height: 58px;
@@ -141,7 +138,6 @@
   }
 }
 
-/* Custom color utility classes */
 .text-custom-blue {
   color: #094B72;
 }

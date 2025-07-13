@@ -17,18 +17,36 @@ const HomePage: React.FC = () => {
   return (
     <main className="m-0 p-0 h-full overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative bg-[url('/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg')] bg-cover bg-center h-screen text-white">
-        <div className="absolute inset-0 bg-black/40 z-10"></div>
-        <div className="relative z-20 text-center px-4 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
-          <h1 className={`${playfair.className} font-medium text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[3px] md:tracking-[6px] lg:tracking-[9px] text-center mb-6 md:mb-8`}>
-            PROFIL
-          </h1>
-          <div className="underline-custom"></div>
-          <p className={`${poppins.className} font-light text-base md:text-lg leading-relaxed tracking-[0.5px] text-center max-w-2xl w-full mx-auto mb-8 px-4`}>
-            Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan.
-          </p>
+      <section className="w-full h-screen flex flex-col ">
+        <div className="relative flex-1 flex flex-col justify-center items-center ">
+          <Image
+            src="/landing-page.png"
+            alt="Desa Slamparejo"
+            fill
+            quality={100}
+            className="z-0 object-cover "
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0  bg-black/40 z-10" />
+          <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
+            <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
+              <h1
+                className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}
+              >
+                PROFIL
+              </h1>
+              <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
+            </div>
+            <p
+              className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
+            >
+              Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan.
+            </p>
+          </div>
         </div>
       </section>
+
 
       {/* Video Section */}
       <section className="relative bg-[url('/Achievement.png')] min-h-screen text-white pb-[50px]">
@@ -37,7 +55,7 @@ const HomePage: React.FC = () => {
           <h1 className={`${playfair.className} video-title text-white mb-4 md:mb-6 text-left`}>
             VIDEO PROFIL
           </h1>
-          <p className={`${poppins.className} font-light text-sm md:text-lg lg:text-xl leading-relaxed md:leading-loose lg:leading-[2rem] tracking-[0.5px] text-white mb-10 text-left max-w-2xl`}>
+          <p className={`${poppins.className} font-normal leading-8 tracking-[1.5px] text-white text-[20px] mb-10 text-left max-w-3xl`}>
             Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna.
           </p>
         </div>
@@ -54,22 +72,22 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Visi Misi Section */}
-      <section className="relative bg-white min-h-screen text-custom-blue py-20 px-20">
+      <section className="relative bg-white min-h-screen py-20 px-20">
         <div className="w-full max-w-[1166px] mx-auto">
           <div className="text-left">
-            <h1 className={`${playfair.className} video-title text-custom-blue mb-4 md:mb-6 text-left`}>
+            <h1 className={`${playfair.className} video-title text-black mb-4 md:mb-6 text-left`}>
               VISI MISI
             </h1>
-            <div className="w-[200px] h-[1px] bg-custom-blue opacity-100 mb-8"></div>
+            <div className="w-[200px] h-[1px] bg-black opacity-100 mb-8"></div>
 
-            <p className={`${poppins.className} font-light text-base md:text-lg leading-relaxed tracking-[0.5px] mb-16 max-w-2xl`}>
+            <p className={`${poppins.className} font-light text-black md:text-lg leading-relaxed tracking-[0.5px] mb-16 max-w-3xl`}>
               Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.
             </p>
           </div>
           <div className="flex flex-col md:flex-row gap-10 justify-center">
             {/* Visi Card */}
             <div className="bg-gray-50 p-8 rounded-lg shadow-md flex-1 max-w-md">
-              <h2 className={`${playfair.className} text-2xl md:text-3xl font-medium mb-6 text-center`}>VISI</h2>
+              <h2 className={`${playfair.className} text-2xl text-black md:text-3xl font-medium mb-6 text-center`}>VISI</h2>
               <p className={`${poppins.className} text-sm md:text-base leading-relaxed text-justify`}>
                 Membangun Desa Slamparejo yang mandiri, sejahtera, dan berkelanjutan dengan tetap mempertahankan nilai-nilai budaya lokal serta kearifan masyarakat dalam tata kelola pemerintahan yang transparan dan akuntabel.
               </p>
@@ -77,7 +95,7 @@ const HomePage: React.FC = () => {
 
             {/* Misi Card */}
             <div className="bg-gray-50 p-8 rounded-lg shadow-md flex-1 max-w-md">
-              <h2 className={`${playfair.className} text-2xl md:text-3xl font-medium mb-6 text-center`}>MISI</h2>
+              <h2 className={`${playfair.className} text-2xl text-black md:text-3xl font-medium mb-6 text-center`}>MISI</h2>
               <ol className={`${poppins.className} text-sm md:text-base leading-relaxed space-y-3 list-decimal pl-5`}>
                 <li>Meningkatkan kualitas pelayanan publik yang prima dan berorientasi pada kebutuhan masyarakat</li>
                 <li>Memperkuat perekonomian desa melalui pengembangan potensi lokal dan UMKM</li>
@@ -148,13 +166,13 @@ const HomePage: React.FC = () => {
               <h1 className={`${playfair.className} text-white font-medium text-3xl md:text-4xl leading-tight tracking-wider mb-4 mt-[10px]`}>
                 Demografi<br />Desa Slamparejo
               </h1>
-              <p className={`${poppins.className} text-gray-200 text-sm md:text-base leading-relaxed text-justify`}>
+              <p className={`${poppins.className} text-gray-200 font-normal leading-8 tracking-[1.5px] text-justify`}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore consequat.
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-[100px]">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-[40px]">
               <div className="bg-white text-red-900 rounded-md p-3 md:p-4 shadow col-span-2">
                 <p className={`${poppins.className} text-xs mb-1`}>Total Penduduk</p>
                 <p className={`${poppins.className} text-lg md:text-xl font-bold`}>5.797 Jiwa</p>
@@ -173,13 +191,13 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Sejarah Section */}
-      <section className="relative bg-white min-h-screen text-custom-blue py-20 px-5">
+      <section className="relative bg-white min-h-screen py-20 px-5">
         <div className="w-full max-w-[1166px] mx-auto">
           <div className="text-left">
-            <h1 className={`${playfair.className} text-custom-blue mb-4 md:mb-6 text-left text-3xl md:text-4xl font-bold`}>
+            <h1 className={`${playfair.className} text-black mb-4 md:mb-6 text-left text-3xl md:text-4xl font-bold`}>
               Sejarah Desa Slamparejo
             </h1>
-            <div className="w-full md:w-[470px] h-[1px] bg-custom-blue opacity-100 mb-8"></div>
+            <div className="w-full md:w-[470px] h-[1px] bg-black opacity-100 mb-8"></div>
 
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
               <div className="w-full md:w-1/2 flex flex-col gap-6">
