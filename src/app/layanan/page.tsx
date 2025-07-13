@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
+import React from "react";
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "700"],
@@ -12,13 +14,7 @@ const poppins = Poppins({
 
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
-  const formLinks = [
-    {
-      url: "/layanan/kepuasan-masyarakat",
-      title: "Kuesioner Survei Kepuasan Masyarakat",
-      desc: "Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.",
-    },
-  ];
+  
   // Example: Replace "https://link1.com" with your actual form link.
   return (
     <main className="min-h-screen bg-white">
