@@ -32,6 +32,7 @@ export default function HeroPerangkat() {
           >
             PERANGKAT DESA
           </h1>
+          <div className="w-full border-b-1 border-white rounded-b-lg mb-6" />
           <p
             className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
           >

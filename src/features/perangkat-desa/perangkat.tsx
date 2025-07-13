@@ -4,42 +4,77 @@ const dataPerangkat = [
   {
     name: "H. Wahyudi, SH,MM",
     title: "Kepala Desa",
-    imageUrl: "/foto-wahyudi.png",
+    imageUrl: "/kepala desa.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
   {
-    name: "H. Wahyudi, SH,MM",
-    title: "Kepala Desa",
-    imageUrl: "/foto-wahyudi.png",
+    name: "Iman Supriyo, SE",
+    title: "Sekretaris Desa",
+    imageUrl: "/sekretaris desa.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
   {
-    name: "H. Wahyudi, SH,MM",
-    title: "Kepala Desa",
-    imageUrl: "/foto-wahyudi.png",
+    name: "Wiji Santoso",
+    title: "Kasi Pemerintahan",
+    imageUrl: "/kasi pemerintahan.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
   {
-    name: "H. Wahyudi, SH,MM",
-    title: "Kepala Desa",
-    imageUrl: "/foto-wahyudi.png",
+    name: "Ngatmono Adi",
+    title: "Kasi Pelayanan",
+    imageUrl: "/kasi pelayanan.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
   {
-    name: "H. Wahyudi, SH,MM",
-    title: "Kepala Desa",
-    imageUrl: "/faq.png",
+    name: "Riki Mulyono U.",
+    title: "Kasi Kesos",
+    imageUrl: "/kasi kesos.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
   {
-    name: "H. Wahyudi, SH,MM",
-    title: "Kepala Desa",
-    imageUrl: "/foto-wahyudi.png",
+    name: "Wahyu Widodo, S.Kom",
+    title: "Kaur Perencanaan",
+    imageUrl: "/kaur perencanaan.png",
+    description:
+      "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
+  },
+  {
+    name: "Yuyun Dian K.",
+    title: "Kaur Keuangan",
+    imageUrl: "/kaur keuangan.png",
+    description:
+      "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
+  },
+  {
+    name: "Sujiatiningsih",
+    title: "Kaur TU & Umum",
+    imageUrl: "/kaur tu & umum.png",
+    description:
+      "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
+  },
+  {
+    name: "Winaryo",
+    title: "Kasun Krajan",
+    imageUrl: "/kasun krajan.png",
+    description:
+      "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
+  },
+  {
+    name: "Sapuan",
+    title: "Kasun Busu",
+    imageUrl: "/kasun busu.png",
+    description:
+      "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
+  },
+  {
+    name: "???",
+    title: "Staff Baru",
+    imageUrl: "/staff baru.png",
     description:
       "Memimpin dan mengkoordinasikan seluruh kegiatan pemerintahan desa, pembangunan, dan pemberdayaan masyarakat",
   },
