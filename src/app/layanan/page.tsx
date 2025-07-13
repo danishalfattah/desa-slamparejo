@@ -190,7 +190,7 @@ export default function LayananPage() {
               Terpercaya
             </span>
             <p className="text-gray-600 text-sm text-center">
-              Pengajuan diproses dan diverifikasi dengan cepat
+              Kami menjaga kepercayaan Anda dengan proses yang transparan dan aman
             </p>
           </div>
         </div>
