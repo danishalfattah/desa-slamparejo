@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
   const formLinks = [
