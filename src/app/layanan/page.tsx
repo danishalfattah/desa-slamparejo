@@ -158,7 +158,7 @@ export default function LayananPage() {
             </div>
             <span className="font-semibold text-[#0B4973] mb-1">Aman</span>
             <p className="text-gray-600 text-sm text-center">
-              Pengajuan diproses dan diverifikasi dengan cepat
+              Data dan informasi Anda dijamin aman dan terlindungi
             </p>
           </div>
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
