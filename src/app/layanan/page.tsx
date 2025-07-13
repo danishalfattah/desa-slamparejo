@@ -20,21 +20,6 @@ export default function LayananPage() {
       title: "Kuesioner Survei Kepuasan Masyarakat",
       desc: "Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.",
     },
-    {
-      url: "https://forms.gle/fPekJoYEFkP3WCWY8",
-      title: "Layanan Surat",
-      desc: "Pengajuan surat-surat penting desa secara online, mudah dan cepat.",
-    },
-    {
-      url: "https://forms.gle/fPekJoYEFkP3WCWY8",
-      title: "Permohonan Bantuan",
-      desc: "Ajukan permohonan bantuan sosial atau fasilitas desa melalui formulir ini.",
-    },
-    {
-      url: "https://forms.gle/fPekJoYEFkP3WCWY8",
-      title: "Layanan Administrasi",
-      desc: "Layanan administrasi kependudukan dan dokumen lainnya secara online.",
-    },
   ];
   // Example: Replace "https://link1.com" with your actual form link.
   return (
@@ -75,10 +60,11 @@ export default function LayananPage() {
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
-          backgroundColor: "#0B4973",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: '#0B4973',
+          backgroundImage: "url('/Patterns.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: 'auto',
+          backgroundPosition: 'center',
         }}
       >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -98,40 +84,30 @@ export default function LayananPage() {
             </p>
           </div>
           {/* Right: 2x2 Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {formLinks.map((item, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]"
-              >
-                <div className="mb-2">
-                  <div className="mb-2">
-                    <Image src="/file.svg" alt="icon" width={32} height={32} />
-                  </div>
-                  <h3
-                    className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
-                  >
-                    {item.title}
-                  </h3>
-                  <p className={`${poppins.className} text-gray-700 text-sm`}>
-                    {item.desc}
-                  </p>
-                </div>
-                <Link
-                  href={item.url}
-                  rel="noopener noreferrer"
-                  className="mt-auto"
-                  passHref
-                >
-                  <button
-                    type="button"
-                    className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                  >
-                    Kirim Formulir
-                  </button>
-                </Link>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
+              <div className="mb-2">
+                <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>
+                  Kuesioner Survei Kepuasan Masyarakat
+                </h3>
+                <p className={`${poppins.className} text-gray-700 text-sm`}>
+                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.
+                </p>
               </div>
-            ))}
+              <Link
+                href="/layanan/kepuasan-masyarakat"
+                rel="noopener noreferrer"
+                className="mt-auto"
+                passHref
+              >
+                <button
+                  type="button"
+                  className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                >
+                  Kirim Formulir
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
