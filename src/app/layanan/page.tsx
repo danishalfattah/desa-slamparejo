@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display } from "next/font/google";
-import { Poppins } from "next/font/google";
-import { useState } from "react";
+import { Playfair_Display, Poppins } from "next/font/google";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -115,10 +113,8 @@ export default function LayananPage() {
 
       {/* Info Section */}
       <section className="bg-white py-10 px-4 md:px-0">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div
-            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
-          >
+        <div className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}>
+          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -143,9 +139,7 @@ export default function LayananPage() {
               Pengajuan diproses dan diverifikasi dengan cepat
             </p>
           </div>
-          <div
-            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
-          >
+          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -168,9 +162,7 @@ export default function LayananPage() {
               Pengajuan diproses dan diverifikasi dengan cepat
             </p>
           </div>
-          <div
-            className={`flex flex-col items-center bg-white rounded-lg shadow p-6 ${poppins.className}`}
-          >
+          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
