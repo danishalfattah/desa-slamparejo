@@ -55,8 +55,8 @@ export default function LayananPage() {
         style={{
           backgroundColor: '#0B4973',
           backgroundImage: "url('/Patterns.png')",
-          backgroundRepeat: 'repeat',
-          backgroundSize: 'auto',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
