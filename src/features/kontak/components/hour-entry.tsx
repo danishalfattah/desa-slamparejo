@@ -19,8 +19,8 @@ export function HourEntry({
     hours,
 }: HourEntryProps) {
   return (
-    <div className="flex flex-row justify-between items-center">
-      <div className="flex flex-row items-center">
+    <div className="flex flex-wrap flex-col md:flex-row justify-between items-center">
+      <div className="flex flex-wrap flex-col md:flex-row items-center">
         <Clock color={type ? "red" : "blue"} size={50} className="mx-[10px]"/>
         <p className={`${poppins.className} font-semibold text-xl`}>{days}</p>
       </div>

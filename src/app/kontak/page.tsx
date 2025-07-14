@@ -81,7 +81,7 @@ export default function KontakPage() {
       </div>
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
-        <div className="w-full md:p-10">
+        <div className="max-w-7xl md:mx-auto">
           <div className="flex flex-wrap md:flex-row flex-col md:justify-between items-center">
             <Card
               title="Email Resmi"
@@ -95,17 +95,17 @@ export default function KontakPage() {
             <Card
               title="Telepon Kantor"
               description="Hubungi langsung untuk informasi terpercaya dengan cepat"
-              contactInfo="(+62)895-5450-6045"
-              link="tel:+6289554506045"
+              contactInfo="(+62)87766747814"
+              link="tel:+6287766747814"
               buttonText="Hubungi Sekarang"
             >
               <Phone />
             </Card>
             <Card
-              title="instagram"
+              title="Instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
-              contactInfo="@desa_slamparejo"
-              link="https://www.instagram.com/desa_slamparejo/"
+              contactInfo="@desaslamparejo"
+              link="https://www.instagram.com/desaslamparejo/"
               buttonText="Kunjungi Instagram"
             >
               <Instagram />
@@ -114,7 +114,7 @@ export default function KontakPage() {
         </div>
       </section>
       <section className="bg-white">
-        <div className="p-[37px]">
+        <div className="p-[37px] max-w-[1328px] mx-auto">
           <div className="border-b border-black py-5 w-fit">
             <h1 className={`${playfair.className} font-normal text-5xl`}>
               Jam Operasional
@@ -125,7 +125,7 @@ export default function KontakPage() {
               Kantor Desa Slamparejo melayani masyarakat pada jam berikut
             </p>
           </div>
-          <div className="grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 md:w-[1166px] mx-auto rounded-xl shadow-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+          <div className="shadow-lg grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 max-w-[1166px] mx-auto rounded-xl p-[37px] gap-y-[36px] gap-x-[134px]">
             <HourEntry
               type={false}
               days="Senin - Kamis"
@@ -150,7 +150,7 @@ export default function KontakPage() {
         </div>
       </section>
       <section>
-        <div className="p-[37px]">
+        <div className="p-[37px] max-w-[1328px] mx-auto">
           <div className="border-b border-black py-5 w-fit">
             <h1 className={`${playfair.className} font-normal text-5xl`}>
               Lokasi Kantor Desa
@@ -163,7 +163,9 @@ export default function KontakPage() {
           </div>
         </div>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus" className="md:w-[1166px] h-[407px] mx-auto  mb-[80px]" allowFullScreen={false} loading="lazy"
+          className="w-[80vw] max-w-[1166px] h-[407px] mx-auto my-10"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus"
+          allowFullScreen={false} loading="lazy"
           referrerPolicy="no-referrer-when-downgrade">
         </iframe>
       </section>
