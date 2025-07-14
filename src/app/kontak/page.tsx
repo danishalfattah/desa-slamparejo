@@ -114,7 +114,7 @@ export default function KontakPage() {
         </div>
       </section>
       <section className="bg-white">
-        <div className="p-[37px]">
+        <div className="p-[37px] max-w-[1328px] mx-auto">
           <div className="border-b border-black py-5 w-fit">
             <h1 className={`${playfair.className} font-normal text-5xl`}>
               Jam Operasional
@@ -150,7 +150,7 @@ export default function KontakPage() {
         </div>
       </section>
       <section>
-        <div className="p-[37px]">
+        <div className="p-[37px] max-w-[1328px] mx-auto">
           <div className="border-b border-black py-5 w-fit">
             <h1 className={`${playfair.className} font-normal text-5xl`}>
               Lokasi Kantor Desa
