@@ -1,4 +1,3 @@
-import { LucideProps } from "lucide-react";
 import { Poppins } from "next/font/google";
 import React from "react";
 
