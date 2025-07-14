@@ -26,27 +26,29 @@ const poppins = Poppins({
 });
 
 const dataNav = [
-  { id: 0, name: "Beranda", href: "/" },
-  { id: 1, name: "Profil", href: "/profil" },
-  { id: 2, name: "Layanan", href: "/layanan" },
-  { id: 3, name: "Usaha Desa", href: "/usaha-desa" },
-  { id: 4, name: "Perangkat Desa", href: "/perangkat-desa" },
-  { id: 5, name: "Kontak", href: "/kontak" },
+  { id: 0, name: "BERANDA", href: "/" },
+  { id: 1, name: "PROFIL", href: "/profil" },
+  { id: 2, name: "LAYANAN", href: "/layanan" },
+  { id: 3, name: "USAHA DESA", href: "/usaha-desa" },
+  { id: 4, name: "PERANGKAT DESA", href: "/perangkat-desa" },
+  { id: 5, name: "KONTAK", href: "/kontak" },
+  { id: 6, name: "PRODUK", href: "/produk-hukum-dan-fisik" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <section className="bg-white px-4 py-2 fixed top-0 left-0 w-full z-100 shadow-sm">
-      <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
-        <Link href="/" className="flex gap-2">
+    <section className="bg-white px-4 py-2 fixed top-0 left-0 w-full z-50 shadow-sm">
+      <div className="max-w-7xl w-full mx-auto flex items-center justify-between ">
+        <Link href="/" className="flex gap-2 ">
           <Image
-            src="/logo.png"
-            alt="logo"
+            src="/logo-slamparejo.png"
+            alt="logo-slamparejo"
             quality={100}
-            width={40}
-            height={40}
+            width={68}
+            height={60}
+            className=""
           />
           <div>
             <h1
@@ -88,21 +90,21 @@ export default function Navbar() {
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+          <SheetContent side="right" className="z-[999] w-[300px] sm:w-[400px]">
             <SheetHeader>
               <SheetTitle className="flex items-center gap-2">
                 <Image
-                  src="/logo.png"
-                  alt="logo"
+                  src="/logo-slamparejo.png"
+                  alt="logo-slamparejo"
                   quality={100}
-                  width={32}
-                  height={32}
+                  width={48}
+                  height={44}
                 />
-                <h1
+                <p
                   className={`${playfair.className} font-light tracking-wide text-base md:text-base`}
                 >
                   Desa Slamparejo
-                </h1>
+                </p>
               </SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col  mt-4">

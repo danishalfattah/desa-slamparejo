@@ -14,7 +14,7 @@ const poppins = Poppins({
 
 export default function LayananPage() {
   // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
-
+  
   // Example: Replace "https://link1.com" with your actual form link.
   return (
     <main className="min-h-screen bg-white">
@@ -54,11 +54,11 @@ export default function LayananPage() {
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
-          backgroundColor: "#0B4973",
+          backgroundColor: '#0B4973',
           backgroundImage: "url('/Patterns.png')",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -81,14 +81,11 @@ export default function LayananPage() {
           <div className="grid grid-cols-1 gap-6">
             <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
               <div className="mb-2">
-                <h3
-                  className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
-                >
+                <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>
                   Kuesioner Survei Kepuasan Masyarakat
                 </h3>
                 <p className={`${poppins.className} text-gray-700 text-sm`}>
-                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh
-                  perangkat desa sebagai bentuk perbaikan dan keterbukaan.
+                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.
                 </p>
               </div>
               <Link
@@ -111,9 +108,7 @@ export default function LayananPage() {
 
       {/* Info Section */}
       <section className="bg-white py-10 px-4 md:px-0">
-        <div
-          className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}
-        >
+        <div className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}>
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
@@ -153,50 +148,4 @@ export default function LayananPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M17 10V7a5 5 0 0 0-10 0v3m-2 4h14l-1.34 5.36A2 2 0 0 1 15.7 21H8.3a2 2 0 0 1-1.96-1.64L5 14Z"
-                />
-              </svg>
-            </div>
-            <span className="font-semibold text-[#0B4973] mb-1">Aman</span>
-            <p className="text-gray-600 text-sm text-center">
-              Data dan informasi Anda dijamin aman dan terlindungi
-            </p>
-          </div>
-          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
-            <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 3l7 4v5c0 5.25-3.5 9.74-7 11-3.5-1.26-7-5.75-7-11V7l7-4z"
-                />
-                <path
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9.5 12.5l2 2 3-3"
-                />
-              </svg>
-            </div>
-            <span className="font-semibold text-[#0B4973] mb-1">
-              Terpercaya
-            </span>
-            <p className="text-gray-600 text-sm text-center">
-              Kami menjaga kepercayaan Anda dengan proses yang transparan dan
-              sangat aman
-            </p>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
+                  d="M17 10V7a5 5 0 0 0-10 0v3m-2 4h14l-1.34 5.36A2 2 0 0 1 1

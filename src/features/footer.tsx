@@ -20,6 +20,7 @@ const dataNav = [
   { id: 3, name: "Usaha Desa", href: "/usaha-desa" },
   { id: 4, name: "Perangkat Desa", href: "/perangkat-desa" },
   { id: 5, name: "Kontak", href: "/kontak" },
+  { id: 6, name: "Produk", href: "/produk-hukum-dan-fisik" },
 ];
 
 export default function Footer() {
