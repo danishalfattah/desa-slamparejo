@@ -15,23 +15,24 @@ const playfair = Playfair_Display({
 const dataFaq = [
   {
     id: 1,
-    name: "lorem",
-    desc: "lorem lorem lorem lorem lorem lorem lorem lorem ",
+    question:
+      "Bisakah saya menyampaikan aspirasi atau pengaduan melalui website ini?",
+    answer:
+      "Bisa. Gunakan fitur “Kotak Saran” untuk menyampaikan aspirasi, kritik, atau pengaduan. Pesan Anda akan ditindaklanjuti oleh perangkat desa sesuai prosedur.",
   },
   {
     id: 2,
-    name: "lorem",
-    desc: "lorem lorem lorem lorem lorem lorem lorem lorem ",
+    question:
+      "Bagaimana cara mengurus layanan administrasi di Desa Slamparejo?",
+    answer:
+      "Seluruh layanan administrasi hanya dilayani langsung di kantor desa. Sebelum datang, silakan cek jam operasional dan kontak resmi di menu “Kontak Kami” agar kunjungan Anda lebih efisien.",
   },
   {
     id: 3,
-    name: "lorem",
-    desc: "lorem lorem lorem lorem lorem lorem lorem lorem ",
-  },
-  {
-    id: 4,
-    name: "wa",
-    desc: "lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem lorem lorem lorem lorem lorem ",
+    question:
+      "Di mana saya bisa menemukan informasi tentang peraturan desa dan hasil pembangunan fisik?",
+    answer:
+      "Informasi mengenai produk hukum, seperti Peraturan Desa (Perdes) dan keputusan resmi lainnya, dapat Anda temukan di menu “Produk Hukum”.",
   },
 ];
 
@@ -67,9 +68,9 @@ export default function Faq() {
                 value={`data-${data.id}`}
                 className="bg-white rounded-lg px-4"
               >
-                <AccordionTrigger>{data.name}</AccordionTrigger>
+                <AccordionTrigger>{data.question}</AccordionTrigger>
                 <AccordionContent className="flex flex-col pb-4 ">
-                  <p>{data.desc}</p>
+                  <p>{data.answer}</p>
                 </AccordionContent>
               </AccordionItem>
             ))}

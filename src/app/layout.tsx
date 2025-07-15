@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://desa-slamparejo.vercel.app"),
   title: "Desa Slamparejo",
   description:
     "Website resmi Desa Slamparejo Kecamatan Jabung, Malang. Akses layanan online, informasi perangkat desa, produk hukum, UMKM, dan pembangunan desa secara transparan dan mudah.",
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     title: "Desa Slamparejo - Layanan & Informasi Resmi",
     description:
       "Akses layanan, informasi, dan produk hukum Desa Slamparejo secara online. Transparan, cepat, dan terpercaya.",
-    url: "https://desa-slamparejo-cy42.vercel.app",
+    url: "https://desa-slamparejo.vercel.app",
     siteName: "Desa Slamparejo",
     images: [
       {
