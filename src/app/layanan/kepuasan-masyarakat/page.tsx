@@ -19,7 +19,7 @@ export default function KritikSaran() {
         href="https://docs.google.com/forms/d/e/1FAIpQLSd_iFaqwV66X0psODErf4qKssKTR2OA5ntPnjDzciugxw-bzA/viewform"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-6 px-6 py-2 bg-[#9D00FF] text-white rounded-lg shadow hover:opacity-80 transition"
+        className="mt-6 px-6 py-2 bg-pattern text-white rounded-lg shadow hover:opacity-80 transition"
       >
         Buka Google Form di Tab Baru
       </Link>
