@@ -53,7 +53,7 @@ export default function LayananPage() {
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
-          backgroundColor: '#0B4973',
+          backgroundColor: '#094B72',
           backgroundImage: "url('/Patterns.png')",
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
@@ -80,7 +80,7 @@ export default function LayananPage() {
           <div className="grid grid-cols-1 gap-6">
             <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
               <div className="mb-2">
-                <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>
+                <h3 className={`${playfair.className} text-lg font-semibold text-[#094B72] mb-1`}>
                   Kuesioner Survei Kepuasan Masyarakat
                 </h3>
                 <p className={`${poppins.className} text-gray-700 text-sm`}>
@@ -95,7 +95,7 @@ export default function LayananPage() {
               >
                 <button
                   type="button"
-                  className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                  className="w-full bg-[#094B72] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
                 >
                   Kirim Formulir
                 </button>
@@ -109,7 +109,7 @@ export default function LayananPage() {
       <section className="bg-white py-10 px-4 md:px-0">
         <div className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}>
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
-            <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
+            <div className="bg-[#094B72] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -126,7 +126,7 @@ export default function LayananPage() {
                 />
               </svg>
             </div>
-            <span className="font-semibold text-[#0B4973] mb-1">
+            <span className="font-semibold text-[#094B72] mb-1">
               Proses Cepat
             </span>
             <p className="text-gray-600 text-sm text-center">
@@ -134,7 +134,7 @@ export default function LayananPage() {
             </p>
           </div>
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
-            <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
+            <div className="bg-[#094B72] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -151,13 +151,13 @@ export default function LayananPage() {
                 />
               </svg>
             </div>
-            <span className="font-semibold text-[#0B4973] mb-1">Aman</span>
+            <span className="font-semibold text-[#094B72] mb-1">Aman</span>
             <p className="text-gray-600 text-sm text-center">
               Data dan informasi Anda dijamin aman dan terlindungi
             </p>
           </div>
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
-            <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
+            <div className="bg-[#094B72] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -181,7 +181,7 @@ export default function LayananPage() {
                 />
               </svg>
             </div>
-            <span className="font-semibold text-[#0B4973] mb-1">
+            <span className="font-semibold text-[#094B72] mb-1">
               Terpercaya
             </span>
             <p className="text-gray-600 text-sm text-center">
