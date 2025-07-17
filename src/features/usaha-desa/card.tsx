@@ -17,7 +17,6 @@ export default function Card({ image, title, description, phone, maps }: CardPro
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-1">{title}</h3>
         
-        {/* Deskripsi dibatasi agar tingginya konsisten */}
         <p className="text-sm text-gray-600 mb-3 h-[48px] line-clamp-2">
           {description && description.length > 80
             ? description.slice(0, 80) + "..."
