@@ -74,15 +74,16 @@ const HomePage: React.FC = () => {
       {/* Visi Misi Section */}
       <section className="relative bg-[#F1F2F9] min-h-screen py-10 px-5">
         <div className="w-full max-w-[1166px] mx-auto">
-          <div className="text-left">
-            <h1 className={`${playfair.className} video-title text-black mb-3 text-left`}>
+        <div className="text-left">
+          <div className="border-b border-black w-fit pb-3">
+            <h1 className={`${playfair.className} video-title text-black text-left`}>
               Visi Misi
             </h1>
-            <div className="w-[215px] h-[1px] bg-black opacity-40 mb-5"></div>
-            <p className={`${poppins.className} font-light text-black md:text-lg leading-relaxed tracking-[0.5px] mb-16 max-w-4xl`}>
-              Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.
-            </p>
           </div>
+          <p className={`${poppins.className} font-light text-black md:text-lg leading-relaxed tracking-[0.5px] mt-5 mb-16 max-w-4xl`}>
+            Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.
+          </p>
+        </div>
           <div className="flex flex-col md:flex-row gap-10 justify-center">
             {/* Visi Card */}
             <div className="bg-gray-50 p-8 rounded-lg shadow-md flex-1 max-w-md">
@@ -195,11 +196,12 @@ const HomePage: React.FC = () => {
       <section className="relative bg-[#F1F2F9] min-h-screen py-10 px-5">
       <div className="w-full max-w-[1166px] mx-auto">
         <div className="text-left">
-        <div className="mb-8">
-          <h1 className={`${playfair.className} text-black mb-2 md:mb-4 text-left text-3xl md:text-4xl`}>
-            Sejarah Desa Slamparejo
-          </h1>
-          <div className="h-[2px] bg-black opacity-40 w-full max-w-[320px] md:max-w-[400px]"></div>
+        <div className="mb-8 text-left">
+          <div className="border-b border-black pb-2 md:pb-4 w-fit">
+            <h1 className={`${playfair.className} text-black text-3xl md:text-4xl`}>
+              Sejarah Desa Slamparejo
+            </h1>
+          </div>
         </div>
           <div className="flex flex-col md:flex-row gap-6 items-stretch">
             {/* Kolom Gambar */}
