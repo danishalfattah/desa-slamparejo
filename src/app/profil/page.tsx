@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Demografi Section */}
-      <section className="relative min-h-screen bg-cover bg-center py-15 px-5 pb-12 bg-[url('/c20512021615f3918f726e5fb61f5c95c047e233.jpg')]">
+      <section className="relative min-h-screen bg-cover bg-center py-10 px-5 pb-12 bg-[url('/c20512021615f3918f726e5fb61f5c95c047e233.jpg')]">
         <div className="absolute inset-0 bg-black/50 z-0"></div>
 
         <div className="relative z-10 rounded-xl w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 text-white p-4 md:p-6 mb-10">
@@ -127,38 +127,38 @@ const HomePage: React.FC = () => {
 
             <div className="w-full overflow-x-auto mb-8">
                 <div className="bg-white p-4 rounded-lg shadow-lg">
-              <div className={`${poppins.className} min-w-full text-sm space-y-2`}>
-                <div className="flex gap-2">
-                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">No</div>
-                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Wilayah</div>
-                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RT</div>
-                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RW</div>
-                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Penduduk</div>
-                </div>
-
-                <div className="flex gap-2">
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">1</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-[2]">Krajan</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">17 RT</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">2 RW</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-[2]">2.991 JIWA</div>
-                </div>
-
-                <div className="flex gap-2">
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">2</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-[2]">Busu</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">20 RT</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-1">3 RW</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center flex-[2]">2.806 JIWA</div>
-                </div>
-
-                <div className="flex gap-2 mb-[10px]">
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-5 py-2 text-center flex-[3]">Jumlah</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center flex-1">37 RT</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center flex-1">5 RW</div>
-                  <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center flex-[2]">5.797 JIWA</div>
-                </div>
+            <div className={`${poppins.className} min-w-full text-sm space-y-2`}>
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.7fr)] gap-2">
+                <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center">No</div>
+                <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center">Wilayah</div>
+                <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center">RT</div>
+                <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center">RW</div>
+                <div className="bg-[#094B72] text-white font-semibold rounded-md py-2 text-center">Penduduk</div>
               </div>
+
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.7fr)] gap-2">
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">1</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">Krajan</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">17 RT</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">2 RW</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">2.991 JIWA</div>
+              </div>
+
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.7fr)] gap-2">
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">2</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">Busu</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">20 RT</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">3 RW</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white rounded-md shadow px-2 py-2 text-center">2.806 JIWA</div>
+              </div>
+
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.7fr)] gap-2 mb-[10px]">
+                <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-5 py-2 text-center col-span-2">Jumlah</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center">37 RT</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center">5 RW</div>
+                <div className="bg-[rgba(9,75,114,0.59)] text-white font-semibold rounded-md shadow px-2 py-2 text-center">5.797 JIWA</div>
+              </div>
+            </div>
             </div>
             </div>
           </div>
