@@ -49,11 +49,11 @@ const HomePage: React.FC = () => {
 
 
       {/* Video Section */}
-      <section className="relative bg-[url('/Achievement.png')] min-h-screen text-white pb-[50px]">
+      <section className="relative bg-[url('/Achievement.png')] min-h-screen text-white">
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         <div className="relative z-20 w-full max-w-[1166px] mx-auto px-5 pt-[40px] md:pt-[60px]">
           <h1 className={`${playfair.className} video-title text-white mb-4 md:mb-6 text-left`}>
-            VIDEO PROFIL
+            Video Profil
           </h1>
           <p className={`${poppins.className} font-normal leading-8 tracking-[1.5px] text-white text-[20px] mb-10 text-left max-w-3xl`}>
             Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna.
@@ -61,8 +61,8 @@ const HomePage: React.FC = () => {
         </div>
         <div className="relative z-20 w-full max-w-[1166px] mx-auto p-5 clear-both">
           <iframe
-            className="w-full h-[calc(100vw*0.6)] max-h-[696px] border-none block mx-auto"
-            src="https://www.youtube.com/embed/abc123" 
+            className="w-full h-[calc(100vw*0.6)] max-h-[696px] border-none block mx-auto mb-[40px]"
+            src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" 
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -72,15 +72,14 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Visi Misi Section */}
-      <section className="relative bg-white min-h-screen py-20 px-20">
+      <section className="relative bg-[#F1F2F9] min-h-screen py-10 px-5">
         <div className="w-full max-w-[1166px] mx-auto">
           <div className="text-left">
-            <h1 className={`${playfair.className} video-title text-black mb-4 md:mb-6 text-left`}>
-              VISI MISI
+            <h1 className={`${playfair.className} video-title text-black mb-3 text-left`}>
+              Visi Misi
             </h1>
-            <div className="w-[200px] h-[1px] bg-black opacity-100 mb-8"></div>
-
-            <p className={`${poppins.className} font-light text-black md:text-lg leading-relaxed tracking-[0.5px] mb-16 max-w-3xl`}>
+            <div className="w-[215px] h-[1px] bg-black opacity-40 mb-5"></div>
+            <p className={`${poppins.className} font-light text-black md:text-lg leading-relaxed tracking-[0.5px] mb-16 max-w-4xl`}>
               Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.
             </p>
           </div>
@@ -126,13 +125,14 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="w-full overflow-x-auto mb-8">
+                <div className="bg-white p-4 rounded-lg shadow-lg">
               <div className={`${poppins.className} min-w-full text-sm space-y-2`}>
                 <div className="flex gap-2">
-                  <div className="bg-blue-800 text-white font-semibold rounded-md px-2 py-2 text-center flex-1">No</div>
-                  <div className="bg-blue-800 text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Wilayah</div>
-                  <div className="bg-blue-800 text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RT</div>
-                  <div className="bg-blue-800 text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RW</div>
-                  <div className="bg-blue-800 text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Penduduk</div>
+                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">No</div>
+                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Wilayah</div>
+                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RT</div>
+                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-1">RW</div>
+                  <div className="bg-[#094B72] text-white font-semibold rounded-md px-2 py-2 text-center flex-[2]">Penduduk</div>
                 </div>
 
                 <div className="flex gap-2">
@@ -159,6 +159,7 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
             </div>
+            </div>
           </div>
 
           <div className="flex flex-col">
@@ -177,11 +178,11 @@ const HomePage: React.FC = () => {
                 <p className={`${poppins.className} text-xs mb-1`}>Total Penduduk</p>
                 <p className={`${poppins.className} text-lg md:text-xl font-bold`}>5.797 Jiwa</p>
               </div>
-              <div className="bg-blue-100 text-blue-900 rounded-md p-3 md:p-4 shadow">
+              <div className="bg-blue-100 text-[#094B72] rounded-md p-3 md:p-4 shadow">
                 <p className={`${poppins.className} text-xs mb-1`}>Laki - Laki</p>
                 <p className={`${poppins.className} text-lg md:text-xl font-bold`}>2.900 Jiwa</p>
               </div>
-              <div className="bg-red-100 text-blue-900 rounded-md p-3 md:p-4 shadow">
+              <div className="bg-red-100 text-[#094B72] rounded-md p-3 md:p-4 shadow">
                 <p className={`${poppins.className} text-xs mb-1`}>Perempuan</p>
                 <p className={`${poppins.className} text-lg md:text-xl font-bold`}>2.897 Jiwa</p>
               </div>
@@ -191,61 +192,53 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Sejarah Section */}
-      <section className="relative bg-white min-h-screen py-20 px-5">
-        <div className="w-full max-w-[1166px] mx-auto">
-          <div className="text-left">
-            <h1 className={`${playfair.className} text-black mb-4 md:mb-6 text-left text-3xl md:text-4xl font-bold`}>
-              Sejarah Desa Slamparejo
-            </h1>
-            <div className="w-full md:w-[470px] h-[1px] bg-black opacity-100 mb-8"></div>
-
-            <div className="flex flex-col md:flex-row gap-6 items-stretch">
-              <div className="w-full md:w-1/2 flex flex-col gap-6">
-                <div className="flex-1 relative w-full h-[200px] md:h-[250px] lg:h-[300px]">
-                  <Image
-                    src="/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg"
-                    alt="Mbah Gude"
-                    fill
-                    quality={100}
-                    className="rounded-lg shadow-lg object-cover"
-                  />
-                </div>
-                <div className="flex-1 relative w-full h-[200px] md:h-[250px] lg:h-[300px]">
-                  <Image
-                    src="/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg"
-                    alt="Wilayah Peteguhan"
-                    fill
-                    quality={100}
-                    className="rounded-lg shadow-lg object-cover"
-                  />
-                </div>
-                <div className="flex-1 relative w-full h-[200px] md:h-[250px] lg:h-[300px]">
-                  <Image
-                    src="/c20512021615f3918f726e5fb61f5c95c047e233.jpg"
-                    alt="Dusun Busu"
-                    fill
-                    quality={100}
-                    className="rounded-lg shadow-lg object-cover"
-                  />
-                </div>
+      <section className="relative bg-[#F1F2F9] min-h-screen py-10 px-5">
+      <div className="w-full max-w-[1166px] mx-auto">
+        <div className="text-left">
+        <div className="mb-8">
+          <h1 className={`${playfair.className} text-black mb-2 md:mb-4 text-left text-3xl md:text-4xl`}>
+            Sejarah Desa Slamparejo
+          </h1>
+          <div className="h-[2px] bg-black opacity-40 w-full max-w-[320px] md:max-w-[400px]"></div>
+        </div>
+          <div className="flex flex-col md:flex-row gap-6 items-stretch">
+            {/* Kolom Gambar */}
+            <div className="w-full md:w-1/2 flex flex-col flex-grow gap-6">
+            {[
+              { src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg", alt: "Mbah Gude" },
+              { src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg", alt: "Wilayah Peteguhan" },
+              { src: "/c20512021615f3918f726e5fb61f5c95c047e233.jpg", alt: "Dusun Busu" },
+            ].map((img, idx) => (
+              <div key={idx} className="relative w-full flex-1 min-h-[150px]">
+                <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                quality={100}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="rounded-lg shadow-lg object-cover"
+              />
               </div>
+            ))}
+          </div>
 
-              {/* Kolom Narasi */}
-              <div className="w-full md:w-1/2">
-                <p className={`${poppins.className} text-justify font-light text-[20px] leading-[40px] tracking-[1.5px]`}>
-                  Desa Slamparejo merupakan suatu desa di kecamatan Jabung yang memiliki dua Dusun, yaitu Dusun Krajan dan Dusun Busu. Pada awal terbentuknya desa ini memiliki suatu sejarah yang menjadikan terbentuknya nama dari Desa Slamparejo.<br /><br />
+            {/* Kolom Narasi */}
+            <div className="w-full md:w-1/2">
+              <p className={`${poppins.className} text-justify font-light text-[20px] leading-[40px] tracking-[1.5px]`}>
+                Desa Slamparejo merupakan suatu desa di kecamatan Jabung yang memiliki dua Dusun, yaitu Dusun Krajan dan Dusun Busu. Pada awal terbentuknya desa ini memiliki suatu sejarah yang menjadikan terbentuknya nama dari Desa Slamparejo.<br /><br />
 
-                  Dahulu ada seorang pengembara yang bernama Mbah Gude dan pengikutnya yang berasal dari Kerajaan Mataram ingin membuka lahan di lokasi Peteguhan yang sekarang disebut Desa Argosari. Warga Peteguhan merasa ada orang baru yang ingin menguasai wilayahnya, maka Mbah Gude dan pengikutnya diusir dari wilayah Peteguhan.<br /><br />
+                Dahulu ada seorang pengembara yang bernama Mbah Gude dan pengikutnya yang berasal dari Kerajaan Mataram ingin membuka lahan di lokasi Peteguhan yang sekarang disebut Desa Argosari. Warga Peteguhan merasa ada orang baru yang ingin menguasai wilayahnya, maka Mbah Gude dan pengikutnya diusir dari wilayah Peteguhan.<br /><br />
 
-                  Akhirnya Mbah Gude memutuskan untuk membuka lahan baru di wilayah utara Peteguhan. Ternyata daerah tersebut masih berupa hutan belantara. Setelah hutan tersebut dibabat, wilayah itu dinamakan Busu yang berasal dari kata &quot;Tembusan&quot; yang sekarang disebut Dusun Busu.<br /><br />
+                Akhirnya Mbah Gude memutuskan untuk membuka lahan baru di wilayah utara Peteguhan. Ternyata daerah tersebut masih berupa hutan belantara. Setelah hutan tersebut dibabat, wilayah itu dinamakan Busu yang berasal dari kata &quot;Tembusan&quot; yang sekarang disebut Dusun Busu.<br /><br />
 
-                  Karena kondisi tanah di wilayah Busu termasuk daerah pegunungan, maka Mbah Gude dan pengikutnya memutuskan untuk memperluas wilayahnya ke utara. Ternyata daerah tersebut adalah daerah rawa-rawa. Mbah Gude dan pengikutnya memakai seutas tampar (tali) untuk menyeberang (nylamper). Setelah lahan tersebut dibabat, daerah itu dinamakan Slampar yang berasal dari kata &quot;Tampar&quot;.<br /><br />
-                </p>
-              </div>
+                Karena kondisi tanah di wilayah Busu termasuk daerah pegunungan, maka Mbah Gude dan pengikutnya memutuskan untuk memperluas wilayahnya ke utara. Ternyata daerah tersebut adalah daerah rawa-rawa. Mbah Gude dan pengikutnya memakai seutas tampar (tali) untuk menyeberang (nylamper). Setelah lahan tersebut dibabat, daerah itu dinamakan Slampar yang berasal dari kata &quot;Tampar&quot;.<br /><br />
+              </p>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+
     </main>
   );
 };
