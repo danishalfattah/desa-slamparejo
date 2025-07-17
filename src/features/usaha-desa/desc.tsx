@@ -21,7 +21,7 @@ export default function DescUsaha() {
           </h1>
         </div>
         <p
-          className={`${poppins.className} text-base md:text-lg text-gray-800 mt-4 leading-relaxed`}
+          className={`${poppins.className} text-base md:text-lg text-gray-800 mt-4 leading-relaxed max-w-5xl`}
         >
           Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna.
         </p>
@@ -29,3 +29,4 @@ export default function DescUsaha() {
     </section>
   );
 }
+
