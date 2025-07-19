@@ -14,13 +14,13 @@ export default function Launching() {
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute top-0 left-0 w-full h-full flex items-start justify-start p-8">
-          <div className="max-w-lg">
-            <h2 className="text-white text-3xl md:text-4xl font-semibold mb-4 leading-tight">
+        <div className="absolute top-0 left-0 w-full h-full flex items-start justify-start px-2 py-4 md:px-8 md:py-8">
+          <div className="w-full max-w-lg">
+            <h2 className="text-white text-2xl md:text-4xl font-semibold mb-3 leading-tight break-words">
               <span>Launching Website</span>
               <span className="block">Desa Slamparejo</span>
             </h2>
-            <p className="text-white text-base md:text-lg font-normal leading-relaxed">
+            <p className="text-white text-sm md:text-lg font-normal leading-relaxed break-words">
               Mahasiswa dari Fakultas Ilmu Komputer, Universitas Brawijaya,
               telah meluncurkan website desaslamparejo.id sebagai bagian dari
               program pengabdian masyarakat untuk Desa Slamparejo.
