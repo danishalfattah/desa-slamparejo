@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
 
 
       {/* Video Section */}
-      <section className="relative bg-[url('/Achievement.png')] min-h-screen text-white">
+      <section className="relative bg-[url('/Achievement.png')] text-white">
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         <div className="relative z-20 w-full max-w-[1166px] mx-auto px-5 pt-[40px] md:pt-[60px]">
           <h1 className={`${playfair.className} video-title text-white mb-4 md:mb-6 text-left`}>
