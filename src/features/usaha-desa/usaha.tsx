@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from "./card";
 
-const CARD_WIDTH = 300;
+const MOBILE_CARD_WIDTH = 280;
+const DESKTOP_CARD_WIDTH = 300;
 const GAP = 24;
-const TOTAL_SPACE = CARD_WIDTH + GAP;
 const CLONE_COUNT = 3;
 
 const originalData = [
@@ -26,23 +26,37 @@ const data = [
 
 export default function Usaha() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(CLONE_COUNT);
   const [transition, setTransition] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const updateVisibleCount = () => {
+    const updateLayout = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        const fullCount = Math.floor(containerWidth / TOTAL_SPACE);
+        const mobile = window.innerWidth < 640;
+        setIsMobile(mobile);
+        
+        const cardWidth = mobile ? MOBILE_CARD_WIDTH : DESKTOP_CARD_WIDTH;
+        const totalSpace = cardWidth + GAP;
+        const fullCount = Math.max(1, Math.floor(containerWidth / totalSpace));
+        
         setVisibleCount(fullCount);
       }
     };
 
-    updateVisibleCount();
-    const observer = new ResizeObserver(updateVisibleCount);
-    observer.observe(containerRef.current!);
-    return () => observer.disconnect();
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
+    const observer = new ResizeObserver(updateLayout);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', updateLayout);
+      observer.disconnect();
+    };
   }, []);
 
   const handleNext = () => {
@@ -65,24 +79,32 @@ export default function Usaha() {
     }
   };
 
-  const translateX = -(currentIndex * TOTAL_SPACE);
+  const cardWidth = isMobile ? MOBILE_CARD_WIDTH : DESKTOP_CARD_WIDTH;
+  const totalSpace = cardWidth + GAP;
+  const translateX = -(currentIndex * totalSpace);
 
   return (
-    <div className="w-full flex flex-col items-center px-4 bg-[#F9FCFC] py-8">
-      <div className="flex items-center justify-center gap-4 w-full max-w-screen-xl" ref={containerRef}>
-        <button onClick={handlePrev} className="p-2 shrink-0">
-          <ChevronLeft className="w-6 h-6 text-black" />
+    <div className="w-full flex flex-col items-center px-2 sm:px-4 bg-[#F9FCFC] py-4 sm:py-8">
+      <div className="flex items-center justify-center gap-2 sm:gap-4 w-full max-w-screen-xl" ref={containerRef}>
+        <button 
+          onClick={handlePrev} 
+          className="p-1 sm:p-2 shrink-0 touch-manipulation"
+          aria-label="Previous card"
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
         </button>
 
         <div
           className="overflow-hidden"
-          style={{ width: `${CARD_WIDTH * visibleCount + GAP * (visibleCount - 1)}px` }}
+          style={{ 
+            width: `${cardWidth * visibleCount + GAP * Math.max(0, visibleCount - 1)}px` 
+          }}
         >
           <div
             className={`flex gap-6 ${transition ? "transition-transform duration-500 ease-in-out" : ""}`}
             style={{
               transform: `translateX(${translateX}px)`,
-              width: `${data.length * TOTAL_SPACE}px`,
+              width: `${data.length * totalSpace}px`,
             }}
             onTransitionEnd={handleTransitionEnd}
           >
@@ -92,8 +114,12 @@ export default function Usaha() {
           </div>
         </div>
 
-        <button onClick={handleNext} className="p-2 shrink-0">
-          <ChevronRight className="w-6 h-6 text-black" />
+        <button 
+          onClick={handleNext} 
+          className="p-1 sm:p-2 shrink-0 touch-manipulation"
+          aria-label="Next card"
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
         </button>
       </div>
     </div>
