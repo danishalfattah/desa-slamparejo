@@ -112,6 +112,29 @@ export default function ManageProfilPage() {
       </PageHeader>
 
       <div className="grid gap-6">
+        {/* Video Profil */}
+        <DataCard
+          title="Video Profil"
+          description="Video profil desa dari YouTube"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="youtube-url">Link Video YouTube</Label>
+            <Input
+              id="youtube-url"
+              type="text"
+              value={data.video?.url || ""}
+              onChange={(e) =>
+                handleNestedChange("video", "url", e.target.value)
+              }
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            <p className="text-sm text-muted-foreground">
+              Masukkan link YouTube untuk video profil desa yang akan
+              ditampilkan di halaman profil
+            </p>
+          </div>
+        </DataCard>
+
         {/* Visi Misi */}
         <DataCard title="Visi & Misi" description="Visi dan misi desa">
           <div className="space-y-4">
@@ -179,7 +202,12 @@ export default function ManageProfilPage() {
                 onChange={(e) =>
                   handleNestedChange("demografi", "petaUrl", e.target.value)
                 }
+                placeholder="https://www.google.com/maps/embed?pb=..."
               />
+              <p className="text-sm text-muted-foreground">
+                Masukkan link embed Google Maps untuk menampilkan peta lokasi
+                desa
+              </p>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-2">
@@ -195,6 +223,7 @@ export default function ManageProfilPage() {
                       e.target.value
                     )
                   }
+                  placeholder="5.982 JIWA"
                 />
               </div>
               <div className="space-y-2">
@@ -206,6 +235,7 @@ export default function ManageProfilPage() {
                   onChange={(e) =>
                     handleNestedChange("demografi", "lakiLaki", e.target.value)
                   }
+                  placeholder="2.991 JIWA"
                 />
               </div>
               <div className="space-y-2">
@@ -217,6 +247,7 @@ export default function ManageProfilPage() {
                   onChange={(e) =>
                     handleNestedChange("demografi", "perempuan", e.target.value)
                   }
+                  placeholder="2.991 JIWA"
                 />
               </div>
             </div>
@@ -314,6 +345,7 @@ export default function ManageProfilPage() {
                 handleNestedChange("sejarah", "description", e.target.value)
               }
               rows={10}
+              placeholder="Masukkan sejarah desa, asal usul nama, perkembangan dari masa ke masa..."
             />
           </div>
         </DataCard>
