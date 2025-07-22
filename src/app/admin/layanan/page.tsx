@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const SuccessModal = ({
   message,
@@ -8,7 +8,7 @@ const SuccessModal = ({
   message: string;
   onClose: () => void;
 }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-xl text-center">
       <p className="mb-4">{message}</p>
       <button
@@ -22,19 +22,56 @@ const SuccessModal = ({
 );
 
 export default function ManageLayananPage() {
-  const [heroSubtitle, setHeroSubtitle] = useState(
-    "Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan."
-  );
-  const [formLink, setFormLink] = useState(
-    "https://docs.google.com/forms/d/e/1FAIpQLSd_iFaqwV66X0psODErf4qKssKTR2OA5ntPnjDzciugxw-bzA/viewform?embedded=true"
-  );
+  const [heroSubtitle, setHeroSubtitle] = useState("");
+  const [formLink, setFormLink] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const handleSave = () => {
-    // Panggil API untuk menyimpan data
-    console.log({ heroSubtitle, formLink });
-    setShowModal(true); // Tampilkan modal
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/layanan");
+        if (response.ok) {
+          const data = await response.json();
+          setHeroSubtitle(data.heroSubtitle);
+          setFormLink(data.formLink);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data layanan:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/layanan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ heroSubtitle, formLink }),
+      });
+
+      if (response.ok) {
+        setShowModal(true);
+      } else {
+        alert("Gagal menyimpan perubahan.");
+      }
+    } catch (error) {
+      console.error("Gagal menyimpan:", error);
+      alert("Terjadi kesalahan saat menyimpan.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return <div>Memuat data halaman layanan...</div>;
+  }
 
   return (
     <div>
@@ -72,9 +109,10 @@ export default function ManageLayananPage() {
         </div>
         <button
           onClick={handleSave}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={isSaving}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
         >
-          Simpan Perubahan
+          {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
         </button>
       </div>
     </div>

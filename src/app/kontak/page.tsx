@@ -1,24 +1,40 @@
 import Image from "next/image";
-
-import { Playfair_Display } from "next/font/google";
-import { Poppins } from "next/font/google";
-
+import { Playfair_Display, Poppins } from "next/font/google";
 import { Phone, Mail, Instagram } from "lucide-react";
-
 import { Card } from "@/features/kontak/components/card";
-import { HourEntry } from "@/features/kontak/components/hour-entry";
+import { HourEntry } from "./components/hour-entry";
+import { Kontak } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
+const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "400", "700"],
-});
+async function getKontakData(): Promise<Kontak | null> {
+  try {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/kontak`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (error) {
+    console.error("Gagal mengambil data kontak:", error);
+    return null;
+  }
+}
 
-export default function KontakPage() {
+export default async function KontakPage() {
+  const data = await getKontakData();
+
+  if (!data) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Gagal memuat data kontak.
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <section className="w-full h-screen flex flex-col ">
@@ -44,13 +60,12 @@ export default function KontakPage() {
             <p
               className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
             >
-              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+              {data.heroSubtitle}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Kontak */}
       <div className="w-full bg-pattern px-5 py-10 relative flex justify-center">
         <Image
           src="/Patterns.png"
@@ -65,29 +80,29 @@ export default function KontakPage() {
             <h2
               className={`${playfair.className} text-white text-2xl md:text-8xl font-normal tracking-[1.5px] mb-4`}
             >
-              Kontak<br/>Desa
+              Kontak
+              <br />
+              Desa
             </h2>
           </div>
           <div className="md:w-1/2 flex items-center ">
             <p
               className={`${poppins.className}  text-white text-sm md:text-lg font-normal tracking-wider`}
             >
-              Hubungi kami melalui informasi kontak di bawah ini jika anda
-              memiliki pertanyaan atau permohonan untuk Pemerintah Desa
-              Slamparejo.
+              {data.description}
             </p>
           </div>
         </div>
       </div>
-      {/* Info Section */}
+
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="max-w-7xl md:mx-auto">
           <div className="flex flex-wrap md:flex-row flex-col md:justify-around items-center">
             <Card
               title="Email Resmi"
               description="Kirim email untuk pertanyaan atau permohonan resmi"
-              contactInfo="desa.slamparejo@gmail.com"
-              link="mailto:desa.slamparejo@gmail.com"
+              contactInfo={data.email}
+              link={`mailto:${data.email}`}
               buttonText="Kirim Email"
             >
               <Mail />
@@ -95,8 +110,8 @@ export default function KontakPage() {
             <Card
               title="Telepon Kantor"
               description="Hubungi langsung untuk informasi terpercaya dengan cepat"
-              contactInfo="(+62)87766747814"
-              link="tel:+6287766747814"
+              contactInfo={data.phone}
+              link={`tel:${data.phone.replace(/[()+\s-]/g, "")}`}
               buttonText="Hubungi Sekarang"
             >
               <Phone />
@@ -104,8 +119,8 @@ export default function KontakPage() {
             <Card
               title="Instagram"
               description="Ikuti Kegiatan dan Berita Terbaru dari Desa Slamparejo"
-              contactInfo="@desaslamparejo"
-              link="https://www.instagram.com/desaslamparejo/"
+              contactInfo={data.instagram}
+              link={data.instagramUrl}
               buttonText="Kunjungi Instagram"
             >
               <Instagram />
@@ -113,61 +128,59 @@ export default function KontakPage() {
           </div>
         </div>
       </section>
-      <section className="bg-white">
-        <div className="p-[37px] max-w-[1328px] mx-auto">
-          <div className="border-b border-black py-5 w-fit">
-            <h1 className={`${playfair.className} font-normal text-5xl`}>
+
+      <section className="bg-white py-10">
+        <div className="p-4 md:p-8 max-w-5xl mx-auto">
+          <div className="text-center md:text-left border-b border-black pb-4 w-full md:w-fit">
+            <h1
+              className={`${playfair.className} font-normal text-4xl md:text-5xl`}
+            >
               Jam Operasional
             </h1>
           </div>
-          <div className="h-[78px] my-[13px]">
-            <p className={`${poppins.className}`}>
+          <div className="my-4 md:my-6">
+            <p className={`${poppins.className} text-center md:text-left`}>
               Kantor Desa Slamparejo melayani masyarakat pada jam berikut
             </p>
           </div>
-          <div className="shadow-lg grid md:grid-cols-2 md:grid-rows-2 grid-cols-1 grid-rows-4 max-w-[1166px] mx-auto rounded-xl p-[37px] gap-y-[36px] gap-x-[134px]">
+          <div className="shadow-lg grid grid-cols-1 gap-y-6 max-w-4xl mx-auto rounded-xl p-6 md:p-10">
             <HourEntry
               type={false}
               days="Senin - Kamis"
               hours="08:00 - 15:30 WIB"
             />
-            <HourEntry
-              type={true}
-              days="Sabtu - Minggu"
-              hours="Tutup"
-            />
-            <HourEntry
-              type={false}
-              days="Jumat"
-              hours="08:00 - 11:30 WIB"
-            />
-            <HourEntry
-              type={true}
-              days="Hari Libur Nasional"
-              hours="Tutup"
-            />
+            <HourEntry type={true} days="Sabtu - Minggu" hours="Tutup" />
+            <HourEntry type={false} days="Jumat" hours="08:00 - 11:30 WIB" />
+            <HourEntry type={true} days="Hari Libur Nasional" hours="Tutup" />
           </div>
         </div>
       </section>
-      <section>
-        <div className="p-[37px] max-w-[1328px] mx-auto">
-          <div className="border-b border-black py-5 w-fit">
-            <h1 className={`${playfair.className} font-normal text-5xl`}>
+      <section className="bg-white py-10">
+        <div className="p-4 md:p-8 max-w-5xl mx-auto">
+          <div className="text-center md:text-left border-b border-black pb-4 w-full md:w-fit">
+            <h1
+              className={`${playfair.className} font-normal text-4xl md:text-5xl`}
+            >
               Lokasi Kantor Desa
             </h1>
           </div>
-          <div className="h-[78px] my-[13px]">
-            <p className={`${poppins.className} font-normal leading-[32px] text-xl tracking-[1.5px]`}>
-              Jl. Raya Slamparejo No.18, Dusun Krajan, Slamparejo, Kec. Jabung, Kabupaten Malang,<br/> Jawa Timur 65155
+          <div className="my-4 md:my-6">
+            <p
+              className={`${poppins.className} font-normal leading-relaxed text-lg md:text-xl tracking-wide whitespace-pre-line text-center md:text-left`}
+            >
+              {data.lokasi.address}
             </p>
           </div>
         </div>
-        <iframe
-          className="w-[80vw] max-w-[1166px] h-[407px] mx-auto my-10"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus"
-          allowFullScreen={false} loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade">
-        </iframe>
+        <div className="px-4">
+          <iframe
+            className="w-full max-w-5xl h-80 md:h-[450px] mx-auto my-10 rounded-lg shadow-lg"
+            src={data.lokasi.mapUrl}
+            allowFullScreen={false}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
       </section>
     </main>
   );

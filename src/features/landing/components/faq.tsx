@@ -1,3 +1,5 @@
+"use client"; // Komponen ini interaktif, jadi harus Client Component
+
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import {
@@ -7,67 +9,55 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Link from "next/link";
+import { FaqItem } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "700"],
 });
 
-const dataFaq = [
-  {
-    id: 1,
-    question:
-      "Bisakah saya menyampaikan aspirasi atau pengaduan melalui website ini?",
-    answer: (
-      <>
-        Bisa. Gunakan fitur{" "}
+// Fungsi untuk mengubah string menjadi elemen dengan Link
+const parseAnswer = (answer: string) => {
+  const parts = answer.split(/("Kotak Saran"|"Kontak Kami"|"Produk")/g);
+  return parts.map((part, index) => {
+    if (part === '"Kotak Saran"') {
+      return (
         <Link
+          key={index}
           href="/layanan/kepuasan-masyarakat"
-          className="italic hover:text-bg-pattern"
+          className="italic hover:text-bg-pattern font-semibold"
         >
           {`"Kotak Saran"`}
-        </Link>{" "}
-        untuk menyampaikan aspirasi, kritik, atau pengaduan. Pesan Anda akan
-        ditindaklanjuti oleh perangkat desa sesuai prosedur.
-      </>
-    ),
-  },
-  {
-    id: 2,
-    question:
-      "Bagaimana cara mengurus layanan administrasi di Desa Slamparejo?",
-    answer: (
-      <>
-        Seluruh layanan administrasi hanya dilayani langsung di kantor desa.
-        Sebelum datang, silakan cek jam operasional dan kontak resmi di menu{" "}
-        <Link href="/kontak" className="italic hover:text-bg-pattern">
-          {`"Kontak Kami"`}
-        </Link>{" "}
-        agar kunjungan Anda lebih efisien.
-      </>
-    ),
-  },
-  {
-    id: 3,
-    question:
-      "Di mana saya bisa menemukan informasi tentang peraturan desa dan hasil pembangunan fisik?",
-    answer: (
-      <>
-        Informasi mengenai produk hukum, seperti Peraturan Desa (Perdes) dan
-        keputusan resmi lainnya, dapat Anda temukan di menu{" "}
+        </Link>
+      );
+    }
+    if (part === '"Kontak Kami"') {
+      return (
         <Link
+          key={index}
+          href="/kontak"
+          className="italic hover:text-bg-pattern font-semibold"
+        >
+          {`"Kontak Kami"`}
+        </Link>
+      );
+    }
+    if (part === '"Produk"') {
+      return (
+        <Link
+          key={index}
           href="/produk-hukum-dan-fisik"
-          className="italic hover:text-pattern"
+          className="italic hover:text-pattern font-semibold"
         >
           {`"Produk"`}
         </Link>
-        .
-      </>
-    ),
-  },
-];
+      );
+    }
+    return part;
+  });
+};
 
-export default function Faq() {
+export default function Faq({ data }: { data: FaqItem[] }) {
   return (
     <section className="w-full h-screen flex flex-col">
       <div className="relative flex-1 flex flex-col w-full items-center  px-5  py-20">
@@ -91,17 +81,17 @@ export default function Faq() {
             type="single"
             collapsible
             className="w-full  md:w-2/3 flex flex-col gap-2  "
-            defaultValue="data-2"
+            defaultValue="item-0"
           >
-            {dataFaq.map((data) => (
+            {data.map((faq, index) => (
               <AccordionItem
-                key={data.id}
-                value={`data-${data.id}`}
+                key={faq.id}
+                value={`item-${index}`}
                 className="bg-white rounded-lg px-4"
               >
-                <AccordionTrigger>{data.question}</AccordionTrigger>
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
                 <AccordionContent className="flex flex-col pb-4 ">
-                  <p>{data.answer}</p>
+                  <p>{parseAnswer(faq.answer)}</p>
                 </AccordionContent>
               </AccordionItem>
             ))}

@@ -3,22 +3,36 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { Profil } from '@/lib/types';
 
-const COLLECTION_NAME = "profil-desa";
-const DOCUMENT_ID = "konten-utama";
+const COLLECTION_NAME = "konten-halaman";
+const DOCUMENT_ID = "profil";
 
-interface ProfilData {
-  visi: string;
-  misi: string;
-  sejarah: string;
-  videoUrl: string;
-}
-
-const defaultData: ProfilData = {
-    visi: "Membangun Desa Slamparejo yang mandiri, sejahtera, dan berkelanjutan dengan tetap mempertahankan nilai-nilai budaya lokal serta kearifan masyarakat dalam tata kelola pemerintahan yang transparan dan akuntabel.",
-    misi: "1. Meningkatkan kualitas pelayanan publik.\n2. Memperkuat perekonomian desa.\n3. Melestarikan budaya dan kearifan lokal.\n4. Membangun infrastruktur yang mendukung.\n5. Mengoptimalkan tata kelola pemerintahan.",
-    sejarah: "Desa Slamparejo berawal dari pengembaraan Mbah Gude dari Kerajaan Mataram...",
-    videoUrl: "https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
+// Data default disederhanakan
+const defaultData: Omit<Profil, 'sejarah'> & { sejarah: Omit<Profil['sejarah'], 'images'> } = {
+    hero: { subtitle: "Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan." },
+    video: { title: "Video Profil", description: "Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna.", url: "https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" },
+    visiMisi: {
+        description: "Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.",
+        visi: "Membangun Desa Slamparejo yang mandiri, sejahtera, dan berkelanjutan...",
+        misi: "Meningkatkan kualitas pelayanan publik...\nMemperkuat perekonomian desa..."
+    },
+    demografi: {
+        title: "Demografi Desa Slamparejo",
+        description: "Lorem ipsum dolor sit amet...",
+        totalPenduduk: "5.797 Jiwa",
+        lakiLaki: "2.900 Jiwa",
+        perempuan: "2.897 Jiwa",
+        petaUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15806.691498613762!2d112.76887845!3d-7.929193899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e66b4b7aee9%3A0x1dfb4e477cdba610!2sSlamparejo%2C%20Kec.%20Jabung%2C%20Kabupaten%20Malang%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1752224970507!5m2!1sid!2sid",
+        tabelData: [
+            { id: "1", wilayah: "Krajan", rt: "17 RT", rw: "2 RW", penduduk: "2.991 JIWA" },
+            { id: "2", wilayah: "Busu", rt: "20 RT", rw: "3 RW", penduduk: "2.806 JIWA" }
+        ]
+    },
+    sejarah: {
+        title: "Sejarah Desa Slamparejo",
+        description: "Desa Slamparejo merupakan suatu desa di kecamatan Jabung..."
+    }
 };
 
 async function isAuthorized() {
@@ -26,35 +40,32 @@ async function isAuthorized() {
     return !!session;
 }
 
-// GET: Mengambil data profil
 export async function GET() {
   try {
     const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
-      return NextResponse.json(docSnap.data() as ProfilData);
+      return NextResponse.json(docSnap.data());
     } else {
-      // Jika dokumen belum ada, kembalikan data default
+      await setDoc(docRef, defaultData);
       return NextResponse.json(defaultData);
     }
   } catch (error) {
-    console.error("Firebase GET Error:", error);
+    console.log(error)
     return NextResponse.json({ error: 'Gagal mengambil data profil' }, { status: 500 });
   }
 }
 
-// POST: Menyimpan/Memperbarui data profil
 export async function POST(request: Request) {
     if (!await isAuthorized()) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
-        const dataToSave: ProfilData = await request.json();
+        const dataToSave: Profil = await request.json();
+        
         const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
-        // setDoc dengan merge: true akan membuat dokumen jika belum ada, atau memperbarui jika sudah ada
         await setDoc(docRef, dataToSave, { merge: true });
-        return NextResponse.json({ message: 'Data profil berhasil disimpan' }, { status: 200 });
+        return NextResponse.json({ message: 'Data profil berhasil disimpan' });
     } catch (error) {
         console.error("Firebase POST Error:", error);
         return NextResponse.json({ error: 'Gagal menyimpan data profil' }, { status: 500 });

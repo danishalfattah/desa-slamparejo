@@ -2,8 +2,10 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Usaha } from "@/lib/types";
+import Image from "next/image";
 
-// Komponen Modal Konfirmasi
+// --- Komponen Modal ---
+
 const ConfirmModal = ({
   message,
   onConfirm,
@@ -13,19 +15,19 @@ const ConfirmModal = ({
   onConfirm: () => void;
   onCancel: () => void;
 }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-      <p className="mb-4">{message}</p>
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-sm">
+      <p className="mb-6 text-lg">{message}</p>
       <div className="flex justify-center gap-4">
         <button
           onClick={onConfirm}
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 w-24"
         >
           Ya, Hapus
         </button>
         <button
           onClick={onCancel}
-          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 w-24"
         >
           Batal
         </button>
@@ -34,18 +36,137 @@ const ConfirmModal = ({
   </div>
 );
 
+const UsahaFormModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  usaha,
+  setUsaha,
+  setImageFile,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (e: FormEvent) => void;
+  usaha: Partial<Usaha>;
+  setUsaha: (data: Partial<Usaha>) => void;
+  imageFile: File | null;
+  setImageFile: (file: File | null) => void;
+}) => {
+  if (!isOpen) return null;
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setUsaha({ ...usaha, [name]: value });
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-semibold mb-4">
+          {usaha.id ? "Edit Usaha" : "Tambah Usaha Baru"}
+        </h2>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="title"
+            value={usaha.title || ""}
+            onChange={handleChange}
+            placeholder="Nama Usaha"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <textarea
+            name="description"
+            value={usaha.description || ""}
+            onChange={handleChange}
+            placeholder="Deskripsi"
+            className="w-full p-2 border rounded-md"
+            rows={4}
+            required
+          />
+          <input
+            type="text"
+            name="phone"
+            value={usaha.phone || ""}
+            onChange={handleChange}
+            placeholder="Nomor Telepon (cth: 62812...)"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <div>
+            <label className="block font-medium mb-1 text-sm">
+              Gambar Usaha
+            </label>
+            {usaha.id && usaha.image && (
+              <div className="mb-2">
+                <p className="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
+                <Image
+                  src={usaha.image}
+                  alt={usaha.title || "Gambar saat ini"}
+                  width={80}
+                  height={80}
+                  className="rounded-md object-cover"
+                />
+              </div>
+            )}
+            <input
+              type="file"
+              name="imageFile"
+              onChange={handleFileChange}
+              accept="image/png, image/jpeg, image/jpg"
+              className="w-full p-2 border rounded-md"
+              required={!usaha.id}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {usaha.id
+                ? "Unggah file baru untuk mengganti gambar."
+                : "File gambar wajib diunggah."}
+            </p>
+          </div>
+          <input
+            type="text"
+            name="maps"
+            value={usaha.maps || ""}
+            onChange={handleChange}
+            placeholder="URL Google Maps"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 export default function ManageUsahaDesaPage() {
   const [usahaList, setUsahaList] = useState<Usaha[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentData, setCurrentData] = useState<Partial<Usaha>>({
-    title: "",
-    description: "",
-    phone: "",
-    image: "",
-    maps: "",
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUsaha, setEditingUsaha] = useState<Partial<Usaha>>({});
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
     action: () => void;
     message: string;
@@ -68,27 +189,15 @@ export default function ManageUsahaDesaPage() {
     fetchData();
   }, []);
 
-  const resetForm = () => {
-    setIsFormVisible(false);
-    setIsEditing(false);
-    setCurrentData({
-      title: "",
-      description: "",
-      phone: "",
-      image: "",
-      maps: "",
-    });
+  const handleOpenModal = (usaha?: Usaha) => {
+    setEditingUsaha(usaha || {});
+    setImageFile(null);
+    setIsModalOpen(true);
   };
 
-  const handleAddNew = () => {
-    resetForm();
-    setIsFormVisible(true);
-  };
-
-  const handleEdit = (data: Usaha) => {
-    setCurrentData(data);
-    setIsEditing(true);
-    setIsFormVisible(true);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingUsaha({});
   };
 
   const handleDelete = (id: string) => {
@@ -108,26 +217,29 @@ export default function ManageUsahaDesaPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const method = isEditing ? "PUT" : "POST";
-    const response = await fetch("/api/usaha-desa", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentData),
-    });
+    const formData = new FormData();
+    formData.append("title", editingUsaha.title || "");
+    formData.append("description", editingUsaha.description || "");
+    formData.append("phone", editingUsaha.phone || "");
+    formData.append("maps", editingUsaha.maps || "");
+
+    if (editingUsaha.id) {
+      formData.append("id", editingUsaha.id);
+    }
+    if (imageFile) {
+      formData.append("imageFile", imageFile);
+    }
+
+    const method = editingUsaha.id ? "PUT" : "POST";
+    const response = await fetch("/api/usaha-desa", { method, body: formData });
 
     if (response.ok) {
-      resetForm();
+      handleCloseModal();
       fetchData();
     } else {
-      alert("Gagal menyimpan data.");
+      const errorData = await response.json();
+      alert(`Gagal menyimpan data: ${errorData.error}`);
     }
-  };
-
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setCurrentData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -139,84 +251,26 @@ export default function ManageUsahaDesaPage() {
           onCancel={() => setConfirmAction(null)}
         />
       )}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Kelola Usaha Desa</h1>
+      <UsahaFormModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        usaha={editingUsaha}
+        setUsaha={setEditingUsaha}
+        imageFile={imageFile}
+        setImageFile={setImageFile}
+      />
+
+      {/* --- BAGIAN YANG DIPERBAIKI --- */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 pt-20 md:pt-0">
+        <h1 className="text-2xl md:text-3xl font-bold">Kelola Usaha Desa</h1>
         <button
-          onClick={handleAddNew}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          onClick={() => handleOpenModal()}
+          className=" md:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shrink-0"
         >
           + Tambah Usaha Baru
         </button>
       </div>
-
-      {isFormVisible && (
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">
-            {isEditing ? "Edit Usaha" : "Tambah Usaha Baru"}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="title"
-              value={currentData.title}
-              onChange={handleInputChange}
-              placeholder="Nama Usaha"
-              className="w-full p-2 border rounded-md"
-              required
-            />
-            <textarea
-              name="description"
-              value={currentData.description}
-              onChange={handleInputChange}
-              placeholder="Deskripsi"
-              className="w-full p-2 border rounded-md"
-              required
-            />
-            <input
-              type="text"
-              name="phone"
-              value={currentData.phone}
-              onChange={handleInputChange}
-              placeholder="Nomor Telepon (cth: 62812...)"
-              className="w-full p-2 border rounded-md"
-              required
-            />
-            <input
-              type="text"
-              name="image"
-              value={currentData.image}
-              onChange={handleInputChange}
-              placeholder="URL Gambar (cth: /nama-gambar.jpg)"
-              className="w-full p-2 border rounded-md"
-              required
-            />
-            <input
-              type="text"
-              name="maps"
-              value={currentData.maps}
-              onChange={handleInputChange}
-              placeholder="URL Google Maps"
-              className="w-full p-2 border rounded-md"
-              required
-            />
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-              >
-                Simpan
-              </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-              >
-                Batal
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
 
       <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
         {isLoading ? (
@@ -239,7 +293,7 @@ export default function ManageUsahaDesaPage() {
                   <td className="p-3">{usaha.phone}</td>
                   <td className="p-3 flex gap-3">
                     <button
-                      onClick={() => handleEdit(usaha)}
+                      onClick={() => handleOpenModal(usaha)}
                       className="text-blue-600 font-semibold"
                     >
                       Edit

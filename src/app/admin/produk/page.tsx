@@ -2,8 +2,10 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { ProdukHukum, Pembangunan } from "@/lib/types";
+import Image from "next/image";
 
-// Komponen Modal Konfirmasi
+// --- Komponen Modal ---
+
 const ConfirmModal = ({
   message,
   onConfirm,
@@ -13,7 +15,7 @@ const ConfirmModal = ({
   onConfirm: () => void;
   onCancel: () => void;
 }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-sm">
       <p className="mb-6 text-lg">{message}</p>
       <div className="flex justify-center gap-4">
@@ -34,207 +36,230 @@ const ConfirmModal = ({
   </div>
 );
 
-// Komponen Form untuk Produk Hukum
-const ProdukHukumForm = ({
-  data,
+const ProdukHukumModal = ({
+  isOpen,
+  onClose,
   onSubmit,
-  onCancel,
+  data,
+  setData,
 }: {
-  data: Partial<ProdukHukum>;
+  isOpen: boolean;
+  onClose: () => void;
   onSubmit: (e: FormEvent) => void;
-  onCancel: () => void;
+  data: Partial<ProdukHukum>;
+  setData: (data: Partial<ProdukHukum>) => void;
 }) => {
-  const [formData, setFormData] = useState(data);
-
-  useEffect(() => {
-    setFormData(data);
-  }, [data]);
-
+  if (!isOpen) return null;
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "year" ? Number(value) : value,
-    }));
+    setData({ ...data, [name]: name === "year" ? Number(value) : value });
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-4 bg-gray-50 p-4 rounded-lg border my-4"
-    >
-      <input name="id" type="hidden" value={formData.id || ""} />
-      <input
-        type="text"
-        name="title"
-        value={formData.title || ""}
-        onChange={handleChange}
-        placeholder="Judul Dokumen"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <textarea
-        name="description"
-        value={formData.description || ""}
-        onChange={handleChange}
-        placeholder="Deskripsi Singkat"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <input
-        type="text"
-        name="link"
-        value={formData.link || ""}
-        onChange={handleChange}
-        placeholder="URL Google Drive"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <div className="flex gap-4">
-        <input
-          type="number"
-          name="year"
-          value={formData.year || new Date().getFullYear()}
-          onChange={handleChange}
-          placeholder="Tahun"
-          className="w-1/2 p-2 border rounded-md"
-          required
-        />
-        <select
-          name="category"
-          value={formData.category || "Perdes"}
-          onChange={handleChange}
-          className="w-1/2 p-2 border rounded-md"
-        >
-          <option value="Perdes">Perdes</option>
-          <option value="Keputusan Desa">Keputusan Desa</option>
-        </select>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-semibold mb-4">
+          {data.id ? "Edit Produk Hukum" : "Tambah Produk Hukum"}
+        </h2>
+        <form onSubmit={onSubmit} id="produkHukumForm" className="space-y-4">
+          <input
+            type="text"
+            name="title"
+            value={data.title || ""}
+            onChange={handleChange}
+            placeholder="Judul Dokumen"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <textarea
+            name="description"
+            value={data.description || ""}
+            onChange={handleChange}
+            placeholder="Deskripsi Singkat"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <input
+            type="text"
+            name="link"
+            value={data.link || ""}
+            onChange={handleChange}
+            placeholder="URL Google Drive"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <div className="flex gap-4">
+            <input
+              type="number"
+              name="year"
+              value={data.year || new Date().getFullYear()}
+              onChange={handleChange}
+              placeholder="Tahun"
+              className="w-1/2 p-2 border rounded-md"
+              required
+            />
+            <select
+              name="category"
+              value={data.category || "Perdes"}
+              onChange={handleChange}
+              className="w-1/2 p-2 border rounded-md"
+            >
+              <option value="Perdes">Perdes</option>
+              <option value="Keputusan Desa">Keputusan Desa</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
       </div>
-      <div className="flex gap-4">
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-        >
-          Simpan
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-        >
-          Batal
-        </button>
-      </div>
-    </form>
+    </div>
   );
 };
 
-// Komponen Form untuk Pembangunan
-const PembangunanForm = ({
-  data,
+const PembangunanModal = ({
+  isOpen,
+  onClose,
   onSubmit,
-  onCancel,
+  data,
+  setData,
+  setImageFile,
 }: {
-  data: Partial<Pembangunan>;
+  isOpen: boolean;
+  onClose: () => void;
   onSubmit: (e: FormEvent) => void;
-  onCancel: () => void;
+  data: Partial<Pembangunan>;
+  setData: (data: Partial<Pembangunan>) => void;
+  imageFile: File | null;
+  setImageFile: (file: File | null) => void;
 }) => {
-  const [formData, setFormData] = useState(data);
-
-  useEffect(() => {
-    setFormData(data);
-  }, [data]);
-
+  if (!isOpen) return null;
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "year" ? Number(value) : value,
-    }));
+    setData({ ...data, [name]: name === "year" ? Number(value) : value });
+  };
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]);
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-4 bg-gray-50 p-4 rounded-lg border my-4"
-    >
-      <input name="id" type="hidden" value={formData.id || ""} />
-      <input
-        type="text"
-        name="title"
-        value={formData.title || ""}
-        onChange={handleChange}
-        placeholder="Nama Proyek Pembangunan"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <textarea
-        name="description"
-        value={formData.description || ""}
-        onChange={handleChange}
-        placeholder="Deskripsi Proyek"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <input
-        type="text"
-        name="image"
-        value={formData.image || ""}
-        onChange={handleChange}
-        placeholder="URL Gambar (cth: /pembangunan.jpg)"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <input
-        type="text"
-        name="budget"
-        value={formData.budget || ""}
-        onChange={handleChange}
-        placeholder="Anggaran (cth: Rp 150.000.000)"
-        className="w-full p-2 border rounded-md"
-        required
-      />
-      <div className="flex gap-4">
-        <input
-          type="number"
-          name="year"
-          value={formData.year || new Date().getFullYear()}
-          onChange={handleChange}
-          placeholder="Tahun"
-          className="w-1/2 p-2 border rounded-md"
-          required
-        />
-        <select
-          name="status"
-          value={formData.status || "Selesai"}
-          onChange={handleChange}
-          className="w-1/2 p-2 border rounded-md"
-        >
-          <option value="Selesai">Selesai</option>
-          <option value="Berlangsung">Berlangsung</option>
-          <option value="Direncanakan">Direncanakan</option>
-        </select>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-semibold mb-4">
+          {data.id ? "Edit Pembangunan" : "Tambah Pembangunan"}
+        </h2>
+        <form onSubmit={onSubmit} id="pembangunanForm" className="space-y-4">
+          <input
+            type="text"
+            name="title"
+            value={data.title || ""}
+            onChange={handleChange}
+            placeholder="Nama Proyek Pembangunan"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <textarea
+            name="description"
+            value={data.description || ""}
+            onChange={handleChange}
+            placeholder="Deskripsi Proyek"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <div>
+            <label className="block font-medium mb-1 text-sm">
+              Gambar Pembangunan
+            </label>
+            {data.id && data.image && (
+              <div className="mb-2">
+                <p className="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
+                <Image
+                  src={data.image}
+                  alt={data.title || "Gambar saat ini"}
+                  width={80}
+                  height={80}
+                  className="rounded-md object-cover"
+                />
+              </div>
+            )}
+            <input
+              type="file"
+              name="imageFile"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="w-full p-2 border rounded-md"
+              required={!data.id}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {data.id
+                ? "Unggah file baru untuk mengganti gambar."
+                : "File gambar wajib diunggah."}
+            </p>
+          </div>
+          <input
+            type="text"
+            name="budget"
+            value={data.budget || ""}
+            onChange={handleChange}
+            placeholder="Anggaran (cth: Rp 150.000.000)"
+            className="w-full p-2 border rounded-md"
+            required
+          />
+          <div className="flex gap-4">
+            <input
+              type="number"
+              name="year"
+              value={data.year || new Date().getFullYear()}
+              onChange={handleChange}
+              placeholder="Tahun"
+              className="w-1/2 p-2 border rounded-md"
+              required
+            />
+            <select
+              name="status"
+              value={data.status || "Selesai"}
+              onChange={handleChange}
+              className="w-1/2 p-2 border rounded-md"
+            >
+              <option value="Selesai">Selesai</option>
+              <option value="Berlangsung">Berlangsung</option>
+              <option value="Direncanakan">Direncanakan</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Simpan
+            </button>
+          </div>
+        </form>
       </div>
-      <div className="flex gap-4">
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-        >
-          Simpan
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-        >
-          Batal
-        </button>
-      </div>
-    </form>
+    </div>
   );
 };
 
@@ -243,13 +268,17 @@ export default function ManageProdukPage() {
   const [pembangunan, setPembangunan] = useState<Pembangunan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [showHukumForm, setShowHukumForm] = useState(false);
+  // State untuk Modal
+  const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
 
-  const [showPembangunanForm, setShowPembangunanForm] = useState(false);
+  const [isPembangunanModalOpen, setIsPembangunanModalOpen] = useState(false);
   const [editingPembangunan, setEditingPembangunan] = useState<
     Partial<Pembangunan>
   >({});
+  const [pembangunanImageFile, setPembangunanImageFile] = useState<File | null>(
+    null
+  );
 
   const [confirmAction, setConfirmAction] = useState<{
     action: () => void;
@@ -276,26 +305,26 @@ export default function ManageProdukPage() {
     fetchAllData();
   }, []);
 
+  // --- Handler untuk Modal Produk Hukum ---
+  const handleOpenHukumModal = (item?: ProdukHukum) => {
+    setEditingHukum(item || {});
+    setIsHukumModalOpen(true);
+  };
+  const handleCloseHukumModal = () => setIsHukumModalOpen(false);
   const handleSaveHukum = async (e: FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    const method = data.id ? "PUT" : "POST";
-
+    const method = editingHukum.id ? "PUT" : "POST";
     await fetch("/api/produk-hukum", {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ...data,
-        id: data.id || undefined,
-        year: Number(data.year),
+        ...editingHukum,
+        id: editingHukum.id || undefined,
       }),
     });
-    setShowHukumForm(false);
+    handleCloseHukumModal();
     fetchAllData();
   };
-
   const handleDeleteHukum = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus produk hukum ini?",
@@ -311,26 +340,27 @@ export default function ManageProdukPage() {
     });
   };
 
+  // --- Handler untuk Modal Pembangunan ---
+  const handleOpenPembangunanModal = (item?: Pembangunan) => {
+    setEditingPembangunan(item || {});
+    setPembangunanImageFile(null);
+    setIsPembangunanModalOpen(true);
+  };
+  const handleClosePembangunanModal = () => setIsPembangunanModalOpen(false);
   const handleSavePembangunan = async (e: FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    const method = data.id ? "PUT" : "POST";
+    const formData = new FormData();
+    Object.entries(editingPembangunan).forEach(([key, value]) =>
+      formData.append(key, String(value))
+    );
+    if (pembangunanImageFile)
+      formData.append("imageFile", pembangunanImageFile);
 
-    await fetch("/api/pembangunan", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...data,
-        id: data.id || undefined,
-        year: Number(data.year),
-      }),
-    });
-    setShowPembangunanForm(false);
+    const method = editingPembangunan.id ? "PUT" : "POST";
+    await fetch("/api/pembangunan", { method, body: formData });
+    handleClosePembangunanModal();
     fetchAllData();
   };
-
   const handleDeletePembangunan = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus data pembangunan ini?",
@@ -346,13 +376,7 @@ export default function ManageProdukPage() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <p className="text-lg text-gray-500">Memuat data...</p>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="text-center p-10">Memuat data...</div>;
 
   return (
     <div>
@@ -363,6 +387,23 @@ export default function ManageProdukPage() {
           onCancel={() => setConfirmAction(null)}
         />
       )}
+      <ProdukHukumModal
+        isOpen={isHukumModalOpen}
+        onClose={handleCloseHukumModal}
+        onSubmit={handleSaveHukum}
+        data={editingHukum}
+        setData={setEditingHukum}
+      />
+      <PembangunanModal
+        isOpen={isPembangunanModalOpen}
+        onClose={handleClosePembangunanModal}
+        onSubmit={handleSavePembangunan}
+        data={editingPembangunan}
+        setData={setEditingPembangunan}
+        imageFile={pembangunanImageFile}
+        setImageFile={setPembangunanImageFile}
+      />
+
       <h1 className="text-3xl font-bold mb-6">
         Kelola Produk Hukum & Pembangunan
       </h1>
@@ -371,22 +412,12 @@ export default function ManageProdukPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Produk Hukum</h2>
           <button
-            onClick={() => {
-              setEditingHukum({});
-              setShowHukumForm(true);
-            }}
+            onClick={() => handleOpenHukumModal()}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
             + Tambah Baru
           </button>
         </div>
-        {showHukumForm && (
-          <ProdukHukumForm
-            data={editingHukum}
-            onSubmit={handleSaveHukum}
-            onCancel={() => setShowHukumForm(false)}
-          />
-        )}
         <div className="overflow-x-auto mt-4">
           <table className="w-full min-w-max">
             <thead>
@@ -405,10 +436,7 @@ export default function ManageProdukPage() {
                   <td className="p-3">{item.category}</td>
                   <td className="p-3 flex gap-3">
                     <button
-                      onClick={() => {
-                        setEditingHukum(item);
-                        setShowHukumForm(true);
-                      }}
+                      onClick={() => handleOpenHukumModal(item)}
                       className="text-blue-600 font-semibold"
                     >
                       Edit
@@ -431,22 +459,12 @@ export default function ManageProdukPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Pembangunan Fisik</h2>
           <button
-            onClick={() => {
-              setEditingPembangunan({});
-              setShowPembangunanForm(true);
-            }}
+            onClick={() => handleOpenPembangunanModal()}
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
             + Tambah Baru
           </button>
         </div>
-        {showPembangunanForm && (
-          <PembangunanForm
-            data={editingPembangunan}
-            onSubmit={handleSavePembangunan}
-            onCancel={() => setShowPembangunanForm(false)}
-          />
-        )}
         <div className="overflow-x-auto mt-4">
           <table className="w-full min-w-max">
             <thead>
@@ -467,10 +485,7 @@ export default function ManageProdukPage() {
                   <td className="p-3">{item.status}</td>
                   <td className="p-3 flex gap-3">
                     <button
-                      onClick={() => {
-                        setEditingPembangunan(item);
-                        setShowPembangunanForm(true);
-                      }}
+                      onClick={() => handleOpenPembangunanModal(item)}
                       className="text-blue-600 font-semibold"
                     >
                       Edit
