@@ -40,6 +40,25 @@ async function isAuthorized() {
     return !!session;
 }
 
+// Fungsi untuk mengubah link youtube menjadi embed
+function convertYoutubeUrlToEmbed(url: string): string {
+    if (!url) return url;
+    // https://www.youtube.com/watch?v=xxxx
+    const watchRegex = /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/;
+    // https://youtu.be/xxxx
+    const shortRegex = /(?:https?:\/\/)?youtu\.be\/([a-zA-Z0-9_-]+)/;
+    let match = url.match(watchRegex);
+    if (match && match[1]) {
+        return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    match = url.match(shortRegex);
+    if (match && match[1]) {
+        return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    // Sudah embed atau format lain, return apa adanya
+    return url;
+}
+
 export async function GET() {
   try {
     const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
@@ -62,7 +81,12 @@ export async function POST(request: Request) {
     }
     try {
         const dataToSave: Profil = await request.json();
-        
+
+        // Logic ganti link youtube ke embed
+        if (dataToSave.video && dataToSave.video.url) {
+            dataToSave.video.url = convertYoutubeUrlToEmbed(dataToSave.video.url);
+        }
+
         const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
         await setDoc(docRef, dataToSave, { merge: true });
         return NextResponse.json({ message: 'Data profil berhasil disimpan' });
