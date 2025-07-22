@@ -7,27 +7,41 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
 export function AdminLayoutClient({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
+  useEffect(() => {
+    // Set ready state when both mounted and session is determined
+    if (mounted && status !== "loading") {
+      // Add small delay to ensure proper hydration
+      const timer = setTimeout(() => {
+        setIsReady(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [mounted, status]);
+
+  // Show loading while determining session state
+  if (!mounted || !isReady || status === "loading") {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        {children}
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   // Jika di halaman login atau belum authenticated, tampilkan tanpa sidebar
-  if (pathname === "/admin" || status !== "authenticated") {
+  if (pathname === "/admin" || status !== "authenticated" || !session) {
     return (
       <div className="min-h-screen bg-background text-foreground">
         {children}
