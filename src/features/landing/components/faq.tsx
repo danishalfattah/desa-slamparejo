@@ -55,7 +55,10 @@ const dataFaq = [
       <>
         Informasi mengenai produk hukum, seperti Peraturan Desa (Perdes) dan
         keputusan resmi lainnya, dapat Anda temukan di menu{" "}
-        <Link href="/produk" className="italic hover:text-pattern">
+        <Link
+          href="/produk-hukum-dan-fisik"
+          className="italic hover:text-pattern"
+        >
           {`"Produk"`}
         </Link>
         .
