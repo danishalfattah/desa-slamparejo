@@ -1,40 +1,38 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { ProdukHukum, Pembangunan } from "@/lib/types";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import type { ProdukHukum, Pembangunan } from "@/lib/types";
 import Image from "next/image";
-
-// --- Komponen Modal ---
-
-const ConfirmModal = ({
-  message,
-  onConfirm,
-  onCancel,
-}: {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-sm">
-      <p className="mb-6 text-lg">{message}</p>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={onConfirm}
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 w-24"
-        >
-          Ya, Hapus
-        </button>
-        <button
-          onClick={onCancel}
-          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 w-24"
-        >
-          Batal
-        </button>
-      </div>
-    </div>
-  </div>
-);
+import { PageHeader } from "@/components/admin/page-header";
+import { DataCard } from "@/components/admin/data-card";
+import { ConfirmModal } from "@/components/admin/confirm-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
 
 const ProdukHukumModal = ({
   isOpen,
@@ -49,85 +47,85 @@ const ProdukHukumModal = ({
   data: Partial<ProdukHukum>;
   setData: (data: Partial<ProdukHukum>) => void;
 }) => {
-  if (!isOpen) return null;
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  const handleChange = (name: string, value: string | number) => {
     setData({ ...data, [name]: name === "year" ? Number(value) : value });
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4">
-          {data.id ? "Edit Produk Hukum" : "Tambah Produk Hukum"}
-        </h2>
-        <form onSubmit={onSubmit} id="produkHukumForm" className="space-y-4">
-          <input
-            type="text"
-            name="title"
-            value={data.title || ""}
-            onChange={handleChange}
-            placeholder="Judul Dokumen"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <textarea
-            name="description"
-            value={data.description || ""}
-            onChange={handleChange}
-            placeholder="Deskripsi Singkat"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <input
-            type="text"
-            name="link"
-            value={data.link || ""}
-            onChange={handleChange}
-            placeholder="URL Google Drive"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <div className="flex gap-4">
-            <input
-              type="number"
-              name="year"
-              value={data.year || new Date().getFullYear()}
-              onChange={handleChange}
-              placeholder="Tahun"
-              className="w-1/2 p-2 border rounded-md"
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {data.id ? "Edit Produk Hukum" : "Tambah Produk Hukum"}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Judul Dokumen</Label>
+            <Input
+              id="title"
+              value={data.title || ""}
+              onChange={(e) => handleChange("title", e.target.value)}
               required
             />
-            <select
-              name="category"
-              value={data.category || "Perdes"}
-              onChange={handleChange}
-              className="w-1/2 p-2 border rounded-md"
-            >
-              <option value="Perdes">Perdes</option>
-              <option value="Keputusan Desa">Keputusan Desa</option>
-            </select>
           </div>
-          <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            >
+          <div className="space-y-2">
+            <Label htmlFor="description">Deskripsi Singkat</Label>
+            <Textarea
+              id="description"
+              value={data.description || ""}
+              onChange={(e) => handleChange("description", e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="link">URL Google Drive</Label>
+            <Input
+              id="link"
+              value={data.link || ""}
+              onChange={(e) => handleChange("link", e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year">Tahun</Label>
+              <Input
+                id="year"
+                type="number"
+                value={data.year || new Date().getFullYear()}
+                onChange={(e) => handleChange("year", e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="category">Kategori</Label>
+              <Select
+                value={data.category || "Perdes"}
+                onValueChange={(value) => handleChange("category", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Perdes">Perdes</SelectItem>
+                  <SelectItem value="Keputusan Desa">Keputusan Desa</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
               Batal
-            </button>
-            <button
-              type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-            >
+            </Button>
+            <Button type="submit">
+              <Save className="h-4 w-4 mr-2" />
               Simpan
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -147,119 +145,120 @@ const PembangunanModal = ({
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
 }) => {
-  if (!isOpen) return null;
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
+  const handleChange = (name: string, value: string | number) => {
     setData({ ...data, [name]: name === "year" ? Number(value) : value });
   };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]);
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4">
-          {data.id ? "Edit Pembangunan" : "Tambah Pembangunan"}
-        </h2>
-        <form onSubmit={onSubmit} id="pembangunanForm" className="space-y-4">
-          <input
-            type="text"
-            name="title"
-            value={data.title || ""}
-            onChange={handleChange}
-            placeholder="Nama Proyek Pembangunan"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <textarea
-            name="description"
-            value={data.description || ""}
-            onChange={handleChange}
-            placeholder="Deskripsi Proyek"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <div>
-            <label className="block font-medium mb-1 text-sm">
-              Gambar Pembangunan
-            </label>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {data.id ? "Edit Pembangunan" : "Tambah Pembangunan"}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Nama Proyek Pembangunan</Label>
+            <Input
+              id="title"
+              value={data.title || ""}
+              onChange={(e) => handleChange("title", e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Deskripsi Proyek</Label>
+            <Textarea
+              id="description"
+              value={data.description || ""}
+              onChange={(e) => handleChange("description", e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="imageFile">Gambar Pembangunan</Label>
             {data.id && data.image && (
               <div className="mb-2">
-                <p className="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Gambar saat ini:
+                </p>
                 <Image
-                  src={data.image}
+                  src={data.image || "/placeholder.svg"}
                   alt={data.title || "Gambar saat ini"}
                   width={80}
                   height={80}
-                  className="rounded-md object-cover"
+                  className="rounded-md object-cover border"
                 />
               </div>
             )}
-            <input
+            <Input
+              id="imageFile"
               type="file"
-              name="imageFile"
               onChange={handleFileChange}
               accept="image/*"
-              className="w-full p-2 border rounded-md"
               required={!data.id}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground">
               {data.id
                 ? "Unggah file baru untuk mengganti gambar."
                 : "File gambar wajib diunggah."}
             </p>
           </div>
-          <input
-            type="text"
-            name="budget"
-            value={data.budget || ""}
-            onChange={handleChange}
-            placeholder="Anggaran (cth: Rp 150.000.000)"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <div className="flex gap-4">
-            <input
-              type="number"
-              name="year"
-              value={data.year || new Date().getFullYear()}
-              onChange={handleChange}
-              placeholder="Tahun"
-              className="w-1/2 p-2 border rounded-md"
+          <div className="space-y-2">
+            <Label htmlFor="budget">Anggaran</Label>
+            <Input
+              id="budget"
+              value={data.budget || ""}
+              onChange={(e) => handleChange("budget", e.target.value)}
+              placeholder="Rp 150.000.000"
               required
             />
-            <select
-              name="status"
-              value={data.status || "Selesai"}
-              onChange={handleChange}
-              className="w-1/2 p-2 border rounded-md"
-            >
-              <option value="Selesai">Selesai</option>
-              <option value="Berlangsung">Berlangsung</option>
-              <option value="Direncanakan">Direncanakan</option>
-            </select>
           </div>
-          <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            >
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year">Tahun</Label>
+              <Input
+                id="year"
+                type="number"
+                value={data.year || new Date().getFullYear()}
+                onChange={(e) => handleChange("year", e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={data.status || "Selesai"}
+                onValueChange={(value) => handleChange("status", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Selesai">Selesai</SelectItem>
+                  <SelectItem value="Berlangsung">Berlangsung</SelectItem>
+                  <SelectItem value="Direncanakan">Direncanakan</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
               Batal
-            </button>
-            <button
-              type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-            >
+            </Button>
+            <Button type="submit">
+              <Save className="h-4 w-4 mr-2" />
               Simpan
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -268,7 +267,6 @@ export default function ManageProdukPage() {
   const [pembangunan, setPembangunan] = useState<Pembangunan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // State untuk Modal
   const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
 
@@ -305,12 +303,11 @@ export default function ManageProdukPage() {
     fetchAllData();
   }, []);
 
-  // --- Handler untuk Modal Produk Hukum ---
   const handleOpenHukumModal = (item?: ProdukHukum) => {
     setEditingHukum(item || {});
     setIsHukumModalOpen(true);
   };
-  const handleCloseHukumModal = () => setIsHukumModalOpen(false);
+
   const handleSaveHukum = async (e: FormEvent) => {
     e.preventDefault();
     const method = editingHukum.id ? "PUT" : "POST";
@@ -322,9 +319,10 @@ export default function ManageProdukPage() {
         id: editingHukum.id || undefined,
       }),
     });
-    handleCloseHukumModal();
+    setIsHukumModalOpen(false);
     fetchAllData();
   };
+
   const handleDeleteHukum = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus produk hukum ini?",
@@ -340,13 +338,12 @@ export default function ManageProdukPage() {
     });
   };
 
-  // --- Handler untuk Modal Pembangunan ---
   const handleOpenPembangunanModal = (item?: Pembangunan) => {
     setEditingPembangunan(item || {});
     setPembangunanImageFile(null);
     setIsPembangunanModalOpen(true);
   };
-  const handleClosePembangunanModal = () => setIsPembangunanModalOpen(false);
+
   const handleSavePembangunan = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -358,9 +355,10 @@ export default function ManageProdukPage() {
 
     const method = editingPembangunan.id ? "PUT" : "POST";
     await fetch("/api/pembangunan", { method, body: formData });
-    handleClosePembangunanModal();
+    setIsPembangunanModalOpen(false);
     fetchAllData();
   };
+
   const handleDeletePembangunan = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus data pembangunan ini?",
@@ -376,27 +374,35 @@ export default function ManageProdukPage() {
     });
   };
 
-  if (isLoading) return <div className="text-center p-10">Memuat data...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Memuat data...</span>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {confirmAction && (
-        <ConfirmModal
-          message={confirmAction.message}
-          onConfirm={confirmAction.action}
-          onCancel={() => setConfirmAction(null)}
-        />
-      )}
+    <div className="space-y-8">
+      <ConfirmModal
+        isOpen={!!confirmAction}
+        onConfirm={confirmAction?.action || (() => {})}
+        onCancel={() => setConfirmAction(null)}
+        message={confirmAction?.message || ""}
+      />
+
       <ProdukHukumModal
         isOpen={isHukumModalOpen}
-        onClose={handleCloseHukumModal}
+        onClose={() => setIsHukumModalOpen(false)}
         onSubmit={handleSaveHukum}
         data={editingHukum}
         setData={setEditingHukum}
       />
+
       <PembangunanModal
         isOpen={isPembangunanModalOpen}
-        onClose={handleClosePembangunanModal}
+        onClose={() => setIsPembangunanModalOpen(false)}
         onSubmit={handleSavePembangunan}
         data={editingPembangunan}
         setData={setEditingPembangunan}
@@ -404,105 +410,143 @@ export default function ManageProdukPage() {
         setImageFile={setPembangunanImageFile}
       />
 
-      <h1 className="text-3xl font-bold mb-6">
-        Kelola Produk Hukum & Pembangunan
-      </h1>
+      <PageHeader
+        title="Kelola Produk Hukum & Pembangunan"
+        description="Atur dokumen hukum dan data pembangunan desa"
+      />
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Produk Hukum</h2>
-          <button
-            onClick={() => handleOpenHukumModal()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            + Tambah Baru
-          </button>
-        </div>
-        <div className="overflow-x-auto mt-4">
-          <table className="w-full min-w-max">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-3">Judul</th>
-                <th className="text-left p-3">Tahun</th>
-                <th className="text-left p-3">Kategori</th>
-                <th className="text-left p-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {produkHukum.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{item.title}</td>
-                  <td className="p-3">{item.year}</td>
-                  <td className="p-3">{item.category}</td>
-                  <td className="p-3 flex gap-3">
-                    <button
-                      onClick={() => handleOpenHukumModal(item)}
-                      className="text-blue-600 font-semibold"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteHukum(item.id)}
-                      className="text-red-600 font-semibold"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Tabs defaultValue="hukum" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="hukum">Produk Hukum</TabsTrigger>
+          <TabsTrigger value="pembangunan">Pembangunan Fisik</TabsTrigger>
+        </TabsList>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Pembangunan Fisik</h2>
-          <button
-            onClick={() => handleOpenPembangunanModal()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        <TabsContent value="hukum" className="space-y-4">
+          <DataCard
+            title="Produk Hukum"
+            description="Dokumen peraturan dan keputusan desa"
           >
-            + Tambah Baru
-          </button>
-        </div>
-        <div className="overflow-x-auto mt-4">
-          <table className="w-full min-w-max">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-3">Proyek</th>
-                <th className="text-left p-3">Anggaran</th>
-                <th className="text-left p-3">Tahun</th>
-                <th className="text-left p-3">Status</th>
-                <th className="text-left p-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pembangunan.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{item.title}</td>
-                  <td className="p-3">{item.budget}</td>
-                  <td className="p-3">{item.year}</td>
-                  <td className="p-3">{item.status}</td>
-                  <td className="p-3 flex gap-3">
-                    <button
-                      onClick={() => handleOpenPembangunanModal(item)}
-                      className="text-blue-600 font-semibold"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeletePembangunan(item.id)}
-                      className="text-red-600 font-semibold"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Daftar Dokumen</h3>
+              <Button onClick={() => handleOpenHukumModal()}>
+                <Plus className="h-4 w-4 mr-2" />
+                Tambah Baru
+              </Button>
+            </div>
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Judul</TableHead>
+                    <TableHead>Tahun</TableHead>
+                    <TableHead>Kategori</TableHead>
+                    <TableHead className="w-[100px]">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {produkHukum.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">
+                        {item.title}
+                      </TableCell>
+                      <TableCell>{item.year}</TableCell>
+                      <TableCell>{item.category}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenHukumModal(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteHukum(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {produkHukum.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  {`Belum ada produk hukum. Klik tombol "Tambah Baru" untuk
+                  menambahkan.`}
+                </div>
+              )}
+            </div>
+          </DataCard>
+        </TabsContent>
+
+        <TabsContent value="pembangunan" className="space-y-4">
+          <DataCard
+            title="Pembangunan Fisik"
+            description="Data proyek pembangunan dan infrastruktur desa"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Daftar Proyek</h3>
+              <Button onClick={() => handleOpenPembangunanModal()}>
+                <Plus className="h-4 w-4 mr-2" />
+                Tambah Baru
+              </Button>
+            </div>
+            <div className="border rounded-lg">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Proyek</TableHead>
+                    <TableHead>Anggaran</TableHead>
+                    <TableHead>Tahun</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[100px]">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pembangunan.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">
+                        {item.title}
+                      </TableCell>
+                      <TableCell>{item.budget}</TableCell>
+                      <TableCell>{item.year}</TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenPembangunanModal(item)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeletePembangunan(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {pembangunan.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  {`Belum ada data pembangunan. Klik tombol "Tambah Baru" untuk
+                  menambahkan.`}
+                </div>
+              )}
+            </div>
+          </DataCard>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

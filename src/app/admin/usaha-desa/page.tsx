@@ -1,40 +1,29 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { Usaha } from "@/lib/types";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import type { Usaha } from "@/lib/types";
 import Image from "next/image";
-
-// --- Komponen Modal ---
-
-const ConfirmModal = ({
-  message,
-  onConfirm,
-  onCancel,
-}: {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-sm">
-      <p className="mb-6 text-lg">{message}</p>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={onConfirm}
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 w-24"
-        >
-          Ya, Hapus
-        </button>
-        <button
-          onClick={onCancel}
-          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 w-24"
-        >
-          Batal
-        </button>
-      </div>
-    </div>
-  </div>
-);
+import { PageHeader } from "@/components/admin/page-header";
+import { ConfirmModal } from "@/components/admin/confirm-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
 
 const UsahaFormModal = ({
   isOpen,
@@ -52,8 +41,6 @@ const UsahaFormModal = ({
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
 }) => {
-  if (!isOpen) return null;
-
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -68,96 +55,98 @@ const UsahaFormModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-4">
-          {usaha.id ? "Edit Usaha" : "Tambah Usaha Baru"}
-        </h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {usaha.id ? "Edit Usaha" : "Tambah Usaha Baru"}
+          </DialogTitle>
+        </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="title"
-            value={usaha.title || ""}
-            onChange={handleChange}
-            placeholder="Nama Usaha"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <textarea
-            name="description"
-            value={usaha.description || ""}
-            onChange={handleChange}
-            placeholder="Deskripsi"
-            className="w-full p-2 border rounded-md"
-            rows={4}
-            required
-          />
-          <input
-            type="text"
-            name="phone"
-            value={usaha.phone || ""}
-            onChange={handleChange}
-            placeholder="Nomor Telepon (cth: 62812...)"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <div>
-            <label className="block font-medium mb-1 text-sm">
-              Gambar Usaha
-            </label>
+          <div className="space-y-2">
+            <Label htmlFor="title">Nama Usaha</Label>
+            <Input
+              id="title"
+              name="title"
+              value={usaha.title || ""}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Deskripsi</Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={usaha.description || ""}
+              onChange={handleChange}
+              rows={4}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone">Nomor Telepon</Label>
+            <Input
+              id="phone"
+              name="phone"
+              value={usaha.phone || ""}
+              onChange={handleChange}
+              placeholder="62812..."
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="imageFile">Gambar Usaha</Label>
             {usaha.id && usaha.image && (
               <div className="mb-2">
-                <p className="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Gambar saat ini:
+                </p>
                 <Image
-                  src={usaha.image}
+                  src={usaha.image || "/placeholder.svg"}
                   alt={usaha.title || "Gambar saat ini"}
                   width={80}
                   height={80}
-                  className="rounded-md object-cover"
+                  className="rounded-md object-cover border"
                 />
               </div>
             )}
-            <input
-              type="file"
+            <Input
+              id="imageFile"
               name="imageFile"
+              type="file"
               onChange={handleFileChange}
               accept="image/png, image/jpeg, image/jpg"
-              className="w-full p-2 border rounded-md"
               required={!usaha.id}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-sm text-muted-foreground">
               {usaha.id
                 ? "Unggah file baru untuk mengganti gambar."
                 : "File gambar wajib diunggah."}
             </p>
           </div>
-          <input
-            type="text"
-            name="maps"
-            value={usaha.maps || ""}
-            onChange={handleChange}
-            placeholder="URL Google Maps"
-            className="w-full p-2 border rounded-md"
-            required
-          />
-          <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            >
+          <div className="space-y-2">
+            <Label htmlFor="maps">URL Google Maps</Label>
+            <Input
+              id="maps"
+              name="maps"
+              value={usaha.maps || ""}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
               Batal
-            </button>
-            <button
-              type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-            >
+            </Button>
+            <Button type="submit">
+              <Save className="h-4 w-4 mr-2" />
               Simpan
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -242,15 +231,24 @@ export default function ManageUsahaDesaPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Memuat data usaha...</span>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {confirmAction && (
-        <ConfirmModal
-          message={confirmAction.message}
-          onConfirm={confirmAction.action}
-          onCancel={() => setConfirmAction(null)}
-        />
-      )}
+    <div className="space-y-8">
+      <ConfirmModal
+        isOpen={!!confirmAction}
+        onConfirm={confirmAction?.action || (() => {})}
+        onCancel={() => setConfirmAction(null)}
+        message={confirmAction?.message || ""}
+      />
+
       <UsahaFormModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -261,54 +259,61 @@ export default function ManageUsahaDesaPage() {
         setImageFile={setImageFile}
       />
 
-      {/* --- BAGIAN YANG DIPERBAIKI --- */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 pt-20 md:pt-0">
-        <h1 className="text-2xl md:text-3xl font-bold">Kelola Usaha Desa</h1>
-        <button
-          onClick={() => handleOpenModal()}
-          className=" md:w-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shrink-0"
-        >
-          + Tambah Usaha Baru
-        </button>
-      </div>
+      <PageHeader
+        title="Kelola Usaha Desa"
+        description="Atur data UMKM dan usaha ekonomi lokal desa"
+      >
+        <Button onClick={() => handleOpenModal()}>
+          <Plus className="h-4 w-4 mr-2" />
+          Tambah Usaha Baru
+        </Button>
+      </PageHeader>
 
-      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-        {isLoading ? (
-          <p>Memuat data...</p>
-        ) : (
-          <table className="w-full min-w-max">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-3">Nama Usaha</th>
-                <th className="text-left p-3">Deskripsi</th>
-                <th className="text-left p-3">Telepon</th>
-                <th className="text-left p-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usahaList.map((usaha) => (
-                <tr key={usaha.id} className="border-b hover:bg-gray-50">
-                  <td className="p-3">{usaha.title}</td>
-                  <td className="p-3 max-w-sm truncate">{usaha.description}</td>
-                  <td className="p-3">{usaha.phone}</td>
-                  <td className="p-3 flex gap-3">
-                    <button
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nama Usaha</TableHead>
+              <TableHead>Deskripsi</TableHead>
+              <TableHead>Telepon</TableHead>
+              <TableHead className="w-[100px]">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {usahaList.map((usaha) => (
+              <TableRow key={usaha.id}>
+                <TableCell className="font-medium">{usaha.title}</TableCell>
+                <TableCell className="max-w-xs truncate">
+                  {usaha.description}
+                </TableCell>
+                <TableCell>{usaha.phone}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenModal(usaha)}
-                      className="text-blue-600 font-semibold"
                     >
-                      Edit
-                    </button>
-                    <button
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleDelete(usaha.id!)}
-                      className="text-red-600 font-semibold"
                     >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {usahaList.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            {`Belum ada data usaha. Klik tombol "Tambah Usaha Baru" untuk
+            menambahkan.`}
+          </div>
         )}
       </div>
     </div>

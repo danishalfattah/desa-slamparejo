@@ -1,25 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-
-const SuccessModal = ({
-  message,
-  onClose,
-}: {
-  message: string;
-  onClose: () => void;
-}) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-      <p className="mb-4">{message}</p>
-      <button
-        onClick={onClose}
-        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-      >
-        Tutup
-      </button>
-    </div>
-  </div>
-);
+import { PageHeader } from "@/components/admin/page-header";
+import { DataCard } from "@/components/admin/data-card";
+import { SuccessModal } from "@/components/admin/success-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Save, Loader2 } from "lucide-react";
 
 export default function ManageLayananPage() {
   const [heroSubtitle, setHeroSubtitle] = useState("");
@@ -70,51 +58,62 @@ export default function ManageLayananPage() {
   };
 
   if (isLoading) {
-    return <div>Memuat data halaman layanan...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Memuat data layanan...</span>
+      </div>
+    );
   }
 
   return (
-    <div>
-      {showModal && (
-        <SuccessModal
-          message="Data Halaman Layanan Disimpan!"
-          onClose={() => setShowModal(false)}
-        />
-      )}
+    <div className="space-y-8">
+      <SuccessModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message="Data Halaman Layanan Berhasil Disimpan!"
+      />
 
-      <h1 className="text-3xl font-bold mb-6">Kelola Halaman Layanan</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
-        <div>
-          <label className="block font-medium mb-1 text-lg">
-            Subjudul Halaman
-          </label>
-          <textarea
-            value={heroSubtitle}
-            onChange={(e) => setHeroSubtitle(e.target.value)}
-            className="w-full p-2 border rounded-md"
-            rows={3}
-          ></textarea>
-        </div>
-        <div>
-          <label className="block font-medium mb-1 text-lg">
-            Link Google Form (Embed)
-          </label>
-          <input
-            type="text"
-            value={formLink}
-            onChange={(e) => setFormLink(e.target.value)}
-            className="w-full p-2 border rounded-md"
-            placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true"
-          />
-        </div>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
-        >
+      <PageHeader
+        title="Kelola Halaman Layanan"
+        description="Atur konten dan formulir layanan desa"
+      >
+        <Button onClick={handleSave} disabled={isSaving}>
+          {isSaving ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
           {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
-        </button>
-      </div>
+        </Button>
+      </PageHeader>
+
+      <DataCard
+        title="Konten Halaman Layanan"
+        description="Atur teks dan formulir layanan"
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="heroSubtitle">Subjudul Halaman</Label>
+            <Textarea
+              id="heroSubtitle"
+              value={heroSubtitle}
+              onChange={(e) => setHeroSubtitle(e.target.value)}
+              rows={3}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="formLink">Link Google Form (Embed)</Label>
+            <Input
+              id="formLink"
+              type="text"
+              value={formLink}
+              onChange={(e) => setFormLink(e.target.value)}
+              placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true"
+            />
+          </div>
+        </div>
+      </DataCard>
     </div>
   );
 }

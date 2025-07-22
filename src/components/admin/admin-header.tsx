@@ -1,20 +1,66 @@
-import { Menu } from "lucide-react";
+"use client";
 
-interface AdminHeaderProps {
-  onMenuClick: () => void;
-}
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { usePathname } from "next/navigation";
 
-export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
+export function AdminHeader() {
+  const pathname = usePathname();
+
+  const getBreadcrumbs = () => {
+    const segments = pathname.split("/").filter(Boolean);
+    const breadcrumbs = [{ label: "Admin", href: "/admin/dashboard" }];
+
+    if (segments.length > 1) {
+      const currentPage = segments[segments.length - 1];
+      const pageLabels: Record<string, string> = {
+        dashboard: "Dashboard",
+        beranda: "Halaman Beranda",
+        profil: "Profil Desa",
+        "perangkat-desa": "Perangkat Desa",
+        produk: "Produk & Pembangunan",
+        "usaha-desa": "Usaha Desa",
+        layanan: "Layanan",
+        kontak: "Kontak",
+      };
+
+      breadcrumbs.push({
+        label: pageLabels[currentPage] || currentPage,
+        href: pathname,
+      });
+    }
+
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = getBreadcrumbs();
+
   return (
-    <header className="md:hidden bg-gray-800 text-white p-4 fixed top-0 w-full z-40 flex items-center">
-      <button
-        onClick={onMenuClick}
-        className="p-2 rounded-md hover:bg-gray-700"
-      >
-        <Menu className="h-6 w-6" />
-        <span className="sr-only">Buka menu</span>
-      </button>
-      <h2 className="text-xl font-semibold ml-4">Admin Desa</h2>
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+      <SidebarTrigger className="-ml-1" />
+      <Separator orientation="vertical" className="mr-2 h-4" />
+      <Breadcrumb>
+        <BreadcrumbList>
+          {breadcrumbs.map((crumb, index) => (
+            <BreadcrumbItem key={`${crumb.href}-${index}`}>
+              {index > 0 && <BreadcrumbSeparator />}
+              {index === breadcrumbs.length - 1 ? (
+                <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
+              )}
+            </BreadcrumbItem>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
     </header>
   );
 }

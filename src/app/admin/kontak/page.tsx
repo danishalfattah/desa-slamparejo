@@ -1,26 +1,14 @@
 "use client";
-import { useState, useEffect, ChangeEvent } from "react";
-import { Kontak } from "@/lib/types";
-
-const SuccessModal = ({
-  message,
-  onClose,
-}: {
-  message: string;
-  onClose: () => void;
-}) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-      <p className="mb-4">{message}</p>
-      <button
-        onClick={onClose}
-        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-      >
-        Tutup
-      </button>
-    </div>
-  </div>
-);
+import { useState, useEffect, type ChangeEvent } from "react";
+import type { Kontak } from "@/lib/types";
+import { PageHeader } from "@/components/admin/page-header";
+import { DataCard } from "@/components/admin/data-card";
+import { SuccessModal } from "@/components/admin/success-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Save, Loader2 } from "lucide-react";
 
 export default function ManageKontakPage() {
   const [data, setData] = useState<Partial<Kontak>>({});
@@ -76,117 +64,133 @@ export default function ManageKontakPage() {
     }
   };
 
-  if (isLoading) return <div className="p-4 md:p-8">Memuat data kontak...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Memuat data kontak...</span>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {showModal && (
-        <SuccessModal
-          message="Data Halaman Kontak Berhasil Disimpan!"
-          onClose={() => setShowModal(false)}
-        />
-      )}
-      <h1 className="text-3xl font-bold mb-6">Kelola Halaman Kontak</h1>
-      <div className="space-y-6">
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <h2 className="text-xl font-semibold border-b pb-2">Teks Halaman</h2>
-          <div>
-            <label className="block font-medium mb-1">Subjudul Hero</label>
-            <textarea
-              name="heroSubtitle"
-              value={data.heroSubtitle || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-              rows={3}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Deskripsi Kontak</label>
-            <textarea
-              name="description"
-              value={data.description || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-              rows={3}
-            />
-          </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-          <h2 className="text-xl font-semibold border-b pb-2">
-            Informasi Kontak & Lokasi
-          </h2>
-          <div>
-            <label className="block font-medium mb-1">Email Resmi</label>
-            <input
-              type="email"
-              name="email"
-              value={data.email || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Telepon Kantor</label>
-            <input
-              type="text"
-              name="phone"
-              value={data.phone || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Instagram Handle</label>
-            <input
-              type="text"
-              name="instagram"
-              value={data.instagram || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">URL Instagram</label>
-            <input
-              type="text"
-              name="instagramUrl"
-              value={data.instagramUrl || ""}
-              onChange={(e) => handleChange(e)}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">
-              Alamat (pisahkan baris dengan enter)
-            </label>
-            <textarea
-              value={data.lokasi?.address || ""}
-              onChange={(e) => handleChange(e, "lokasi", "address")}
-              className="w-full p-2 border rounded-md"
-              rows={3}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">
-              URL Google Maps (Embed)
-            </label>
-            <input
-              type="text"
-              value={data.lokasi?.mapUrl || ""}
-              onChange={(e) => handleChange(e, "lokasi", "mapUrl")}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="mt-6 flex justify-start">
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-        >
+    <div className="space-y-8">
+      <SuccessModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message="Data Halaman Kontak Berhasil Disimpan!"
+      />
+
+      <PageHeader
+        title="Kelola Halaman Kontak"
+        description="Atur informasi kontak dan lokasi desa"
+      >
+        <Button onClick={handleSave} disabled={isSaving}>
+          {isSaving ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
           {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
-        </button>
+        </Button>
+      </PageHeader>
+
+      <div className="grid gap-6">
+        <DataCard
+          title="Teks Halaman"
+          description="Konten utama halaman kontak"
+        >
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="heroSubtitle">Subjudul Hero</Label>
+              <Textarea
+                id="heroSubtitle"
+                name="heroSubtitle"
+                value={data.heroSubtitle || ""}
+                onChange={(e) => handleChange(e)}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Deskripsi Kontak</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={data.description || ""}
+                onChange={(e) => handleChange(e)}
+                rows={3}
+              />
+            </div>
+          </div>
+        </DataCard>
+
+        <DataCard
+          title="Informasi Kontak & Lokasi"
+          description="Detail kontak dan alamat desa"
+        >
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Resmi</Label>
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                value={data.email || ""}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Telepon Kantor</Label>
+              <Input
+                id="phone"
+                type="text"
+                name="phone"
+                value={data.phone || ""}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="instagram">Instagram Handle</Label>
+              <Input
+                id="instagram"
+                type="text"
+                name="instagram"
+                value={data.instagram || ""}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="instagramUrl">URL Instagram</Label>
+              <Input
+                id="instagramUrl"
+                type="text"
+                name="instagramUrl"
+                value={data.instagramUrl || ""}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">
+                Alamat (pisahkan baris dengan enter)
+              </Label>
+              <Textarea
+                id="address"
+                value={data.lokasi?.address || ""}
+                onChange={(e) => handleChange(e, "lokasi", "address")}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mapUrl">URL Google Maps (Embed)</Label>
+              <Input
+                id="mapUrl"
+                type="text"
+                value={data.lokasi?.mapUrl || ""}
+                onChange={(e) => handleChange(e, "lokasi", "mapUrl")}
+              />
+            </div>
+          </div>
+        </DataCard>
       </div>
     </div>
   );
