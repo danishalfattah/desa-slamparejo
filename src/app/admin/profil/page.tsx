@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Komponen Modal Sederhana
 const SuccessModal = ({
@@ -23,31 +23,67 @@ const SuccessModal = ({
 );
 
 export default function ManageProfilPage() {
-  const [visi, setVisi] = useState(
-    "Membangun Desa Slamparejo yang mandiri, sejahtera, dan berkelanjutan dengan tetap mempertahankan nilai-nilai budaya lokal serta kearifan masyarakat dalam tata kelola pemerintahan yang transparan dan akuntabel."
-  );
-  const [misi, setMisi] = useState(
-    "1. Meningkatkan kualitas pelayanan publik.\n2. Memperkuat perekonomian desa.\n3. Melestarikan budaya dan kearifan lokal.\n4. Membangun infrastruktur yang mendukung.\n5. Mengoptimalkan tata kelola pemerintahan."
-  );
-  const [sejarah, setSejarah] = useState(
-    "Desa Slamparejo berawal dari pengembaraan Mbah Gude dari Kerajaan Mataram..."
-  );
-  const [videoUrl, setVideoUrl] = useState(
-    "https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
-  );
+  const [visi, setVisi] = useState("");
+  const [misi, setMisi] = useState("");
+  const [sejarah, setSejarah] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    // Di sini Anda akan memanggil API untuk menyimpan data
-    console.log({ visi, misi, sejarah, videoUrl });
-    setShowModal(true); // Tampilkan modal
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/profil-desa");
+        if (response.ok) {
+          const data = await response.json();
+          setVisi(data.visi);
+          setMisi(data.misi);
+          setSejarah(data.sejarah);
+          setVideoUrl(data.videoUrl);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data profil:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const profilData = { visi, misi, sejarah, videoUrl };
+    try {
+      const response = await fetch("/api/profil-desa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profilData),
+      });
+
+      if (response.ok) {
+        setShowModal(true);
+      } else {
+        alert("Gagal menyimpan data.");
+      }
+    } catch (error) {
+      console.error("Gagal menyimpan data profil:", error);
+      alert("Terjadi kesalahan saat menyimpan data.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return <div className="text-center p-10">Memuat data profil...</div>;
+  }
 
   return (
     <div>
       {showModal && (
         <SuccessModal
-          message="Data Halaman Profil Disimpan!"
+          message="Data Halaman Profil Berhasil Disimpan!"
           onClose={() => setShowModal(false)}
         />
       )}
@@ -95,9 +131,10 @@ export default function ManageProfilPage() {
         </div>
         <button
           onClick={handleSave}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={isSaving}
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
         >
-          Simpan Perubahan
+          {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
         </button>
       </div>
     </div>

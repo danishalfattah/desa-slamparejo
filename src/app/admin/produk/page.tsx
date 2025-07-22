@@ -14,18 +14,18 @@ const ConfirmModal = ({
   onCancel: () => void;
 }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-xl text-center">
-      <p className="mb-4">{message}</p>
+    <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-sm">
+      <p className="mb-6 text-lg">{message}</p>
       <div className="flex justify-center gap-4">
         <button
           onClick={onConfirm}
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 w-24"
         >
           Ya, Hapus
         </button>
         <button
           onClick={onCancel}
-          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 w-24"
         >
           Batal
         </button>
@@ -63,7 +63,7 @@ const ProdukHukumForm = ({
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-4 bg-gray-50 p-4 rounded-lg border"
+      className="space-y-4 bg-gray-50 p-4 rounded-lg border my-4"
     >
       <input name="id" type="hidden" value={formData.id || ""} />
       <input
@@ -160,7 +160,7 @@ const PembangunanForm = ({
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-4 bg-gray-50 p-4 rounded-lg border"
+      className="space-y-4 bg-gray-50 p-4 rounded-lg border my-4"
     >
       <input name="id" type="hidden" value={formData.id || ""} />
       <input
@@ -258,13 +258,18 @@ export default function ManageProdukPage() {
 
   const fetchAllData = async () => {
     setIsLoading(true);
-    const [hukumRes, pembangunanRes] = await Promise.all([
-      fetch("/api/produk-hukum"),
-      fetch("/api/pembangunan"),
-    ]);
-    setProdukHukum(await hukumRes.json());
-    setPembangunan(await pembangunanRes.json());
-    setIsLoading(false);
+    try {
+      const [hukumRes, pembangunanRes] = await Promise.all([
+        fetch("/api/produk-hukum"),
+        fetch("/api/pembangunan"),
+      ]);
+      setProdukHukum(await hukumRes.json());
+      setPembangunan(await pembangunanRes.json());
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -283,7 +288,7 @@ export default function ManageProdukPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...data,
-        id: data.id ? Number(data.id) : undefined,
+        id: data.id || undefined,
         year: Number(data.year),
       }),
     });
@@ -291,7 +296,7 @@ export default function ManageProdukPage() {
     fetchAllData();
   };
 
-  const handleDeleteHukum = (id: number) => {
+  const handleDeleteHukum = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus produk hukum ini?",
       action: async () => {
@@ -318,7 +323,7 @@ export default function ManageProdukPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...data,
-        id: data.id ? Number(data.id) : undefined,
+        id: data.id || undefined,
         year: Number(data.year),
       }),
     });
@@ -326,7 +331,7 @@ export default function ManageProdukPage() {
     fetchAllData();
   };
 
-  const handleDeletePembangunan = (id: number) => {
+  const handleDeletePembangunan = (id: string) => {
     setConfirmAction({
       message: "Yakin ingin menghapus data pembangunan ini?",
       action: async () => {
