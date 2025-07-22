@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { signIn, useSession } from "next-auth/react";
 import type React from "react";
@@ -32,28 +33,34 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (mounted && status === "authenticated") {
-      router.replace("/admin/dashboard");
+      // Use window.location for hard navigation to ensure proper state reset
+      window.location.href = "/admin/dashboard";
     }
-  }, [status, router, mounted]);
+  }, [status, mounted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
 
-    if (result?.error) {
-      setError("Email atau password salah.");
-    } else if (result?.ok) {
-      router.replace("/admin/dashboard");
+      if (result?.error) {
+        setError("Email atau password salah.");
+        setIsLoading(false);
+      } else if (result?.ok) {
+        // Use window.location for hard navigation after successful login
+        window.location.href = "/admin/dashboard";
+      }
+    } catch (error) {
+      setError("Terjadi kesalahan saat login.");
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   // Prevent hydration mismatch
