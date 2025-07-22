@@ -13,6 +13,7 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
 const PAGE_SIZE = 6;
 
+// Komponen Modal untuk Preview PDF
 const PdfPreviewModal = ({
   src,
   onClose,
@@ -51,6 +52,7 @@ export default function ProdukPage() {
   const [pembangunanData, setPembangunanData] = useState<Pembangunan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // State untuk modal preview
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,8 +63,10 @@ export default function ProdukPage() {
           fetch("/api/produk-hukum"),
           fetch("/api/pembangunan"),
         ]);
-        setProdukHukumData(await hukumRes.json());
-        setPembangunanData(await pembangunanRes.json());
+        const hukumJson = await hukumRes.json();
+        const pembangunanJson = await pembangunanRes.json();
+        setProdukHukumData(hukumJson);
+        setPembangunanData(pembangunanJson);
       } catch (error) {
         console.error("Gagal mengambil data produk:", error);
       } finally {
@@ -72,7 +76,6 @@ export default function ProdukPage() {
     fetchData();
   }, []);
 
-  // --- FUNGSI YANG DIPERBARUI ---
   const handlePreview = (link: string) => {
     // Regex untuk mengekstrak ID file dari berbagai format URL Google Drive
     const regex =
@@ -90,8 +93,10 @@ export default function ProdukPage() {
 
   const hukumTotal = produkHukumData.length;
   const pembangunanTotal = pembangunanData.length;
+
   const hukumPages = Math.ceil(hukumTotal / PAGE_SIZE);
   const pembangunanPages = Math.ceil(pembangunanTotal / PAGE_SIZE);
+
   const hukumItems = produkHukumData.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
@@ -103,6 +108,7 @@ export default function ProdukPage() {
 
   return (
     <main className="min-h-screen bg-white">
+      {/* Render Modal jika previewUrl ada */}
       {previewUrl && (
         <PdfPreviewModal src={previewUrl} onClose={() => setPreviewUrl(null)} />
       )}
@@ -150,8 +156,8 @@ export default function ProdukPage() {
           backgroundPosition: "center",
         }}
       >
-        <div className="max-w-6xl flex flex-col md:flex-row gap-0">
-          <div className="md:w-1/2 flex items-center z-50">
+        <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
+          <div className="md:w-1/2  flex items-center z-50 ">
             <h2
               className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}
             >
@@ -160,7 +166,7 @@ export default function ProdukPage() {
           </div>
           <div className="md:w-1/2 flex items-center ">
             <p
-              className={`${poppins.className} text-white text-base md:text-lg font-normal tracking-wider`}
+              className={`${poppins.className}  text-white text-base md:text-lg font-normal tracking-wider`}
             >
               Akses dokumen resmi dan pantau seluruh proses pembangunan Desa
               Slamparejo secara transparan, akuntabel, dan terbuka bagi
@@ -231,6 +237,7 @@ export default function ProdukPage() {
                           </p>
                         </div>
                       </div>
+
                       <div className="flex gap-2 self-end md:self-center">
                         <button
                           onClick={() => handlePreview(item.link)}
@@ -270,7 +277,60 @@ export default function ProdukPage() {
                   )}
                 </div>
               )}
-              {/* ... (bagian pembangunan tidak berubah) ... */}
+
+              {tab === "pembangunan" && (
+                <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {pembangunanItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-white rounded-lg shadow p-4 flex flex-col"
+                      >
+                        <div className="relative w-full h-36 mb-3">
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            className="object-cover rounded"
+                          />
+                          <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
+                            {item.status}
+                          </span>
+                        </div>
+                        <h3 className="font-semibold text-base text-[#0B4973] mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-2 flex-1">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
+                          <span>
+                            Anggaran: <b>{item.budget}</b>
+                          </span>
+                          <span>{item.year}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {pembangunanPages > 1 && (
+                    <div className="flex justify-center gap-2 mt-4">
+                      {Array.from({ length: pembangunanPages }, (_, i) => (
+                        <button
+                          key={i}
+                          className={`w-8 h-8 rounded ${
+                            page === i + 1
+                              ? "bg-[#0B4973] text-white"
+                              : "bg-white text-[#0B4973] border border-[#0B4973]"
+                          }`}
+                          onClick={() => setPage(i + 1)}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>
