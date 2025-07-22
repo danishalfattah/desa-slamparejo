@@ -82,7 +82,7 @@ export default function KontakPage() {
       {/* Info Section */}
       <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
         <div className="max-w-7xl md:mx-auto">
-          <div className="flex flex-wrap md:flex-row flex-col md:justify-between items-center">
+          <div className="flex flex-wrap md:flex-row flex-col md:justify-around items-center">
             <Card
               title="Email Resmi"
               description="Kirim email untuk pertanyaan atau permohonan resmi"
