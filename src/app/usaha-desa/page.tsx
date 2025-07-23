@@ -5,9 +5,9 @@ import DaftarUsaha from "@/features/usaha-desa/usaha";
 export default function UsahaDesaPage() {
   return (
     <>
-      <HeroUsaha/>
-      <DescUsaha/>
-      <DaftarUsaha/>
+      <HeroUsaha />
+      <DescUsaha />
+      <DaftarUsaha />
     </>
   );
 }

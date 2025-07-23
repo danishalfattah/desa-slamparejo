@@ -4,8 +4,14 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query } from 'firebase/firestore';
 import { Pembangunan } from '@/lib/types';
-import { writeFile } from 'fs/promises';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Konfigurasi Cloudinary
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const COLLECTION_NAME = "pembangunan";
 
@@ -14,17 +20,27 @@ async function isAuthorized() {
     return !!session;
 }
 
-// Fungsi helper untuk unggah file
+// Fungsi helper untuk unggah file ke Cloudinary
 async function handleFileUpload(file: File | null): Promise<string | null> {
-    if (!file) {
-        return null;
-    }
+    if (!file) return null;
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-    const uploadPath = path.join(process.cwd(), 'public/uploads', filename);
-    await writeFile(uploadPath, buffer);
-    return `/uploads/${filename}`;
+
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'desa-slamparejo-uploads',
+            },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result?.secure_url || null);
+            }
+        );
+        uploadStream.end(buffer);
+    });
 }
 
 export async function GET() {

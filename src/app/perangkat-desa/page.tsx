@@ -5,9 +5,9 @@ import DaftarPerangkat from "@/features/perangkat-desa/perangkat";
 export default function PerangkatDesaPage() {
   return (
     <>
-      <HeroPerangkat/>
-      <DescPerangkat/>
-      <DaftarPerangkat/>
+      <HeroPerangkat />
+      <DescPerangkat />
+      <DaftarPerangkat />
     </>
   );
 }

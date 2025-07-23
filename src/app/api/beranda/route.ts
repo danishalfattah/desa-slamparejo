@@ -4,21 +4,39 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Beranda } from '@/lib/types';
-import { writeFile } from 'fs/promises';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Konfigurasi Cloudinary
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "beranda";
 
-// Fungsi helper untuk unggah file
+// Fungsi helper untuk unggah file ke Cloudinary
 async function handleFileUpload(file: File | null): Promise<string | null> {
     if (!file) return null;
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-    const uploadPath = path.join(process.cwd(), 'public/uploads', filename);
-    await writeFile(uploadPath, buffer);
-    return `/uploads/${filename}`;
+
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'desa-slamparejo-uploads',
+            },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(result?.secure_url || null);
+            }
+        );
+        uploadStream.end(buffer);
+    });
 }
 
 const defaultData: Beranda = {
@@ -71,34 +89,20 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const launchingImageFile = formData.get('launchingImageFile') as File | null;
-
-        // Ambil data yang ada saat ini dari database
-        const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
-        const docSnap = await getDoc(docRef);
-        const existingData = docSnap.exists() ? docSnap.data() as Beranda : defaultData;
-
-        // Unggah gambar baru jika ada
+        
         const newImageUrl = await handleFileUpload(launchingImageFile);
 
-        // Susun ulang objek data untuk disimpan
-        const dataToSave: Beranda = {
-            hero: {
-                title: formData.get('heroTitle') as string || existingData.hero.title,
-                subtitle: formData.get('heroSubtitle') as string || existingData.hero.subtitle,
-            },
-            slogan: {
-                title: formData.get('sloganTitle') as string || existingData.slogan.title,
-                description: formData.get('sloganDescription') as string || existingData.slogan.description,
-            },
-            launching: {
-                title: formData.get('launchingTitle') as string || existingData.launching.title,
-                description: formData.get('launchingDescription') as string || existingData.launching.description,
-                // Gunakan gambar baru jika ada, jika tidak, gunakan gambar yang sudah ada
-                image: newImageUrl || existingData.launching.image,
-            },
-            faq: JSON.parse(formData.get('faq') as string || "[]"),
-        };
+        const jsonDataString = formData.get('jsonData') as string;
+        if (!jsonDataString) {
+             return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
+        }
+        const dataToSave: Beranda = JSON.parse(jsonDataString);
+        
+        if (newImageUrl) {
+            dataToSave.launching.image = newImageUrl;
+        }
 
+        const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
         await setDoc(docRef, dataToSave, { merge: true });
         return NextResponse.json({ message: 'Data Beranda berhasil disimpan' }, { status: 200 });
     } catch (error) {
