@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import type { Layanan } from "@/lib/types";
+import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
 import { SuccessModal } from "@/components/admin/success-modal";
@@ -10,11 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Save, Loader2 } from "lucide-react";
 
 export default function ManageLayananPage() {
-  const [heroSubtitle, setHeroSubtitle] = useState("");
-  const [formLink, setFormLink] = useState("");
+  const [data, setData] = useState<Partial<Layanan>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,9 +24,7 @@ export default function ManageLayananPage() {
       try {
         const response = await fetch("/api/layanan");
         if (response.ok) {
-          const data = await response.json();
-          setHeroSubtitle(data.heroSubtitle);
-          setFormLink(data.formLink);
+          setData(await response.json());
         }
       } catch (error) {
         console.error("Gagal mengambil data layanan:", error);
@@ -37,15 +37,29 @@ export default function ManageLayananPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
+
+    const formData = new FormData();
+    const jsonData = {
+      hero: { subtitle: data.hero?.subtitle },
+      formLink: data.formLink,
+    };
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
+
     try {
       const response = await fetch("/api/layanan", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ heroSubtitle, formLink }),
+        body: formData,
       });
 
       if (response.ok) {
         setShowModal(true);
+        setHeroImageFile(null);
+        const freshData = await fetch("/api/layanan").then((res) => res.json());
+        setData(freshData);
       } else {
         alert("Gagal menyimpan perubahan.");
       }
@@ -97,18 +111,52 @@ export default function ManageLayananPage() {
             <Label htmlFor="heroSubtitle">Subjudul Halaman</Label>
             <Textarea
               id="heroSubtitle"
-              value={heroSubtitle}
-              onChange={(e) => setHeroSubtitle(e.target.value)}
+              value={data.hero?.subtitle || ""}
+              onChange={(e) =>
+                setData((prev) => ({
+                  ...prev,
+                  hero: { ...prev.hero, subtitle: e.target.value },
+                }))
+              }
               rows={3}
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="hero-image">Gambar Hero</Label>
+            {data.hero?.heroImage && (
+              <div className="mb-2">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Gambar saat ini:
+                </p>
+                <Image
+                  src={data.hero.heroImage}
+                  alt="Preview Hero"
+                  width={200}
+                  height={112}
+                  className="rounded-md object-cover border"
+                />
+              </div>
+            )}
+            <Input
+              id="hero-image"
+              type="file"
+              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              accept="image/png, image/jpeg, image/jpg"
+              disabled={isSaving}
+            />
+            <p className="text-sm text-muted-foreground">
+              Unggah file baru untuk mengganti gambar hero.
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="formLink">Link Google Form (Embed)</Label>
             <Input
               id="formLink"
               type="text"
-              value={formLink}
-              onChange={(e) => setFormLink(e.target.value)}
+              value={data.formLink || ""}
+              onChange={(e) =>
+                setData((prev) => ({ ...prev, formLink: e.target.value }))
+              }
               placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true"
             />
           </div>

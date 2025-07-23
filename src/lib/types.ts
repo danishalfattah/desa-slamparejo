@@ -1,5 +1,5 @@
 export interface Usaha {
-  id: string; // Diubah dari number
+  id: string;
   image: string;
   title: string;
   description: string;
@@ -8,7 +8,7 @@ export interface Usaha {
 }
 
 export interface PerangkatDesa {
-  id: string; // Diubah dari number
+  id: string;
   name: string;
   title: string;
   imageUrl: string;
@@ -16,7 +16,7 @@ export interface PerangkatDesa {
 }
 
 export interface ProdukHukum {
-  id: string; // Diubah dari number
+  id: string;
   category: string;
   year: number;
   fileType: 'pdf';
@@ -26,7 +26,7 @@ export interface ProdukHukum {
 }
 
 export interface Pembangunan {
-  id: string; // Diubah dari number
+  id: string;
   image: string;
   status: string;
   title: string;
@@ -45,7 +45,7 @@ export interface Beranda {
   hero: {
     title: string;
     subtitle: string;
-    heroImage: string; 
+    heroImage: string;
   };
   slogan: {
     title: string;
@@ -70,6 +70,7 @@ export interface DemografiRow {
 export interface Profil {
   hero: {
     subtitle: string;
+    heroImage?: string;
   };
   video: {
     title: string;
@@ -97,16 +98,49 @@ export interface Profil {
 }
 
 export interface Kontak {
-  heroSubtitle: string;
+  hero: {
+    subtitle: string;
+    heroImage?: string;
+  };
   description: string;
   email: string;
   phone: string;
   instagram: string;
   instagramUrl: string;
-  // Hapus jamOperasional
   lokasi: {
-    // Hapus title
     address: string;
     mapUrl: string;
   };
+}
+
+export interface Layanan {
+  hero: {
+    subtitle: string;
+    heroImage?: string;
+  };
+  formLink: string;
+}
+
+export interface PerangkatDesaPageData {
+  hero: {
+    subtitle: string;
+    heroImage?: string;
+  };
+  description: string;
+}
+
+export interface ProdukPageData {
+  hero: {
+    subtitle: string;
+    heroImage?: string;
+  };
+  description: string;
+}
+
+export interface UsahaDesaPageData {
+  hero: {
+    subtitle: string;
+    heroImage?: string;
+  };
+  description: string;
 }

@@ -1,10 +1,9 @@
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query } from 'firebase/firestore';
-import { PerangkatDesa } from '@/lib/types';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, getDoc as getDoc_, DocumentData, setDoc } from 'firebase/firestore';
+import { PerangkatDesa, PerangkatDesaPageData } from '@/lib/types';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Konfigurasi Cloudinary
@@ -14,7 +13,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
-const COLLECTION_NAME = "perangkat-desa";
+const PERANGKAT_COLLECTION_NAME = "perangkat-desa";
+const PAGE_CONTENT_COLLECTION_NAME = "konten-halaman";
+const PAGE_CONTENT_DOCUMENT_ID = "perangkat-desa";
+
 
 async function isAuthorized() {
     const session = await getServerSession(authOptions);
@@ -29,13 +31,9 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
 
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-            {
-                folder: 'desa-slamparejo-uploads', 
-            },
+            { folder: 'desa-slamparejo-uploads' },
             (error, result) => {
-                if (error) {
-                    reject(error);
-                }
+                if (error) reject(error);
                 resolve(result?.secure_url || null);
             }
         );
@@ -43,13 +41,34 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
     });
 }
 
+const defaultPageData: PerangkatDesaPageData = {
+    hero: {
+        subtitle: "Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.",
+        heroImage: "/landing-page.png"
+    },
+    description: "Berikut adalah daftar perangkat desa yang menjalankan pemerintahan Desa Slamparejo. Setiap perangkat desa memiliki tugas dan tanggung jawab dalam melayani masyarakat serta mengembangkan potensi desa."
+};
+
 
 export async function GET() {
   try {
-    const q = query(collection(db, COLLECTION_NAME));
-    const data = await getDocs(q);
-    const perangkatData = data.docs.map((doc) => ({ ...(doc.data() as Omit<PerangkatDesa, 'id'>), id: doc.id }));
-    return NextResponse.json(perangkatData);
+    // Get list of officials
+    const perangkatQuery = query(collection(db, PERANGKAT_COLLECTION_NAME));
+    const perangkatDocs = await getDocs(perangkatQuery);
+    const perangkatList = perangkatDocs.docs.map((doc) => ({ ...(doc.data() as Omit<PerangkatDesa, 'id'>), id: doc.id }));
+
+    // Get page content
+    const pageDocRef = doc(db, PAGE_CONTENT_COLLECTION_NAME, PAGE_CONTENT_DOCUMENT_ID);
+    const pageDocSnap = await getDoc_(pageDocRef);
+    let pageData: PerangkatDesaPageData;
+    if (pageDocSnap.exists()) {
+      pageData = pageDocSnap.data() as PerangkatDesaPageData;
+    } else {
+      await setDoc(pageDocRef, defaultPageData as DocumentData);
+      pageData = defaultPageData;
+    }
+
+    return NextResponse.json({ perangkatList, pageData });
   } catch (error) {
     console.error("Firebase GET Error:", error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
@@ -73,7 +92,7 @@ export async function POST(request: Request) {
             description: formData.get('description') as string,
         };
 
-        const docRef = await addDoc(collection(db, COLLECTION_NAME), { ...newData, imageUrl });
+        const docRef = await addDoc(collection(db, PERANGKAT_COLLECTION_NAME), { ...newData, imageUrl });
         return NextResponse.json({ ...newData, imageUrl, id: docRef.id }, { status: 201 });
     } catch (error) {
         console.error("Firebase POST Error:", error);
@@ -99,7 +118,7 @@ export async function PUT(request: Request) {
         
         const finalData = { ...dataToUpdate, ...(imageUrl && { imageUrl }) };
 
-        const perangkatDoc = doc(db, COLLECTION_NAME, id);
+        const perangkatDoc = doc(db, PERANGKAT_COLLECTION_NAME, id);
         await updateDoc(perangkatDoc, finalData);
         return NextResponse.json({ id, ...finalData });
     } catch (error) {
@@ -114,11 +133,39 @@ export async function DELETE(request: Request) {
         const { id }: { id: string } = await request.json();
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-        const perangkatDoc = doc(db, COLLECTION_NAME, id);
+        const perangkatDoc = doc(db, PERANGKAT_COLLECTION_NAME, id);
         await deleteDoc(perangkatDoc);
         return NextResponse.json({ message: 'Data deleted successfully' });
     } catch (error) {
         console.error("Firebase DELETE Error:", error);
         return NextResponse.json({ error: 'Failed to delete data' }, { status: 500 });
+    }
+}
+
+export async function PATCH(request: Request) {
+    if (!await isAuthorized()) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    try {
+        const formData = await request.formData();
+        const heroImageFile = formData.get('heroImageFile') as File | null;
+        const newHeroImageUrl = await handleFileUpload(heroImageFile);
+
+        const jsonDataString = formData.get('jsonData') as string;
+        if (!jsonDataString) {
+             return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
+        }
+        const dataToSave: PerangkatDesaPageData = JSON.parse(jsonDataString);
+        
+        if (newHeroImageUrl) {
+            dataToSave.hero.heroImage = newHeroImageUrl;
+        }
+
+        const docRef = doc(db, PAGE_CONTENT_COLLECTION_NAME, PAGE_CONTENT_DOCUMENT_ID);
+        await setDoc(docRef, dataToSave as DocumentData, { merge: true });
+        return NextResponse.json({ message: 'Data halaman Perangkat Desa berhasil disimpan' });
+    } catch (error) {
+        console.error("Firebase PATCH Error:", error);
+        return NextResponse.json({ error: 'Gagal menyimpan data halaman Perangkat Desa' }, { status: 500 });
     }
 }

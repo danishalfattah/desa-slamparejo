@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query } from 'firebase/firestore';
-import { Usaha } from '@/lib/types';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, getDoc as getDoc_, DocumentData, setDoc } from 'firebase/firestore';
+import { Usaha, UsahaDesaPageData } from '@/lib/types';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Konfigurasi Cloudinary
@@ -13,7 +13,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const COLLECTION_NAME = "usaha-desa";
+const USAHA_COLLECTION_NAME = "usaha-desa";
+const PAGE_CONTENT_COLLECTION_NAME = "konten-halaman";
+const PAGE_CONTENT_DOCUMENT_ID = "usaha-desa";
 
 async function isAuthorized() {
     const session = await getServerSession(authOptions);
@@ -29,13 +31,9 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
 
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-            {
-                folder: 'desa-slamparejo-uploads',
-            },
+            { folder: 'desa-slamparejo-uploads' },
             (error, result) => {
-                if (error) {
-                    reject(error);
-                }
+                if (error) reject(error);
                 resolve(result?.secure_url || null);
             }
         );
@@ -43,12 +41,34 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
     });
 }
 
+const defaultPageData: UsahaDesaPageData = {
+    hero: {
+        subtitle: "Temukan berbagai produk dan jasa unggulan dari UMKM Desa Slamparejo yang kreatif dan inovatif.",
+        heroImage: "/landing-page.png"
+    },
+    description: "Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna."
+};
+
+
 export async function GET() {
   try {
-    const q = query(collection(db, COLLECTION_NAME));
-    const data = await getDocs(q);
-    const usahaData = data.docs.map((doc) => ({ ...(doc.data() as Omit<Usaha, 'id'>), id: doc.id }));
-    return NextResponse.json(usahaData);
+    // Get list of businesses
+    const usahaQuery = query(collection(db, USAHA_COLLECTION_NAME));
+    const usahaDocs = await getDocs(usahaQuery);
+    const usahaList = usahaDocs.docs.map((doc) => ({ ...(doc.data() as Omit<Usaha, 'id'>), id: doc.id }));
+
+    // Get page content
+    const pageDocRef = doc(db, PAGE_CONTENT_COLLECTION_NAME, PAGE_CONTENT_DOCUMENT_ID);
+    const pageDocSnap = await getDoc_(pageDocRef);
+    let pageData: UsahaDesaPageData;
+    if (pageDocSnap.exists()) {
+      pageData = pageDocSnap.data() as UsahaDesaPageData;
+    } else {
+      await setDoc(pageDocRef, defaultPageData as DocumentData);
+      pageData = defaultPageData;
+    }
+
+    return NextResponse.json({ usahaList, pageData });
   } catch (error) {
     console.error("Firebase GET Error:", error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
@@ -73,7 +93,7 @@ export async function POST(request: Request) {
             maps: formData.get('maps') as string,
         };
 
-        const docRef = await addDoc(collection(db, COLLECTION_NAME), { ...newData, image });
+        const docRef = await addDoc(collection(db, USAHA_COLLECTION_NAME), { ...newData, image });
         return NextResponse.json({ ...newData, image, id: docRef.id }, { status: 201 });
     } catch (error) {
         console.error("Firebase POST Error:", error);
@@ -100,7 +120,7 @@ export async function PUT(request: Request) {
         
         const finalData = { ...dataToUpdate, ...(image && { image }) };
 
-        const usahaDoc = doc(db, COLLECTION_NAME, id);
+        const usahaDoc = doc(db, USAHA_COLLECTION_NAME, id);
         await updateDoc(usahaDoc, finalData);
         return NextResponse.json({ id, ...finalData });
     } catch (error) {
@@ -115,11 +135,39 @@ export async function DELETE(request: Request) {
         const { id }: { id: string } = await request.json();
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-        const usahaDoc = doc(db, COLLECTION_NAME, id);
+        const usahaDoc = doc(db, USAHA_COLLECTION_NAME, id);
         await deleteDoc(usahaDoc);
         return NextResponse.json({ message: 'Data deleted successfully' });
     } catch (error) {
         console.error("Firebase DELETE Error:", error);
         return NextResponse.json({ error: 'Failed to delete data' }, { status: 500 });
+    }
+}
+
+export async function PATCH(request: Request) {
+    if (!await isAuthorized()) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    try {
+        const formData = await request.formData();
+        const heroImageFile = formData.get('heroImageFile') as File | null;
+        const newHeroImageUrl = await handleFileUpload(heroImageFile);
+
+        const jsonDataString = formData.get('jsonData') as string;
+        if (!jsonDataString) {
+             return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
+        }
+        const dataToSave: UsahaDesaPageData = JSON.parse(jsonDataString);
+        
+        if (newHeroImageUrl) {
+            dataToSave.hero.heroImage = newHeroImageUrl;
+        }
+
+        const docRef = doc(db, PAGE_CONTENT_COLLECTION_NAME, PAGE_CONTENT_DOCUMENT_ID);
+        await setDoc(docRef, dataToSave as DocumentData, { merge: true });
+        return NextResponse.json({ message: 'Data halaman Usaha Desa berhasil disimpan' });
+    } catch (error) {
+        console.error("Firebase PATCH Error:", error);
+        return NextResponse.json({ error: 'Gagal menyimpan data halaman Usaha Desa' }, { status: 500 });
     }
 }

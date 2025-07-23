@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
-import type { ProdukHukum, Pembangunan } from "@/lib/types";
+import type { ProdukHukum, Pembangunan, ProdukPageData } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
+import { SuccessModal } from "@/components/admin/success-modal";
 
 const ProdukHukumModal = ({
   isOpen,
@@ -265,7 +266,11 @@ const PembangunanModal = ({
 export default function ManageProdukPage() {
   const [produkHukum, setProdukHukum] = useState<ProdukHukum[]>([]);
   const [pembangunan, setPembangunan] = useState<Pembangunan[]>([]);
+  const [pageData, setPageData] = useState<Partial<ProdukPageData>>({});
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSavingPage, setIsSavingPage] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
@@ -286,12 +291,14 @@ export default function ManageProdukPage() {
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [hukumRes, pembangunanRes] = await Promise.all([
+      const [hukumRes, pembangunanRes, pageRes] = await Promise.all([
         fetch("/api/produk-hukum"),
         fetch("/api/pembangunan"),
+        fetch("/api/produk-page"),
       ]);
       setProdukHukum(await hukumRes.json());
       setPembangunan(await pembangunanRes.json());
+      setPageData(await pageRes.json());
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -374,6 +381,40 @@ export default function ManageProdukPage() {
     });
   };
 
+  const handleSavePageData = async () => {
+    setIsSavingPage(true);
+    const formData = new FormData();
+
+    const jsonData = {
+      hero: { subtitle: pageData.hero?.subtitle },
+      description: pageData.description,
+    };
+
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
+
+    try {
+      const response = await fetch("/api/produk-page", {
+        method: "POST",
+        body: formData,
+      });
+      if (response.ok) {
+        setShowSuccessModal(true);
+        setHeroImageFile(null);
+        fetchAllData();
+      } else {
+        alert("Gagal menyimpan data halaman.");
+      }
+    } catch (error) {
+      console.error("Gagal menyimpan data halaman:", error);
+    } finally {
+      setIsSavingPage(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -385,6 +426,11 @@ export default function ManageProdukPage() {
 
   return (
     <div className="space-y-8">
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="Data Halaman Produk Berhasil Disimpan!"
+      />
       <ConfirmModal
         isOpen={!!confirmAction}
         onConfirm={confirmAction?.action || (() => {})}
@@ -411,9 +457,81 @@ export default function ManageProdukPage() {
       />
 
       <PageHeader
-        title="Kelola Produk Hukum & Pembangunan"
+        title="Kelola Produk Hukum & Fisik"
         description="Atur dokumen hukum dan data pembangunan desa"
       />
+
+      <DataCard title="Konten Halaman Produk Hukum dan Fisik">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+            <Textarea
+              id="hero-subtitle"
+              value={pageData.hero?.subtitle || ""}
+              onChange={(e) =>
+                setPageData((prev) => ({
+                  ...prev,
+                  hero: { ...prev.hero, subtitle: e.target.value },
+                }))
+              }
+              rows={3}
+              disabled={isSavingPage}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Deskripsi Halaman</Label>
+            <Textarea
+              id="description"
+              value={pageData.description || ""}
+              onChange={(e) =>
+                setPageData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              rows={3}
+              disabled={isSavingPage}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="hero-image">Gambar Hero</Label>
+            {pageData.hero?.heroImage && (
+              <div className="mb-2">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Gambar saat ini:
+                </p>
+                <Image
+                  src={pageData.hero.heroImage}
+                  alt="Preview Hero"
+                  width={200}
+                  height={112}
+                  className="rounded-md object-cover border"
+                />
+              </div>
+            )}
+            <Input
+              id="hero-image"
+              type="file"
+              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              accept="image/png, image/jpeg, image/jpg"
+              disabled={isSavingPage}
+            />
+            <p className="text-sm text-muted-foreground">
+              Unggah file baru untuk mengganti gambar hero.
+            </p>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={handleSavePageData} disabled={isSavingPage}>
+              {isSavingPage ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSavingPage ? "Menyimpan..." : "Simpan Konten Halaman"}
+            </Button>
+          </div>
+        </div>
+      </DataCard>
 
       <Tabs defaultValue="hukum" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">

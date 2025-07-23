@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
-import { ProdukHukum, Pembangunan } from "@/lib/types";
+import { ProdukHukum, Pembangunan, ProdukPageData } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -50,6 +50,7 @@ export default function ProdukPage() {
 
   const [produkHukumData, setProdukHukumData] = useState<ProdukHukum[]>([]);
   const [pembangunanData, setPembangunanData] = useState<Pembangunan[]>([]);
+  const [pageData, setPageData] = useState<Partial<ProdukPageData>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   // State untuk modal preview
@@ -59,14 +60,17 @@ export default function ProdukPage() {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const [hukumRes, pembangunanRes] = await Promise.all([
+        const [hukumRes, pembangunanRes, pageRes] = await Promise.all([
           fetch("/api/produk-hukum"),
           fetch("/api/pembangunan"),
+          fetch("/api/produk-page"),
         ]);
         const hukumJson = await hukumRes.json();
         const pembangunanJson = await pembangunanRes.json();
+        const pageJson = await pageRes.json();
         setProdukHukumData(hukumJson);
         setPembangunanData(pembangunanJson);
+        setPageData(pageJson);
       } catch (error) {
         console.error("Gagal mengambil data produk:", error);
       } finally {
@@ -117,7 +121,7 @@ export default function ProdukPage() {
       <section className="w-full h-screen flex flex-col ">
         <div className="relative w-full h-screen flex flex-col justify-center items-center">
           <Image
-            src="/landing-page.png"
+            src={pageData.hero?.heroImage || "/landing-page.png"}
             alt="Desa Slamparejo"
             fill
             quality={100}
@@ -138,8 +142,7 @@ export default function ProdukPage() {
             <p
               className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
             >
-              Akses dokumen resmi dan pantau seluruh proses pembangunan Desa
-              Slamparejo secara transparan dan terbuka.
+              {pageData.hero?.subtitle}
             </p>
           </div>
         </div>
@@ -168,9 +171,7 @@ export default function ProdukPage() {
             <p
               className={`${poppins.className}  text-white text-base md:text-lg font-normal tracking-wider`}
             >
-              Akses dokumen resmi dan pantau seluruh proses pembangunan Desa
-              Slamparejo secara transparan, akuntabel, dan terbuka bagi
-              masyarakat.
+              {pageData.description}
             </p>
           </div>
         </div>

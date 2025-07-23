@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
-import type { Usaha } from "@/lib/types";
+import type { Usaha, UsahaDesaPageData } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { ConfirmModal } from "@/components/admin/confirm-modal";
@@ -24,6 +24,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
+import { DataCard } from "@/components/admin/data-card";
+import { SuccessModal } from "@/components/admin/success-modal";
 
 const UsahaFormModal = ({
   isOpen,
@@ -152,6 +154,8 @@ const UsahaFormModal = ({
 
 export default function ManageUsahaDesaPage() {
   const [usahaList, setUsahaList] = useState<Usaha[]>([]);
+  const [pageData, setPageData] = useState<Partial<UsahaDesaPageData>>({});
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUsaha, setEditingUsaha] = useState<Partial<Usaha>>({});
@@ -160,13 +164,16 @@ export default function ManageUsahaDesaPage() {
     action: () => void;
     message: string;
   } | null>(null);
+  const [isSavingPage, setIsSavingPage] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/usaha-desa");
       const data = await response.json();
-      setUsahaList(data);
+      setUsahaList(data.usahaList);
+      setPageData(data.pageData || {});
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -231,6 +238,40 @@ export default function ManageUsahaDesaPage() {
     }
   };
 
+  const handleSavePageData = async () => {
+    setIsSavingPage(true);
+    const formData = new FormData();
+
+    const jsonData = {
+      hero: { subtitle: pageData.hero?.subtitle },
+      description: pageData.description,
+    };
+
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
+
+    try {
+      const response = await fetch("/api/usaha-desa", {
+        method: "PATCH",
+        body: formData,
+      });
+      if (response.ok) {
+        setShowSuccessModal(true);
+        setHeroImageFile(null);
+        fetchData();
+      } else {
+        alert("Gagal menyimpan data halaman.");
+      }
+    } catch (error) {
+      console.error("Gagal menyimpan data halaman:", error);
+    } finally {
+      setIsSavingPage(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -242,6 +283,11 @@ export default function ManageUsahaDesaPage() {
 
   return (
     <div className="space-y-8">
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="Data Halaman Usaha Desa Berhasil Disimpan!"
+      />
       <ConfirmModal
         isOpen={!!confirmAction}
         onConfirm={confirmAction?.action || (() => {})}
@@ -262,60 +308,135 @@ export default function ManageUsahaDesaPage() {
       <PageHeader
         title="Kelola Usaha Desa"
         description="Atur data UMKM dan usaha ekonomi lokal desa"
-      >
-        <Button onClick={() => handleOpenModal()}>
-          <Plus className="h-4 w-4 mr-2" />
-          Tambah Usaha Baru
-        </Button>
-      </PageHeader>
+      />
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nama Usaha</TableHead>
-              <TableHead>Deskripsi</TableHead>
-              <TableHead>Telepon</TableHead>
-              <TableHead className="w-[100px]">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {usahaList.map((usaha) => (
-              <TableRow key={usaha.id}>
-                <TableCell className="font-medium">{usaha.title}</TableCell>
-                <TableCell className="max-w-xs truncate">
-                  {usaha.description}
-                </TableCell>
-                <TableCell>{usaha.phone}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleOpenModal(usaha)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(usaha.id!)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {usahaList.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            {`Belum ada data usaha. Klik tombol "Tambah Usaha Baru" untuk
-            menambahkan.`}
+      <DataCard title="Konten Halaman Usaha Desa">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+            <Textarea
+              id="hero-subtitle"
+              value={pageData.hero?.subtitle || ""}
+              onChange={(e) =>
+                setPageData((prev) => ({
+                  ...prev,
+                  hero: { ...prev.hero, subtitle: e.target.value },
+                }))
+              }
+              rows={3}
+              disabled={isSavingPage}
+            />
           </div>
-        )}
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Deskripsi Halaman</Label>
+            <Textarea
+              id="description"
+              value={pageData.description || ""}
+              onChange={(e) =>
+                setPageData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              rows={3}
+              disabled={isSavingPage}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="hero-image">Gambar Hero</Label>
+            {pageData.hero?.heroImage && (
+              <div className="mb-2">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Gambar saat ini:
+                </p>
+                <Image
+                  src={pageData.hero.heroImage}
+                  alt="Preview Hero"
+                  width={200}
+                  height={112}
+                  className="rounded-md object-cover border"
+                />
+              </div>
+            )}
+            <Input
+              id="hero-image"
+              type="file"
+              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              accept="image/png, image/jpeg, image/jpg"
+              disabled={isSavingPage}
+            />
+            <p className="text-sm text-muted-foreground">
+              Unggah file baru untuk mengganti gambar hero.
+            </p>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={handleSavePageData} disabled={isSavingPage}>
+              {isSavingPage ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSavingPage ? "Menyimpan..." : "Simpan Konten Halaman"}
+            </Button>
+          </div>
+        </div>
+      </DataCard>
+
+      <DataCard title="Daftar Usaha (UMKM)">
+        <div className="flex justify-end">
+          <Button onClick={() => handleOpenModal()}>
+            <Plus className="h-4 w-4 mr-2" />
+            Tambah Usaha Baru
+          </Button>
+        </div>
+        <div className="border rounded-lg mt-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nama Usaha</TableHead>
+                <TableHead>Deskripsi</TableHead>
+                <TableHead>Telepon</TableHead>
+                <TableHead className="w-[100px]">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {usahaList.map((usaha) => (
+                <TableRow key={usaha.id}>
+                  <TableCell className="font-medium">{usaha.title}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {usaha.description}
+                  </TableCell>
+                  <TableCell>{usaha.phone}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenModal(usaha)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDelete(usaha.id!)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {usahaList.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              {`Belum ada data usaha. Klik tombol "Tambah Usaha Baru" untuk
+                menambahkan.`}
+            </div>
+          )}
+        </div>
+      </DataCard>
     </div>
   );
 }

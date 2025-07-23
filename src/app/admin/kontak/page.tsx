@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, type ChangeEvent } from "react";
 import type { Kontak } from "@/lib/types";
+import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
 import { SuccessModal } from "@/components/admin/success-modal";
@@ -15,6 +16,7 @@ export default function ManageKontakPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,14 +51,28 @@ export default function ManageKontakPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
+    const formData = new FormData();
+
+    const jsonData = { ...data };
+    delete (jsonData as Partial<Kontak>).hero?.heroImage; // Don't send old image url
+
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
+
     try {
       const response = await fetch("/api/kontak", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: formData,
       });
-      if (response.ok) setShowModal(true);
-      else alert("Gagal menyimpan data.");
+      if (response.ok) {
+        setShowModal(true);
+        setHeroImageFile(null);
+        const freshData = await fetch("/api/kontak").then((res) => res.json());
+        setData(freshData);
+      } else alert("Gagal menyimpan data.");
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
     } finally {
@@ -106,10 +122,37 @@ export default function ManageKontakPage() {
               <Textarea
                 id="heroSubtitle"
                 name="heroSubtitle"
-                value={data.heroSubtitle || ""}
-                onChange={(e) => handleChange(e)}
+                value={data.hero?.subtitle || ""}
+                onChange={(e) => handleChange(e, "hero", "subtitle")}
                 rows={3}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hero-image">Gambar Hero</Label>
+              {data.hero?.heroImage && (
+                <div className="mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Gambar saat ini:
+                  </p>
+                  <Image
+                    src={data.hero.heroImage}
+                    alt="Preview Hero"
+                    width={200}
+                    height={112}
+                    className="rounded-md object-cover border"
+                  />
+                </div>
+              )}
+              <Input
+                id="hero-image"
+                type="file"
+                onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+                accept="image/png, image/jpeg, image/jpg"
+                disabled={isSaving}
+              />
+              <p className="text-sm text-muted-foreground">
+                Unggah file baru untuk mengganti gambar hero.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Deskripsi Kontak</Label>
@@ -140,13 +183,14 @@ export default function ManageKontakPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Telepon Kantor</Label>
+              <Label htmlFor="phone">Nomor WhatsApp</Label>
               <Input
                 id="phone"
                 type="text"
                 name="phone"
                 value={data.phone || ""}
                 onChange={(e) => handleChange(e)}
+                placeholder="6281234567890"
               />
             </div>
             <div className="space-y-2">

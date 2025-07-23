@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import type { Profil, DemografiRow } from "@/lib/types";
+import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
 import { SuccessModal } from "@/components/admin/success-modal";
@@ -16,6 +17,7 @@ export default function ManageProfilPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,14 +64,34 @@ export default function ManageProfilPage() {
 
   const handleSave = async () => {
     setIsSaving(true);
+    const formData = new FormData();
+
+    // Hapus heroImage dari data JSON sebelum dikirim
+    const { hero, ...restData } = data;
+    const jsonData = {
+      hero: { subtitle: hero?.subtitle },
+      ...restData,
+    };
+
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
+
     try {
       const response = await fetch("/api/profil-desa", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: formData,
       });
       if (response.ok) {
         setShowModal(true);
+        setHeroImageFile(null); // Reset file input
+        // Re-fetch data to show the new image
+        const freshData = await fetch("/api/profil-desa").then((res) =>
+          res.json()
+        );
+        setData(freshData);
       } else {
         alert("Gagal menyimpan data.");
       }
@@ -112,6 +134,54 @@ export default function ManageProfilPage() {
       </PageHeader>
 
       <div className="grid gap-6">
+        {/* Hero Section */}
+        <DataCard
+          title="Bagian Hero"
+          description="Konten utama yang pertama dilihat pengunjung"
+        >
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+              <Textarea
+                id="hero-subtitle"
+                value={data.hero?.subtitle || ""}
+                onChange={(e) =>
+                  handleNestedChange("hero", "subtitle", e.target.value)
+                }
+                rows={3}
+                disabled={isSaving}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hero-image">Gambar Hero</Label>
+              {data.hero?.heroImage && (
+                <div className="mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Gambar saat ini:
+                  </p>
+                  <Image
+                    src={data.hero.heroImage}
+                    alt="Preview Hero"
+                    width={200}
+                    height={112}
+                    className="rounded-md object-cover border"
+                  />
+                </div>
+              )}
+              <Input
+                id="hero-image"
+                type="file"
+                onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+                accept="image/png, image/jpeg, image/jpg"
+                disabled={isSaving}
+              />
+              <p className="text-sm text-muted-foreground">
+                Unggah file baru untuk mengganti gambar hero.
+              </p>
+            </div>
+          </div>
+        </DataCard>
+
         {/* Video Profil */}
         <DataCard
           title="Video Profil"

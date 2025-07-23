@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
+import { Layanan } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -9,7 +10,7 @@ const playfair = Playfair_Display({
 const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
 // Fungsi untuk mengambil data dari server-side
-async function getLayananData() {
+async function getLayananData(): Promise<Layanan | null> {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/layanan`, {
       cache: "no-store",
@@ -39,7 +40,7 @@ export default async function LayananPage() {
       <section className="w-full h-screen flex flex-col ">
         <div className="relative flex-1 flex flex-col justify-center items-center ">
           <Image
-            src="/landing-page.png"
+            src={data.hero?.heroImage || "/landing-page.png"}
             alt="Desa Slamparejo"
             fill
             quality={100}
@@ -60,7 +61,7 @@ export default async function LayananPage() {
             <p
               className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
             >
-              {data.heroSubtitle}
+              {data.hero?.subtitle}
             </p>
           </div>
         </div>

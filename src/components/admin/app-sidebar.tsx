@@ -50,7 +50,7 @@ const menuItems = [
     icon: Users,
   },
   {
-    title: "Produk & Pembangunan",
+    title: "Produk Hukum & Fisik",
     url: "/admin/produk",
     icon: Building,
   },

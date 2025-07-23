@@ -35,12 +35,17 @@ export default async function KontakPage() {
     );
   }
 
+  // Membersihkan nomor telepon untuk link wa.me
+  const cleanPhoneNumber = (phone: string = "") => {
+    return phone.replace(/[()+\s-]/g, "");
+  };
+
   return (
     <main className="min-h-screen bg-white">
       <section className="w-full h-screen flex flex-col ">
         <div className="relative flex-1 flex flex-col justify-center items-center ">
           <Image
-            src="/landing-page.png"
+            src={data.hero?.heroImage || "/landing-page.png"}
             alt="Desa Slamparejo"
             fill
             quality={100}
@@ -60,7 +65,7 @@ export default async function KontakPage() {
             <p
               className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
             >
-              {data.heroSubtitle}
+              {data.hero?.subtitle}
             </p>
           </div>
         </div>
@@ -108,11 +113,11 @@ export default async function KontakPage() {
               <Mail />
             </Card>
             <Card
-              title="Telepon Kantor"
+              title="WhatsApp"
               description="Hubungi langsung untuk informasi terpercaya dengan cepat"
               contactInfo={data.phone}
-              link={`tel:${data.phone.replace(/[()+\s-]/g, "")}`}
-              buttonText="Hubungi Sekarang"
+              link={`https://wa.me/${cleanPhoneNumber(data.phone)}`}
+              buttonText="Hubungi via WhatsApp"
             >
               <Phone />
             </Card>

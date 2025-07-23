@@ -1,31 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Card from "./card";
 import { PerangkatDesa } from "@/lib/types";
 
-export default function DaftarPerangkat() {
-  const [dataPerangkat, setDataPerangkat] = useState<PerangkatDesa[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("/api/perangkat-desa");
-        const data = await response.json();
-        setDataPerangkat(data);
-      } catch (error) {
-        console.error("Gagal mengambil data perangkat desa:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (isLoading) {
+export default function DaftarPerangkat({
+  dataPerangkat,
+}: {
+  dataPerangkat: PerangkatDesa[];
+}) {
+  if (!dataPerangkat || dataPerangkat.length === 0) {
     return (
-      <div className="text-center py-10">Memuat data perangkat desa...</div>
+      <div className="text-center py-10 bg-[#f4f8fc]">
+        Belum ada data perangkat desa yang tersedia.
+      </div>
     );
   }
 

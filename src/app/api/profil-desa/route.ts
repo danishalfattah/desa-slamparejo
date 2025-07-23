@@ -4,13 +4,38 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Profil } from '@/lib/types';
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "profil";
 
-// Data default disederhanakan
-const defaultData: Omit<Profil, 'sejarah'> & { sejarah: Omit<Profil['sejarah'], 'images'> } = {
-    hero: { subtitle: "Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan." },
+async function handleFileUpload(file: File | null): Promise<string | null> {
+    if (!file) return null;
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: 'desa-slamparejo-uploads' },
+            (error, result) => {
+                if (error) reject(error);
+                resolve(result?.secure_url || null);
+            }
+        );
+        uploadStream.end(buffer);
+    });
+}
+
+const defaultData: Profil = {
+    hero: { 
+        subtitle: "Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan.",
+        heroImage: "/landing-page.png"
+    },
     video: { title: "Video Profil", description: "Setiap jengkal tanah, setiap tarikan napas warga, adalah bagian dari cerita besar yang hidup. Inilah Slamparejo, desa yang tumbuh dalam makna.", url: "https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" },
     visiMisi: {
         description: "Visi misi ini mencerminkan semangat membangun desa yang mandiri, sejahtera, dan tetap menjunjung nilai budaya lokal.",
@@ -40,12 +65,9 @@ async function isAuthorized() {
     return !!session;
 }
 
-// Fungsi untuk mengubah link youtube menjadi embed
 function convertYoutubeUrlToEmbed(url: string): string {
     if (!url) return url;
-    // https://www.youtube.com/watch?v=xxxx
     const watchRegex = /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/;
-    // https://youtu.be/xxxx
     const shortRegex = /(?:https?:\/\/)?youtu\.be\/([a-zA-Z0-9_-]+)/;
     let match = url.match(watchRegex);
     if (match && match[1]) {
@@ -55,7 +77,6 @@ function convertYoutubeUrlToEmbed(url: string): string {
     if (match && match[1]) {
         return `https://www.youtube.com/embed/${match[1]}`;
     }
-    // Sudah embed atau format lain, return apa adanya
     return url;
 }
 
@@ -80,9 +101,20 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
-        const dataToSave: Profil = await request.json();
+        const formData = await request.formData();
+        const heroImageFile = formData.get('heroImageFile') as File | null;
+        const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
-        // Logic ganti link youtube ke embed
+        const jsonDataString = formData.get('jsonData') as string;
+        if (!jsonDataString) {
+             return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
+        }
+        const dataToSave: Profil = JSON.parse(jsonDataString);
+        
+        if (newHeroImageUrl) {
+            dataToSave.hero.heroImage = newHeroImageUrl;
+        }
+
         if (dataToSave.video && dataToSave.video.url) {
             dataToSave.video.url = convertYoutubeUrlToEmbed(dataToSave.video.url);
         }

@@ -54,7 +54,7 @@ export default async function ProfilPage() {
       <section className="w-full h-screen flex flex-col">
         <div className="relative flex-1 flex flex-col justify-center items-center">
           <Image
-            src="/landing-page.png"
+            src={data.hero.heroImage || "/landing-page.png"}
             alt="Desa Slamparejo"
             fill
             quality={100}
@@ -171,7 +171,6 @@ export default async function ProfilPage() {
               ></iframe>
             </div>
 
-            {/* --- KODE TABEL YANG DIPERBAIKI --- */}
             <div className="w-full overflow-x-auto">
               <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg">
                 <table

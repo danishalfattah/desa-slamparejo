@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Card from "./card";
 import { Usaha } from "@/lib/types";
 import {
@@ -9,35 +8,12 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"; // Import komponen Carousel baru
+} from "@/components/ui/carousel";
 
-export default function DaftarUsaha() {
-  const [dataUsaha, setDataUsaha] = useState<Usaha[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/usaha-desa");
-        const data = await response.json();
-        setDataUsaha(data);
-      } catch (error) {
-        console.error("Gagal mengambil data usaha desa:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (isLoading) {
-    return <div className="text-center py-20">Memuat data UMKM...</div>;
-  }
-
-  if (dataUsaha.length === 0) {
+export default function DaftarUsaha({ dataUsaha }: { dataUsaha: Usaha[] }) {
+  if (!dataUsaha || dataUsaha.length === 0) {
     return (
-      <div className="text-center py-20">
+      <div className="text-center py-20 bg-[#F9FCFC]">
         Belum ada data usaha yang tersedia.
       </div>
     );

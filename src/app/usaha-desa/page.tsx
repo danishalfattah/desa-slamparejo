@@ -1,13 +1,40 @@
 import HeroUsaha from "@/features/usaha-desa/hero";
 import DescUsaha from "@/features/usaha-desa/desc";
 import DaftarUsaha from "@/features/usaha-desa/usaha";
+import { Usaha, UsahaDesaPageData } from "@/lib/types";
 
-export default function UsahaDesaPage() {
+async function getUsahaDesaData(): Promise<{
+  usahaList: Usaha[];
+  pageData: UsahaDesaPageData;
+} | null> {
+  try {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/usaha-desa`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (error) {
+    console.error("Gagal mengambil data usaha desa:", error);
+    return null;
+  }
+}
+
+export default async function UsahaDesaPage() {
+  const data = await getUsahaDesaData();
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Gagal memuat data.
+      </div>
+    );
+  }
+
   return (
     <>
-      <HeroUsaha />
-      <DescUsaha />
-      <DaftarUsaha />
+      <HeroUsaha data={data.pageData.hero} />
+      <DescUsaha data={data.pageData} />
+      <DaftarUsaha dataUsaha={data.usahaList} />
     </>
   );
 }
