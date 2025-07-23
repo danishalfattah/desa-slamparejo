@@ -173,7 +173,13 @@ export default function ManageBerandaPage() {
     setIsSaving(true);
 
     const formData = new FormData();
-    formData.append("jsonData", JSON.stringify(data));
+    formData.append("heroTitle", data.hero?.title || "");
+    formData.append("heroSubtitle", data.hero?.subtitle || "");
+    formData.append("sloganTitle", data.slogan?.title || "");
+    formData.append("sloganDescription", data.slogan?.description || "");
+    formData.append("launchingTitle", data.launching?.title || "");
+    formData.append("launchingDescription", data.launching?.description || "");
+    formData.append("faq", JSON.stringify(data.faq || []));
 
     if (launchingImageFile) {
       formData.append("launchingImageFile", launchingImageFile);

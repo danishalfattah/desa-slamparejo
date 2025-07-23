@@ -71,23 +71,34 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const launchingImageFile = formData.get('launchingImageFile') as File | null;
-        
+
+        // Ambil data yang ada saat ini dari database
+        const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
+        const docSnap = await getDoc(docRef);
+        const existingData = docSnap.exists() ? docSnap.data() as Beranda : defaultData;
+
         // Unggah gambar baru jika ada
         const newImageUrl = await handleFileUpload(launchingImageFile);
 
-        // Ambil data JSON dari form data
-        const jsonDataString = formData.get('jsonData') as string;
-        if (!jsonDataString) {
-             return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
-        }
-        const dataToSave: Beranda = JSON.parse(jsonDataString);
-        
-        // Ganti path gambar jika ada gambar baru yang diunggah
-        if (newImageUrl) {
-            dataToSave.launching.image = newImageUrl;
-        }
+        // Susun ulang objek data untuk disimpan
+        const dataToSave: Beranda = {
+            hero: {
+                title: formData.get('heroTitle') as string || existingData.hero.title,
+                subtitle: formData.get('heroSubtitle') as string || existingData.hero.subtitle,
+            },
+            slogan: {
+                title: formData.get('sloganTitle') as string || existingData.slogan.title,
+                description: formData.get('sloganDescription') as string || existingData.slogan.description,
+            },
+            launching: {
+                title: formData.get('launchingTitle') as string || existingData.launching.title,
+                description: formData.get('launchingDescription') as string || existingData.launching.description,
+                // Gunakan gambar baru jika ada, jika tidak, gunakan gambar yang sudah ada
+                image: newImageUrl || existingData.launching.image,
+            },
+            faq: JSON.parse(formData.get('faq') as string || "[]"),
+        };
 
-        const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
         await setDoc(docRef, dataToSave, { merge: true });
         return NextResponse.json({ message: 'Data Beranda berhasil disimpan' }, { status: 200 });
     } catch (error) {
