@@ -25,12 +25,14 @@ const FaqFormModal = ({
   onSubmit,
   faqData,
   setFaqData,
+  isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (e: FormEvent) => void;
   faqData: FaqItem;
   setFaqData: (data: FaqItem) => void;
+  isSaving: boolean;
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,6 +58,7 @@ const FaqFormModal = ({
               value={faqData.question}
               onChange={handleChange}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -67,15 +70,25 @@ const FaqFormModal = ({
               onChange={handleChange}
               rows={4}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               Batal
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Simpan
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>
@@ -88,6 +101,7 @@ export default function ManageBerandaPage() {
   const [data, setData] = useState<Partial<Beranda>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFaqSaving, setIsFaqSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
@@ -98,6 +112,7 @@ export default function ManageBerandaPage() {
     message: string;
   } | null>(null);
 
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [launchingImageFile, setLaunchingImageFile] = useState<File | null>(
     null
   );
@@ -128,9 +143,12 @@ export default function ManageBerandaPage() {
     }));
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    fileStateSetter: React.Dispatch<React.SetStateAction<File | null>>
+  ) => {
     if (e.target.files && e.target.files[0]) {
-      setLaunchingImageFile(e.target.files[0]);
+      fileStateSetter(e.target.files[0]);
     }
   };
 
@@ -147,12 +165,14 @@ export default function ManageBerandaPage() {
   const handleSaveFaq = (e: FormEvent) => {
     e.preventDefault();
     if (!editingFaq) return;
+    setIsFaqSaving(true);
     const updatedFaqList = editingFaq.id
       ? (data.faq || []).map((item) =>
           item.id === editingFaq.id ? editingFaq : item
         )
       : [...(data.faq || []), { ...editingFaq, id: crypto.randomUUID() }];
     setData((prev) => ({ ...prev, faq: updatedFaqList }));
+    setIsFaqSaving(false);
     handleCloseFaqModal();
   };
 
@@ -173,14 +193,24 @@ export default function ManageBerandaPage() {
     setIsSaving(true);
 
     const formData = new FormData();
-    formData.append("heroTitle", data.hero?.title || "");
-    formData.append("heroSubtitle", data.hero?.subtitle || "");
-    formData.append("sloganTitle", data.slogan?.title || "");
-    formData.append("sloganDescription", data.slogan?.description || "");
-    formData.append("launchingTitle", data.launching?.title || "");
-    formData.append("launchingDescription", data.launching?.description || "");
-    formData.append("faq", JSON.stringify(data.faq || []));
 
+    const jsonData = {
+      hero: {
+        title: data.hero?.title,
+        subtitle: data.hero?.subtitle,
+      },
+      slogan: data.slogan,
+      launching: {
+        title: data.launching?.title,
+        description: data.launching?.description,
+      },
+      faq: data.faq,
+    };
+    formData.append("jsonData", JSON.stringify(jsonData));
+
+    if (heroImageFile) {
+      formData.append("heroImageFile", heroImageFile);
+    }
     if (launchingImageFile) {
       formData.append("launchingImageFile", launchingImageFile);
     }
@@ -192,6 +222,7 @@ export default function ManageBerandaPage() {
       });
       if (response.ok) {
         setShowSuccessModal(true);
+        setHeroImageFile(null);
         setLaunchingImageFile(null);
         const freshResponse = await fetch("/api/beranda");
         if (freshResponse.ok) setData(await freshResponse.json());
@@ -236,6 +267,7 @@ export default function ManageBerandaPage() {
           onSubmit={handleSaveFaq}
           faqData={editingFaq}
           setFaqData={setEditingFaq}
+          isSaving={isFaqSaving}
         />
       )}
 
@@ -249,7 +281,7 @@ export default function ManageBerandaPage() {
           ) : (
             <Save className="h-4 w-4 mr-2" />
           )}
-          {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
+          {isSaving ? "Menyimpan..." : "Simpan Semua Perubahan"}
         </Button>
       </PageHeader>
 
@@ -266,6 +298,7 @@ export default function ManageBerandaPage() {
                 id="hero-title"
                 value={data.hero?.title || ""}
                 onChange={(e) => handleInputChange(e, "hero", "title")}
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -275,7 +308,35 @@ export default function ManageBerandaPage() {
                 value={data.hero?.subtitle || ""}
                 onChange={(e) => handleInputChange(e, "hero", "subtitle")}
                 rows={3}
+                disabled={isSaving}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hero-image">Gambar Hero</Label>
+              {data.hero?.heroImage && (
+                <div className="mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Gambar saat ini:
+                  </p>
+                  <Image
+                    src={data.hero.heroImage}
+                    alt="Preview Hero"
+                    width={200}
+                    height={112}
+                    className="rounded-md object-cover border"
+                  />
+                </div>
+              )}
+              <Input
+                id="hero-image"
+                type="file"
+                onChange={(e) => handleFileChange(e, setHeroImageFile)}
+                accept="image/png, image/jpeg, image/jpg"
+                disabled={isSaving}
+              />
+              <p className="text-sm text-muted-foreground">
+                Unggah file baru untuk mengganti gambar hero.
+              </p>
             </div>
           </div>
         </DataCard>
@@ -289,6 +350,7 @@ export default function ManageBerandaPage() {
                 id="slogan-title"
                 value={data.slogan?.title || ""}
                 onChange={(e) => handleInputChange(e, "slogan", "title")}
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -298,6 +360,7 @@ export default function ManageBerandaPage() {
                 value={data.slogan?.description || ""}
                 onChange={(e) => handleInputChange(e, "slogan", "description")}
                 rows={3}
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -315,6 +378,7 @@ export default function ManageBerandaPage() {
                 id="launching-title"
                 value={data.launching?.title || ""}
                 onChange={(e) => handleInputChange(e, "launching", "title")}
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -326,6 +390,7 @@ export default function ManageBerandaPage() {
                   handleInputChange(e, "launching", "description")
                 }
                 rows={3}
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -347,8 +412,9 @@ export default function ManageBerandaPage() {
               <Input
                 id="launching-image"
                 type="file"
-                onChange={handleFileChange}
+                onChange={(e) => handleFileChange(e, setLaunchingImageFile)}
                 accept="image/png, image/jpeg, image/jpg"
+                disabled={isSaving}
               />
               <p className="text-sm text-muted-foreground">
                 Unggah file baru untuk mengganti gambar saat ini.

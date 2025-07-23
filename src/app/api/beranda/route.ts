@@ -42,7 +42,8 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
 const defaultData: Beranda = {
     hero: {
         title: "DESA SLAMPAREJO",
-        subtitle: "Satu pintu digital untuk mengenal, berinteraksi, dan berkontribusi dalam semangat kebersamaan membangun desa."
+        subtitle: "Satu pintu digital untuk mengenal, berinteraksi, dan berkontribusi dalam semangat kebersamaan membangun desa.",
+        heroImage: "/landing-page.png" // Path default
     },
     slogan: {
         title: "Melayani dengan Hati Membangun dengan Aksi",
@@ -88,9 +89,11 @@ export async function POST(request: Request) {
     }
     try {
         const formData = await request.formData();
+        const heroImageFile = formData.get('heroImageFile') as File | null;
         const launchingImageFile = formData.get('launchingImageFile') as File | null;
         
-        const newImageUrl = await handleFileUpload(launchingImageFile);
+        const newHeroImageUrl = await handleFileUpload(heroImageFile);
+        const newLaunchingImageUrl = await handleFileUpload(launchingImageFile);
 
         const jsonDataString = formData.get('jsonData') as string;
         if (!jsonDataString) {
@@ -98,8 +101,11 @@ export async function POST(request: Request) {
         }
         const dataToSave: Beranda = JSON.parse(jsonDataString);
         
-        if (newImageUrl) {
-            dataToSave.launching.image = newImageUrl;
+        if (newHeroImageUrl) {
+            dataToSave.hero.heroImage = newHeroImageUrl;
+        }
+        if (newLaunchingImageUrl) {
+            dataToSave.launching.image = newLaunchingImageUrl;
         }
 
         const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);

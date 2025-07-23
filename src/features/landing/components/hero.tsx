@@ -18,7 +18,7 @@ export default function Hero({ data }: { data: Beranda }) {
     <section className="w-full flex flex-col ">
       <div className="relative flex flex-col justify-center items-center h-screen">
         <Image
-          src="/landing-page.png"
+          src={data.hero.heroImage || "/landing-page.png"} // Menggunakan gambar dinamis
           alt="Desa Slamparejo"
           fill
           quality={100}
