@@ -17,6 +17,7 @@ import {
   FileText,
   MapPin,
   Phone,
+  Newspaper,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -62,6 +63,12 @@ export default async function DashboardPage() {
       description: "Formulir dan pelayanan desa",
       icon: FileText,
       href: "/admin/layanan",
+    },
+    {
+      title: "Berita",
+      description: "Kelola berita dan informasi terbaru",
+      icon: Newspaper, // Tambahkan item baru
+      href: "/admin/berita",
     },
     {
       title: "Kontak",

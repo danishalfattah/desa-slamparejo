@@ -1,3 +1,5 @@
+// src/lib/types.ts
+
 export interface Usaha {
   id: string;
   image: string;
@@ -164,4 +166,21 @@ export interface UsahaDesaPageData {
     heroImage?: string;
   };
   description: string;
+}
+
+export interface Berita {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  createdAt: number;
+  isHeadline?: boolean;
+}
+
+export interface BeritaPageData {
+  hero: {
+    title: string;
+    subtitle: string;
+    heroImage?: string;
+  };
 }
