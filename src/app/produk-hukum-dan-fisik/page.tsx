@@ -4,7 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { ProdukHukum, Pembangunan, ProdukPageData } from "@/lib/types";
-import { Eye, Download, Scale, Construction, FileText } from "lucide-react";
+import {
+  Eye,
+  Download,
+  Scale,
+  Construction,
+  FileText,
+  Loader2,
+} from "lucide-react";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -59,7 +66,7 @@ export default function ProdukPage() {
 
   useEffect(() => {
     async function fetchData() {
-      setIsLoading(true);
+      // Tidak set loading di sini agar tidak ada kedipan
       try {
         const [hukumRes, pembangunanRes, pageRes] = await Promise.all([
           fetch("/api/produk-hukum"),
@@ -75,7 +82,7 @@ export default function ProdukPage() {
       } catch (error) {
         console.error("Gagal mengambil data produk:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Set loading false setelah semua data terambil
       }
     }
     fetchData();
@@ -110,6 +117,18 @@ export default function ProdukPage() {
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
+
+  // Tampilkan loading screen jika data belum siap
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        <span className={`${poppins.className} ml-4 text-gray-700`}>
+          Memuat data...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -175,7 +194,7 @@ export default function ProdukPage() {
         </div>
       </section>
 
-      <section className="bg-[#F9FCFC]   py-16 px-4 md:px-0">
+      <section className="bg-[#F9FCFC] py-16 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
           <div className="flex gap-4 mb-8">
             <button
@@ -212,139 +231,135 @@ export default function ProdukPage() {
             </button>
           </div>
 
-          {isLoading ? (
-            <div className="text-center py-10">Memuat data...</div>
-          ) : (
-            <>
-              {tab === "hukum" && (
-                <div className="space-y-4">
-                  {hukumItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
-                    >
-                      <div className="flex flex-row  justify-between items-start md:items-center w-full">
-                        <div className="flex items-center  gap-4">
-                          <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg">
-                            <FileText size={24} />
-                          </div>
-                          <div>
-                            <span className="bg-blue-200 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
-                              {item.category}
-                            </span>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Tahun {item.year}
-                            </p>
-                          </div>
+          <>
+            {tab === "hukum" && (
+              <div className="space-y-4">
+                {hukumItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
+                  >
+                    <div className="flex flex-row justify-between  items-start sm:items-center w-full">
+                      <div className="flex items-center gap-4 mb-4 sm:mb-0">
+                        <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg flex-shrink-0">
+                          <FileText size={24} />
                         </div>
-                        <div className="flex gap-2 self-end    md:self-center mt-4 md:mt-0">
-                          <button
-                            onClick={() => handlePreview(item.link)}
-                            className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
-                          >
-                            <Eye size={16} />
-                            Lihat
-                          </button>
-                          <Link
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            passHref
-                          >
-                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
-                              <Download size={16} />
-                              Unduh
-                            </button>
-                          </Link>
+                        <div>
+                          <span className="bg-blue-200 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
+                            {item.category}
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Tahun {item.year}
+                          </p>
                         </div>
                       </div>
-                      <div className="w-full">
+                      <div className="flex gap-2 self-center flex-shrink-0">
+                        <button
+                          onClick={() => handlePreview(item.link)}
+                          className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
+                        >
+                          <Eye size={16} />
+                          Lihat
+                        </button>
+                        <Link
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          passHref
+                        >
+                          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
+                            <Download size={16} />
+                            Unduh
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="w-full pt-2  border-gray-100">
+                      <h3 className="font-semibold text-base text-gray-800 mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm font-normal">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {hukumPages > 1 && (
+                  <div className="flex justify-center gap-2 mt-8">
+                    {Array.from({ length: hukumPages }, (_, i) => (
+                      <button
+                        key={i}
+                        className={`${poppins.className} w-8 h-8 rounded-lg ${
+                          page === i + 1
+                            ? "bg-[#0B4973] text-white"
+                            : "bg-white text-[#0B4973] border border-gray-300"
+                        }`}
+                        onClick={() => setPage(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {tab === "pembangunan" && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {pembangunanItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
+                    >
+                      <div className="relative w-full h-40">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          className="object-cover"
+                        />
+                        <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                          {item.status}
+                        </span>
+                      </div>
+                      <div className="p-4 flex flex-col flex-1">
                         <h3 className="font-semibold text-base text-gray-800 mb-1">
                           {item.title}
                         </h3>
-                        <p className="text-gray-600 text-sm font-normal">
+                        <p className="text-gray-600 text-sm mb-4 flex-1 font-normal">
                           {item.description}
                         </p>
+                        <div className="border-t border-gray-200 pt-3 flex items-center justify-between text-xs text-gray-500 mt-auto">
+                          <span className="font-semibold">
+                            Anggaran: <b>{item.budget}</b>
+                          </span>
+                          <span className="font-semibold">{item.year}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
-                  {hukumPages > 1 && (
-                    <div className="flex justify-center gap-2 mt-8">
-                      {Array.from({ length: hukumPages }, (_, i) => (
-                        <button
-                          key={i}
-                          className={`${poppins.className} w-8 h-8 rounded-lg ${
-                            page === i + 1
-                              ? "bg-[#0B4973] text-white"
-                              : "bg-white text-[#0B4973] border border-gray-300"
-                          }`}
-                          onClick={() => setPage(i + 1)}
-                        >
-                          {i + 1}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
-              )}
-
-              {tab === "pembangunan" && (
-                <div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pembangunanItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
+                {pembangunanPages > 1 && (
+                  <div className="flex justify-center gap-2 mt-8">
+                    {Array.from({ length: pembangunanPages }, (_, i) => (
+                      <button
+                        key={i}
+                        className={`${poppins.className} w-8 h-8 rounded-lg ${
+                          page === i + 1
+                            ? "bg-[#0B4973] text-white"
+                            : "bg-white text-[#0B4973] border border-gray-300"
+                        }`}
+                        onClick={() => setPage(i + 1)}
                       >
-                        <div className="relative w-full h-40">
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            fill
-                            className="object-cover"
-                          />
-                          <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                            {item.status}
-                          </span>
-                        </div>
-                        <div className="p-4 flex flex-col flex-1">
-                          <h3 className="font-semibold text-base text-gray-800 mb-1">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-4 flex-1 font-normal">
-                            {item.description}
-                          </p>
-                          <div className="border-t border-gray-200 pt-3 flex items-center justify-between text-xs text-gray-500 mt-auto">
-                            <span className="font-semibold">
-                              Anggaran: <b>{item.budget}</b>
-                            </span>
-                            <span className="font-semibold">{item.year}</span>
-                          </div>
-                        </div>
-                      </div>
+                        {i + 1}
+                      </button>
                     ))}
                   </div>
-                  {pembangunanPages > 1 && (
-                    <div className="flex justify-center gap-2 mt-8">
-                      {Array.from({ length: pembangunanPages }, (_, i) => (
-                        <button
-                          key={i}
-                          className={`${poppins.className} w-8 h-8 rounded-lg ${
-                            page === i + 1
-                              ? "bg-[#0B4973] text-white"
-                              : "bg-white text-[#0B4973] border border-gray-300"
-                          }`}
-                          onClick={() => setPage(i + 1)}
-                        >
-                          {i + 1}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </div>
+            )}
+          </>
         </div>
       </section>
     </main>
