@@ -7,7 +7,12 @@ interface CardProps {
   imageUrl: string;
 }
 
-export default function Card({ name, title, description, imageUrl }: CardProps) {
+export default function Card({
+  name,
+  title,
+  description,
+  imageUrl,
+}: CardProps) {
   return (
     <div className="bg-white shadow-md rounded-lg pt-10 pb-6 px-6 w-full max-w-xs flex flex-col items-center text-center relative">
       <div className="w-32 h-32 relative z-10 -mb-5">
@@ -24,7 +29,8 @@ export default function Card({ name, title, description, imageUrl }: CardProps) 
       </span>
 
       <h3 className="text-lg font-semibold">{name}</h3>
-      <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">
+      {/* Menambahkan kelas untuk word-break dan text-center */}
+      <p className="text-sm text-gray-600 mt-2 whitespace-pre-line break-words text-center">
         {description}
       </p>
     </div>

@@ -57,12 +57,14 @@ const ProdukHukumModal = ({
   onSubmit,
   data,
   setData,
+  isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (e: FormEvent) => void;
   data: Partial<ProdukHukum>;
   setData: (data: Partial<ProdukHukum>) => void;
+  isSaving: boolean;
 }) => {
   const handleChange = (name: string, value: string | number) => {
     setData({ ...data, [name]: name === "year" ? Number(value) : value });
@@ -84,6 +86,7 @@ const ProdukHukumModal = ({
               value={data.title || ""}
               onChange={(e) => handleChange("title", e.target.value)}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -93,6 +96,7 @@ const ProdukHukumModal = ({
               value={data.description || ""}
               onChange={(e) => handleChange("description", e.target.value)}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -102,6 +106,7 @@ const ProdukHukumModal = ({
               value={data.link || ""}
               onChange={(e) => handleChange("link", e.target.value)}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -113,6 +118,7 @@ const ProdukHukumModal = ({
                 value={data.year || new Date().getFullYear()}
                 onChange={(e) => handleChange("year", e.target.value)}
                 required
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -120,6 +126,7 @@ const ProdukHukumModal = ({
               <Select
                 value={data.category || "Perdes"}
                 onValueChange={(value) => handleChange("category", value)}
+                disabled={isSaving}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -132,12 +139,21 @@ const ProdukHukumModal = ({
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               Batal
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Simpan
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>
@@ -153,6 +169,7 @@ const PembangunanModal = ({
   data,
   setData,
   setImageFile,
+  isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -161,6 +178,7 @@ const PembangunanModal = ({
   setData: (data: Partial<Pembangunan>) => void;
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
+  isSaving: boolean;
 }) => {
   const handleChange = (name: string, value: string | number) => {
     setData({ ...data, [name]: name === "year" ? Number(value) : value });
@@ -186,6 +204,7 @@ const PembangunanModal = ({
               value={data.title || ""}
               onChange={(e) => handleChange("title", e.target.value)}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -195,6 +214,7 @@ const PembangunanModal = ({
               value={data.description || ""}
               onChange={(e) => handleChange("description", e.target.value)}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -219,6 +239,7 @@ const PembangunanModal = ({
               onChange={handleFileChange}
               accept="image/*"
               required={!data.id}
+              disabled={isSaving}
             />
             <p className="text-sm text-muted-foreground">
               {data.id
@@ -234,6 +255,7 @@ const PembangunanModal = ({
               onChange={(e) => handleChange("budget", e.target.value)}
               placeholder="Rp 150.000.000"
               required
+              disabled={isSaving}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -245,6 +267,7 @@ const PembangunanModal = ({
                 value={data.year || new Date().getFullYear()}
                 onChange={(e) => handleChange("year", e.target.value)}
                 required
+                disabled={isSaving}
               />
             </div>
             <div className="space-y-2">
@@ -252,6 +275,7 @@ const PembangunanModal = ({
               <Select
                 value={data.status || "Selesai"}
                 onValueChange={(value) => handleChange("status", value)}
+                disabled={isSaving}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -265,12 +289,21 @@ const PembangunanModal = ({
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               Batal
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Simpan
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>
@@ -305,6 +338,8 @@ export default function ManageProdukPage() {
     action: () => void;
     message: string;
   } | null>(null);
+  const [isHukumSaving, setIsHukumSaving] = useState(false);
+  const [isPembangunanSaving, setIsPembangunanSaving] = useState(false);
 
   // Filter & Pagination states for Produk Hukum
   const [hukumCurrentPage, setHukumCurrentPage] = useState(1);
@@ -417,17 +452,24 @@ export default function ManageProdukPage() {
 
   const handleSaveHukum = async (e: FormEvent) => {
     e.preventDefault();
-    const method = editingHukum.id ? "PUT" : "POST";
-    await fetch("/api/produk-hukum", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...editingHukum,
-        id: editingHukum.id || undefined,
-      }),
-    });
-    setIsHukumModalOpen(false);
-    fetchAllData();
+    setIsHukumSaving(true);
+    try {
+      const method = editingHukum.id ? "PUT" : "POST";
+      await fetch("/api/produk-hukum", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...editingHukum,
+          id: editingHukum.id || undefined,
+        }),
+      });
+      setIsHukumModalOpen(false);
+      fetchAllData();
+    } catch (error) {
+      console.error("Gagal menyimpan produk hukum:", error);
+    } finally {
+      setIsHukumSaving(false);
+    }
   };
 
   const handleDeleteHukum = (id: string) => {
@@ -455,17 +497,24 @@ export default function ManageProdukPage() {
 
   const handleSavePembangunan = async (e: FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.entries(editingPembangunan).forEach(([key, value]) =>
-      formData.append(key, String(value))
-    );
-    if (pembangunanImageFile)
-      formData.append("imageFile", pembangunanImageFile);
+    setIsPembangunanSaving(true);
+    try {
+      const formData = new FormData();
+      Object.entries(editingPembangunan).forEach(([key, value]) =>
+        formData.append(key, String(value))
+      );
+      if (pembangunanImageFile)
+        formData.append("imageFile", pembangunanImageFile);
 
-    const method = editingPembangunan.id ? "PUT" : "POST";
-    await fetch("/api/pembangunan", { method, body: formData });
-    setIsPembangunanModalOpen(false);
-    fetchAllData();
+      const method = editingPembangunan.id ? "PUT" : "POST";
+      await fetch("/api/pembangunan", { method, body: formData });
+      setIsPembangunanModalOpen(false);
+      fetchAllData();
+    } catch (error) {
+      console.error("Gagal menyimpan pembangunan:", error);
+    } finally {
+      setIsPembangunanSaving(false);
+    }
   };
 
   const handleDeletePembangunan = (id: string) => {
@@ -540,6 +589,7 @@ export default function ManageProdukPage() {
         onSubmit={handleSaveHukum}
         data={editingHukum}
         setData={setEditingHukum}
+        isSaving={isHukumSaving}
       />
       <PembangunanModal
         isOpen={isPembangunanModalOpen}
@@ -549,6 +599,7 @@ export default function ManageProdukPage() {
         setData={setEditingPembangunan}
         imageFile={pembangunanImageFile}
         setImageFile={setPembangunanImageFile}
+        isSaving={isPembangunanSaving}
       />
 
       <PageHeader

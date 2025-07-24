@@ -57,6 +57,7 @@ const UsahaFormModal = ({
   usaha,
   setUsaha,
   setImageFile,
+  isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -65,6 +66,7 @@ const UsahaFormModal = ({
   setUsaha: (data: Partial<Usaha>) => void;
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
+  isSaving: boolean;
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -96,6 +98,7 @@ const UsahaFormModal = ({
               value={usaha.title || ""}
               onChange={handleChange}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -107,6 +110,7 @@ const UsahaFormModal = ({
               onChange={handleChange}
               rows={4}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -118,6 +122,7 @@ const UsahaFormModal = ({
               onChange={handleChange}
               placeholder="62812..."
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -143,6 +148,7 @@ const UsahaFormModal = ({
               onChange={handleFileChange}
               accept="image/png, image/jpeg, image/jpg"
               required={!usaha.id}
+              disabled={isSaving}
             />
             <p className="text-sm text-muted-foreground">
               {usaha.id
@@ -158,15 +164,25 @@ const UsahaFormModal = ({
               value={usaha.maps || ""}
               onChange={handleChange}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               Batal
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Simpan
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>
@@ -188,6 +204,7 @@ export default function ManageUsahaDesaPage() {
     message: string;
   } | null>(null);
   const [isSavingPage, setIsSavingPage] = useState(false);
+  const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Filter and Pagination State
@@ -254,28 +271,38 @@ export default function ManageUsahaDesaPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", editingUsaha.title || "");
-    formData.append("description", editingUsaha.description || "");
-    formData.append("phone", editingUsaha.phone || "");
-    formData.append("maps", editingUsaha.maps || "");
+    setIsModalSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editingUsaha.title || "");
+      formData.append("description", editingUsaha.description || "");
+      formData.append("phone", editingUsaha.phone || "");
+      formData.append("maps", editingUsaha.maps || "");
 
-    if (editingUsaha.id) {
-      formData.append("id", editingUsaha.id);
-    }
-    if (imageFile) {
-      formData.append("imageFile", imageFile);
-    }
+      if (editingUsaha.id) {
+        formData.append("id", editingUsaha.id);
+      }
+      if (imageFile) {
+        formData.append("imageFile", imageFile);
+      }
 
-    const method = editingUsaha.id ? "PUT" : "POST";
-    const response = await fetch("/api/usaha-desa", { method, body: formData });
+      const method = editingUsaha.id ? "PUT" : "POST";
+      const response = await fetch("/api/usaha-desa", {
+        method,
+        body: formData,
+      });
 
-    if (response.ok) {
-      handleCloseModal();
-      fetchData();
-    } else {
-      const errorData = await response.json();
-      alert(`Gagal menyimpan data: ${errorData.error}`);
+      if (response.ok) {
+        handleCloseModal();
+        fetchData();
+      } else {
+        const errorData = await response.json();
+        alert(`Gagal menyimpan data: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Gagal submit:", error);
+    } finally {
+      setIsModalSaving(false);
     }
   };
 
@@ -344,6 +371,7 @@ export default function ManageUsahaDesaPage() {
         setUsaha={setEditingUsaha}
         imageFile={imageFile}
         setImageFile={setImageFile}
+        isSaving={isModalSaving}
       />
 
       <PageHeader

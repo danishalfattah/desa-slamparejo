@@ -34,6 +34,7 @@ const PerangkatFormModal = ({
   perangkat,
   setPerangkat,
   setImageFile,
+  isSaving, // Tambahkan prop isSaving
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -42,6 +43,7 @@ const PerangkatFormModal = ({
   setPerangkat: (data: Partial<PerangkatDesa>) => void;
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
+  isSaving: boolean; // Tambahkan tipe untuk isSaving
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -73,6 +75,7 @@ const PerangkatFormModal = ({
               value={perangkat.name || ""}
               onChange={handleChange}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -83,6 +86,7 @@ const PerangkatFormModal = ({
               value={perangkat.title || ""}
               onChange={handleChange}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -94,6 +98,7 @@ const PerangkatFormModal = ({
               onChange={handleChange}
               rows={4}
               required
+              disabled={isSaving}
             />
           </div>
           <div className="space-y-2">
@@ -119,6 +124,7 @@ const PerangkatFormModal = ({
               onChange={handleFileChange}
               accept="image/png, image/jpeg, image/jpg"
               required={!perangkat.id}
+              disabled={isSaving}
             />
             <p className="text-sm text-muted-foreground">
               {perangkat.id
@@ -127,12 +133,21 @@ const PerangkatFormModal = ({
             </p>
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
               Batal
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Simpan
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>
@@ -156,6 +171,7 @@ export default function ManagePerangkatDesaPage() {
     message: string;
   } | null>(null);
   const [isSavingPage, setIsSavingPage] = useState(false);
+  const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const fetchData = async () => {
@@ -204,30 +220,37 @@ export default function ManagePerangkatDesaPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", editingPerangkat.name || "");
-    formData.append("title", editingPerangkat.title || "");
-    formData.append("description", editingPerangkat.description || "");
+    setIsModalSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", editingPerangkat.name || "");
+      formData.append("title", editingPerangkat.title || "");
+      formData.append("description", editingPerangkat.description || "");
 
-    if (editingPerangkat.id) {
-      formData.append("id", editingPerangkat.id);
-    }
-    if (imageFile) {
-      formData.append("imageFile", imageFile);
-    }
+      if (editingPerangkat.id) {
+        formData.append("id", editingPerangkat.id);
+      }
+      if (imageFile) {
+        formData.append("imageFile", imageFile);
+      }
 
-    const method = editingPerangkat.id ? "PUT" : "POST";
-    const response = await fetch("/api/perangkat-desa", {
-      method,
-      body: formData,
-    });
+      const method = editingPerangkat.id ? "PUT" : "POST";
+      const response = await fetch("/api/perangkat-desa", {
+        method,
+        body: formData,
+      });
 
-    if (response.ok) {
-      handleCloseModal();
-      fetchData();
-    } else {
-      const errorData = await response.json();
-      alert(`Gagal menyimpan data: ${errorData.error}`);
+      if (response.ok) {
+        handleCloseModal();
+        fetchData();
+      } else {
+        const errorData = await response.json();
+        alert(`Gagal menyimpan data: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Gagal submit:", error);
+    } finally {
+      setIsModalSaving(false);
     }
   };
 
@@ -296,6 +319,7 @@ export default function ManagePerangkatDesaPage() {
         setPerangkat={setEditingPerangkat}
         imageFile={imageFile}
         setImageFile={setImageFile}
+        isSaving={isModalSaving}
       />
 
       <PageHeader

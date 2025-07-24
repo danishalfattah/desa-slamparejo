@@ -112,7 +112,7 @@ export default function KontakPage() {
         </div>
       </div>
 
-      <section className="bg-[#F9FEFF] py-12 px-4 md:px-0">
+      <section className="bg-[#F9FCFC] py-12 px-4 md:px-0">
         <div className="max-w-7xl md:mx-auto">
           <div className="flex flex-wrap md:flex-row flex-col md:justify-around items-center">
             <Card

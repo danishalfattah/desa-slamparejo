@@ -3,7 +3,7 @@ import { Beranda } from "@/lib/types";
 
 export default function Launching({ data }: { data: Beranda["launching"] }) {
   return (
-    <section className="w-full flex flex-col items-center justify-center p-4 md:py-12">
+    <section className="w-full flex bg-[#F9FCFC] flex-col items-center justify-center p-4 md:py-12">
       <div className="relative w-full max-w-6xl aspect-video rounded-xl shadow-2xl overflow-hidden">
         <Image
           // UBAH BARIS INI

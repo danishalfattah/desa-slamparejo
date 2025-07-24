@@ -57,6 +57,9 @@ export async function GET() {
     const perangkatDocs = await getDocs(perangkatQuery);
     const perangkatList = perangkatDocs.docs.map((doc) => ({ ...(doc.data() as Omit<PerangkatDesa, 'id'>), id: doc.id }));
 
+    // Mengurutkan data berdasarkan waktu pembuatan (data lama di atas)
+    perangkatList.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+
     // Get page content
     const pageDocRef = doc(db, PAGE_CONTENT_COLLECTION_NAME, PAGE_CONTENT_DOCUMENT_ID);
     const pageDocSnap = await getDoc_(pageDocRef);
@@ -90,6 +93,7 @@ export async function POST(request: Request) {
             name: formData.get('name') as string,
             title: formData.get('title') as string,
             description: formData.get('description') as string,
+            createdAt: Date.now(), // Menambahkan timestamp saat data dibuat
         };
 
         const docRef = await addDoc(collection(db, PERANGKAT_COLLECTION_NAME), { ...newData, imageUrl });
@@ -110,7 +114,7 @@ export async function PUT(request: Request) {
         const file = formData.get('imageFile') as File | null;
         const imageUrl = await handleFileUpload(file);
         
-        const dataToUpdate: Omit<PerangkatDesa, 'id' | 'imageUrl'> = {
+        const dataToUpdate: Partial<Omit<PerangkatDesa, 'id' | 'imageUrl'>> = {
             name: formData.get('name') as string,
             title: formData.get('title') as string,
             description: formData.get('description') as string,

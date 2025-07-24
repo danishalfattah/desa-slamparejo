@@ -13,6 +13,7 @@ export interface PerangkatDesa {
   title: string;
   imageUrl: string;
   description: string;
+  createdAt?: number; // Ditambahkan untuk pengurutan
 }
 
 export interface ProdukHukum {
