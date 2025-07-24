@@ -14,11 +14,13 @@ async function getLayananData(): Promise<Layanan | null> {
   }
 }
 
-export default async function FormPage({
-  params,
-}: {
+// Definisikan tipe props secara eksplisit
+type Props = {
   params: { formId: string };
-}) {
+};
+
+// Gunakan tipe Props yang sudah didefinisikan
+export default async function FormPage({ params }: Props) {
   const data = await getLayananData();
   const form = data?.forms.find((f: LayananForm) => f.id === params.formId);
 
