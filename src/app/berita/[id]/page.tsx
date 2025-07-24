@@ -25,18 +25,18 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
   }
 }
 
-// Definisikan tipe untuk props halaman secara eksplisit
+// Definisikan tipe untuk props halaman, dengan params sebagai Promise
 type BeritaDetailPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export default async function BeritaDetailPage({
   params,
 }: BeritaDetailPageProps) {
-  // Ambil id dari params (objek biasa, bukan promise)
-  const { id } = params;
+  // Gunakan await untuk mendapatkan nilai dari promise params
+  const { id } = await params;
 
   // Gunakan id untuk mengambil data berita
   const berita = await getBeritaDetail(id);
