@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, type ChangeEvent } from "react";
-import type { Kontak } from "@/lib/types";
+import type { Kontak, JamOperasionalItem } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Save, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export default function ManageKontakPage() {
   const [data, setData] = useState<Partial<Kontak>>({});
@@ -47,6 +48,16 @@ export default function ManageKontakPage() {
     } else {
       setData((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleJamOperasionalChange = (
+    index: number,
+    field: keyof JamOperasionalItem,
+    value: string | boolean
+  ) => {
+    const updatedJam = [...(data.jamOperasional || [])];
+    updatedJam[index] = { ...updatedJam[index], [field]: value };
+    setData((prev) => ({ ...prev, jamOperasional: updatedJam }));
   };
 
   const handleSave = async () => {
@@ -233,6 +244,51 @@ export default function ManageKontakPage() {
                 onChange={(e) => handleChange(e, "lokasi", "mapUrl")}
               />
             </div>
+          </div>
+        </DataCard>
+
+        <DataCard
+          title="Jam Operasional"
+          description="Atur jadwal layanan kantor desa"
+        >
+          <div className="space-y-4">
+            {(data.jamOperasional || []).map((item, index) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-3 items-center gap-4 p-2 border rounded-md"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor={`hari-${index}`}>Hari</Label>
+                  <Input
+                    id={`hari-${index}`}
+                    value={item.hari}
+                    onChange={(e) =>
+                      handleJamOperasionalChange(index, "hari", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`jam-${index}`}>Jam</Label>
+                  <Input
+                    id={`jam-${index}`}
+                    value={item.jam}
+                    onChange={(e) =>
+                      handleJamOperasionalChange(index, "jam", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex items-center space-x-2 pt-6">
+                  <Switch
+                    id={`isLibur-${index}`}
+                    checked={item.isLibur}
+                    onCheckedChange={(checked) =>
+                      handleJamOperasionalChange(index, "isLibur", checked)
+                    }
+                  />
+                  <Label htmlFor={`isLibur-${index}`}>Libur</Label>
+                </div>
+              </div>
+            ))}
           </div>
         </DataCard>
       </div>

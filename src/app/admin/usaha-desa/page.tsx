@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import type { Usaha, UsahaDesaPageData } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
@@ -23,7 +29,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  Loader2,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { DataCard } from "@/components/admin/data-card";
 import { SuccessModal } from "@/components/admin/success-modal";
 
@@ -167,6 +190,11 @@ export default function ManageUsahaDesaPage() {
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // Filter and Pagination State
+  const [filter, setFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -184,6 +212,19 @@ export default function ManageUsahaDesaPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const filteredUsaha = useMemo(() => {
+    return usahaList.filter((usaha) =>
+      usaha.title.toLowerCase().includes(filter.toLowerCase())
+    );
+  }, [usahaList, filter]);
+
+  const paginatedUsaha = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredUsaha.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredUsaha, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredUsaha.length / itemsPerPage);
 
   const handleOpenModal = (usaha?: Usaha) => {
     setEditingUsaha(usaha || {});
@@ -383,7 +424,16 @@ export default function ManageUsahaDesaPage() {
       </DataCard>
 
       <DataCard title="Daftar Usaha (UMKM)">
-        <div className="flex justify-end">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <Input
+            placeholder="Cari nama usaha..."
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="max-w-xs"
+          />
           <Button onClick={() => handleOpenModal()}>
             <Plus className="h-4 w-4 mr-2" />
             Tambah Usaha Baru
@@ -400,7 +450,7 @@ export default function ManageUsahaDesaPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {usahaList.map((usaha) => (
+              {paginatedUsaha.map((usaha) => (
                 <TableRow key={usaha.id}>
                   <TableCell className="font-medium">{usaha.title}</TableCell>
                   <TableCell className="max-w-xs truncate">
@@ -429,12 +479,66 @@ export default function ManageUsahaDesaPage() {
               ))}
             </TableBody>
           </Table>
-          {usahaList.length === 0 && (
+          {paginatedUsaha.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
-              {`Belum ada data usaha. Klik tombol "Tambah Usaha Baru" untuk
-                menambahkan.`}
+              {`Tidak ada data yang cocok dengan filter.`}
             </div>
           )}
+        </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+          <Select
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => {
+              setItemsPerPage(Number(value));
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10 per halaman</SelectItem>
+              <SelectItem value="50">50 per halaman</SelectItem>
+              <SelectItem value="100">100 per halaman</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm">
+              Halaman {currentPage} dari {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </DataCard>
     </div>

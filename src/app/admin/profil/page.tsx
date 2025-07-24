@@ -24,7 +24,36 @@ export default function ManageProfilPage() {
       setIsLoading(true);
       try {
         const response = await fetch("/api/profil-desa");
-        if (response.ok) setData(await response.json());
+        if (response.ok) {
+          const fetchedData = await response.json();
+          // Membersihkan data demografi dari unit sebelum ditampilkan di form
+          const cleanedData = {
+            ...fetchedData,
+            demografi: {
+              ...fetchedData.demografi,
+              totalPenduduk: (
+                fetchedData.demografi.totalPenduduk || ""
+              ).replace(/\D/g, ""),
+              lakiLaki: (fetchedData.demografi.lakiLaki || "").replace(
+                /\D/g,
+                ""
+              ),
+              perempuan: (fetchedData.demografi.perempuan || "").replace(
+                /\D/g,
+                ""
+              ),
+              tabelData: (fetchedData.demografi.tabelData || []).map(
+                (row: DemografiRow) => ({
+                  ...row,
+                  rt: (row.rt || "").replace(/\D/g, ""),
+                  rw: (row.rw || "").replace(/\D/g, ""),
+                  penduduk: (row.penduduk || "").replace(/\D/g, ""),
+                })
+              ),
+            },
+          };
+          setData(cleanedData);
+        }
       } catch (error) {
         console.error("Gagal mengambil data profil:", error);
       } finally {
@@ -66,10 +95,26 @@ export default function ManageProfilPage() {
     setIsSaving(true);
     const formData = new FormData();
 
-    // Hapus heroImage dari data JSON sebelum dikirim
-    const { hero, ...restData } = data;
+    // Menambahkan kembali unit sebelum menyimpan
+    const { hero, demografi, ...restData } = data;
+    const formattedDemografi = demografi
+      ? {
+          ...demografi,
+          totalPenduduk: `${demografi.totalPenduduk || ""} JIWA`,
+          lakiLaki: `${demografi.lakiLaki || ""} JIWA`,
+          perempuan: `${demografi.perempuan || ""} JIWA`,
+          tabelData: (demografi.tabelData || []).map((row) => ({
+            ...row,
+            rt: `${row.rt} RT`,
+            rw: `${row.rw} RW`,
+            penduduk: `${row.penduduk} JIWA`,
+          })),
+        }
+      : undefined;
+
     const jsonData = {
       hero: { subtitle: hero?.subtitle },
+      demografi: formattedDemografi,
       ...restData,
     };
 
@@ -87,11 +132,35 @@ export default function ManageProfilPage() {
       if (response.ok) {
         setShowModal(true);
         setHeroImageFile(null); // Reset file input
-        // Re-fetch data to show the new image
-        const freshData = await fetch("/api/profil-desa").then((res) =>
-          res.json()
-        );
-        setData(freshData);
+        // Re-fetch data to show the new image and cleaned data
+        const freshResponse = await fetch("/api/profil-desa");
+        if (freshResponse.ok) {
+          const freshData = await freshResponse.json();
+          const cleanedData = {
+            ...freshData,
+            demografi: {
+              ...freshData.demografi,
+              totalPenduduk: (freshData.demografi.totalPenduduk || "").replace(
+                /\D/g,
+                ""
+              ),
+              lakiLaki: (freshData.demografi.lakiLaki || "").replace(/\D/g, ""),
+              perempuan: (freshData.demografi.perempuan || "").replace(
+                /\D/g,
+                ""
+              ),
+              tabelData: (freshData.demografi.tabelData || []).map(
+                (row: DemografiRow) => ({
+                  ...row,
+                  rt: (row.rt || "").replace(/\D/g, ""),
+                  rw: (row.rw || "").replace(/\D/g, ""),
+                  penduduk: (row.penduduk || "").replace(/\D/g, ""),
+                })
+              ),
+            },
+          };
+          setData(cleanedData);
+        }
       } else {
         alert("Gagal menyimpan data.");
       }
@@ -196,7 +265,6 @@ export default function ManageProfilPage() {
               onChange={(e) =>
                 handleNestedChange("video", "url", e.target.value)
               }
-              placeholder="https://www.youtube.com/watch?v=..."
             />
             <p className="text-sm text-muted-foreground">
               Masukkan link YouTube untuk video profil desa yang akan
@@ -272,7 +340,6 @@ export default function ManageProfilPage() {
                 onChange={(e) =>
                   handleNestedChange("demografi", "petaUrl", e.target.value)
                 }
-                placeholder="https://www.google.com/maps/embed?pb=..."
               />
               <p className="text-sm text-muted-foreground">
                 Masukkan link embed Google Maps untuk menampilkan peta lokasi
@@ -284,7 +351,7 @@ export default function ManageProfilPage() {
                 <Label htmlFor="total-penduduk">Total Penduduk</Label>
                 <Input
                   id="total-penduduk"
-                  type="text"
+                  type="number"
                   value={data.demografi?.totalPenduduk || ""}
                   onChange={(e) =>
                     handleNestedChange(
@@ -293,31 +360,28 @@ export default function ManageProfilPage() {
                       e.target.value
                     )
                   }
-                  placeholder="5.982 JIWA"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="laki-laki">Laki-laki</Label>
                 <Input
                   id="laki-laki"
-                  type="text"
+                  type="number"
                   value={data.demografi?.lakiLaki || ""}
                   onChange={(e) =>
                     handleNestedChange("demografi", "lakiLaki", e.target.value)
                   }
-                  placeholder="2.991 JIWA"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="perempuan">Perempuan</Label>
                 <Input
                   id="perempuan"
-                  type="text"
+                  type="number"
                   value={data.demografi?.perempuan || ""}
                   onChange={(e) =>
                     handleNestedChange("demografi", "perempuan", e.target.value)
                   }
-                  placeholder="2.991 JIWA"
                 />
               </div>
             </div>
@@ -344,7 +408,6 @@ export default function ManageProfilPage() {
                               e.target.value
                             )
                           }
-                          placeholder="Contoh: Krajan"
                         />
                       </div>
                       <div className="space-y-2">
@@ -353,6 +416,7 @@ export default function ManageProfilPage() {
                         </Label>
                         <Input
                           id={`penduduk-${index}`}
+                          type="number"
                           value={row.penduduk}
                           onChange={(e) =>
                             handleDemografiTableChange(
@@ -361,13 +425,13 @@ export default function ManageProfilPage() {
                               e.target.value
                             )
                           }
-                          placeholder="Contoh: 2.991 JIWA"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor={`rt-${index}`}>Jumlah RT</Label>
                         <Input
                           id={`rt-${index}`}
+                          type="number"
                           value={row.rt}
                           onChange={(e) =>
                             handleDemografiTableChange(
@@ -376,13 +440,13 @@ export default function ManageProfilPage() {
                               e.target.value
                             )
                           }
-                          placeholder="Contoh: 17 RT"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor={`rw-${index}`}>Jumlah RW</Label>
                         <Input
                           id={`rw-${index}`}
+                          type="number"
                           value={row.rw}
                           onChange={(e) =>
                             handleDemografiTableChange(
@@ -391,7 +455,6 @@ export default function ManageProfilPage() {
                               e.target.value
                             )
                           }
-                          placeholder="Contoh: 2 RW"
                         />
                       </div>
                     </div>

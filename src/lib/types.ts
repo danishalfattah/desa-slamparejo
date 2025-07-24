@@ -97,6 +97,13 @@ export interface Profil {
   };
 }
 
+export interface JamOperasionalItem {
+  id: string;
+  hari: string;
+  jam: string;
+  isLibur: boolean;
+}
+
 export interface Kontak {
   hero: {
     subtitle: string;
@@ -111,6 +118,14 @@ export interface Kontak {
     address: string;
     mapUrl: string;
   };
+  jamOperasional: JamOperasionalItem[];
+}
+
+export interface LayananForm {
+  id: string;
+  title: string;
+  description: string;
+  link: string;
 }
 
 export interface Layanan {
@@ -118,8 +133,13 @@ export interface Layanan {
     subtitle: string;
     heroImage?: string;
   };
-  formLink: string;
+  akses: {
+    title: string;
+    description: string;
+  };
+  forms: LayananForm[];
 }
+
 
 export interface PerangkatDesaPageData {
   hero: {

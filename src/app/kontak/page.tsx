@@ -1,3 +1,5 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Phone, Mail, Instagram } from "lucide-react";
@@ -11,21 +13,31 @@ const playfair = Playfair_Display({
 });
 const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
-async function getKontakData(): Promise<Kontak | null> {
-  try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/kontak`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch (error) {
-    console.error("Gagal mengambil data kontak:", error);
-    return null;
-  }
-}
+export default function KontakPage() {
+  const [data, setData] = useState<Kontak | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-export default async function KontakPage() {
-  const data = await getKontakData();
+  useEffect(() => {
+    async function getKontakData() {
+      try {
+        const res = await fetch("/api/kontak");
+        if (res.ok) {
+          setData(await res.json());
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data kontak:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getKontakData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">Memuat...</div>
+    );
+  }
 
   if (!data) {
     return (
@@ -149,14 +161,14 @@ export default async function KontakPage() {
             </p>
           </div>
           <div className="shadow-lg grid grid-cols-1 gap-y-6 max-w-4xl mx-auto rounded-xl p-6 md:p-10">
-            <HourEntry
-              type={false}
-              days="Senin - Kamis"
-              hours="08:00 - 15:30 WIB"
-            />
-            <HourEntry type={true} days="Sabtu - Minggu" hours="Tutup" />
-            <HourEntry type={false} days="Jumat" hours="08:00 - 11:30 WIB" />
-            <HourEntry type={true} days="Hari Libur Nasional" hours="Tutup" />
+            {(data.jamOperasional || []).map((item) => (
+              <HourEntry
+                key={item.id}
+                type={item.isLibur}
+                days={item.hari}
+                hours={item.jam}
+              />
+            ))}
           </div>
         </div>
       </section>

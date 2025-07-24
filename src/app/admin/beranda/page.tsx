@@ -439,7 +439,7 @@ export default function ManageBerandaPage() {
             <div className="space-y-3">
               {(data.faq || []).map((item) => (
                 <Card key={item.id}>
-                  <CardContent className="pt-4">
+                  <CardContent>
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1 space-y-1">
                         <h4 className="font-medium">{item.question}</h4>

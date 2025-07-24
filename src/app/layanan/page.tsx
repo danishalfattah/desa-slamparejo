@@ -1,7 +1,16 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Layanan } from "@/lib/types";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -9,22 +18,31 @@ const playfair = Playfair_Display({
 });
 const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
-// Fungsi untuk mengambil data dari server-side
-async function getLayananData(): Promise<Layanan | null> {
-  try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/layanan`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch (error) {
-    console.error("Gagal mengambil data layanan:", error);
-    return null;
-  }
-}
+export default function LayananPage() {
+  const [data, setData] = useState<Layanan | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-export default async function LayananPage() {
-  const data = await getLayananData();
+  useEffect(() => {
+    async function getLayananData() {
+      try {
+        const res = await fetch("/api/layanan");
+        if (res.ok) {
+          setData(await res.json());
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data layanan:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getLayananData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">Memuat...</div>
+    );
+  }
 
   if (!data) {
     return (
@@ -83,47 +101,71 @@ export default async function LayananPage() {
             <h2
               className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
             >
-              Akses Layanan
+              {data.akses?.title || "Akses Layanan"}
             </h2>
             <p
-              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}
+              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed whitespace-pre-line`}
             >
-              Pilih layanan yang anda butuhkan, <br />
-              Pengajuan akan di proses secara online melalui formulir resmi
+              {data.akses?.description ||
+                "Pilih layanan yang anda butuhkan, Pengajuan akan di proses secara online melalui formulir resmi"}
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-6">
-            <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
-              <div className="mb-2">
-                <h3
-                  className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
-                >
-                  Kuesioner Survei Kepuasan Masyarakat
-                </h3>
-                <p className={`${poppins.className} text-gray-700 text-sm`}>
-                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh
-                  perangkat desa sebagai bentuk perbaikan dan keterbukaan.
-                </p>
-              </div>
-              <Link
-                href="/layanan/kepuasan-masyarakat"
-                rel="noopener noreferrer"
-                className="mt-auto"
-                passHref
+          <div className="w-full max-w-md mx-auto">
+            {data.forms && data.forms.length > 0 ? (
+              <Carousel
+                opts={{ align: "start", loop: data.forms.length > 1 }}
+                className="w-full"
               >
-                <button
-                  type="button"
-                  className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                >
-                  Kirim Formulir
-                </button>
-              </Link>
-            </div>
+                <CarouselContent>
+                  {data.forms.map((form) => (
+                    <CarouselItem key={form.id}>
+                      <div className="p-1">
+                        <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-h-[220px]">
+                          <div>
+                            <h3
+                              className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
+                            >
+                              {form.title}
+                            </h3>
+                            <p
+                              className={`${poppins.className} text-gray-700 text-sm`}
+                            >
+                              {form.description}
+                            </p>
+                          </div>
+                          <Link
+                            href={`/layanan/${form.id}`}
+                            className="mt-4"
+                            passHref
+                          >
+                            <button
+                              type="button"
+                              className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                            >
+                              Isi Formulir
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {data.forms.length > 1 && (
+                  <>
+                    <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+                  </>
+                )}
+              </Carousel>
+            ) : (
+              <div className="bg-white rounded-xl shadow p-6 text-center">
+                <p>Belum ada layanan yang tersedia.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* ... Sisa section (info proses cepat, aman, terpercaya) tidak berubah ... */}
       <section className="bg-white py-10 px-4 md:px-0">
         <div
           className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}

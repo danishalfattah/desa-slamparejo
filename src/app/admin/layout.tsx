@@ -4,12 +4,8 @@ import { AdminLayoutClient } from "@/components/admin/admin-layout-client";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id">
-      <body>
-        <SessionProviderWrapper>
-          <AdminLayoutClient>{children}</AdminLayoutClient>
-        </SessionProviderWrapper>
-      </body>
-    </html>
+    <SessionProviderWrapper>
+      <AdminLayoutClient>{children}</AdminLayoutClient>
+    </SessionProviderWrapper>
   );
 }

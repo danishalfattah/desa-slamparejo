@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import type { ProdukHukum, Pembangunan, ProdukPageData } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
@@ -32,7 +38,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  Loader2,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { SuccessModal } from "@/components/admin/success-modal";
 
 const ProdukHukumModal = ({
@@ -264,17 +280,20 @@ const PembangunanModal = ({
 };
 
 export default function ManageProdukPage() {
+  // Data states
   const [produkHukum, setProdukHukum] = useState<ProdukHukum[]>([]);
   const [pembangunan, setPembangunan] = useState<Pembangunan[]>([]);
   const [pageData, setPageData] = useState<Partial<ProdukPageData>>({});
-  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+
+  // UI states
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
+  // Modal states
   const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
-
   const [isPembangunanModalOpen, setIsPembangunanModalOpen] = useState(false);
   const [editingPembangunan, setEditingPembangunan] = useState<
     Partial<Pembangunan>
@@ -282,11 +301,22 @@ export default function ManageProdukPage() {
   const [pembangunanImageFile, setPembangunanImageFile] = useState<File | null>(
     null
   );
-
   const [confirmAction, setConfirmAction] = useState<{
     action: () => void;
     message: string;
   } | null>(null);
+
+  // Filter & Pagination states for Produk Hukum
+  const [hukumCurrentPage, setHukumCurrentPage] = useState(1);
+  const [hukumItemsPerPage, setHukumItemsPerPage] = useState(10);
+  const [hukumTahunFilter, setHukumTahunFilter] = useState("all");
+  const [hukumKategoriFilter, setHukumKategoriFilter] = useState("all");
+
+  // Filter & Pagination states for Pembangunan
+  const [pembangunanCurrentPage, setPembangunanCurrentPage] = useState(1);
+  const [pembangunanItemsPerPage, setPembangunanItemsPerPage] = useState(10);
+  const [pembangunanTahunFilter, setPembangunanTahunFilter] = useState("all");
+  const [pembangunanStatusFilter, setPembangunanStatusFilter] = useState("all");
 
   const fetchAllData = async () => {
     setIsLoading(true);
@@ -310,8 +340,78 @@ export default function ManageProdukPage() {
     fetchAllData();
   }, []);
 
+  // Get unique years for filters
+  const hukumAvailableYears = useMemo(
+    () =>
+      [...new Set(produkHukum.map((item) => item.year))].sort((a, b) => b - a),
+    [produkHukum]
+  );
+  const pembangunanAvailableYears = useMemo(
+    () =>
+      [...new Set(pembangunan.map((item) => item.year))].sort((a, b) => b - a),
+    [pembangunan]
+  );
+
+  // Memoized filtered data for Produk Hukum
+  const filteredProdukHukum = useMemo(() => {
+    return produkHukum
+      .filter((item) =>
+        hukumTahunFilter !== "all"
+          ? item.year.toString() === hukumTahunFilter
+          : true
+      )
+      .filter((item) =>
+        hukumKategoriFilter !== "all"
+          ? item.category === hukumKategoriFilter
+          : true
+      );
+  }, [produkHukum, hukumTahunFilter, hukumKategoriFilter]);
+
+  // Memoized filtered data for Pembangunan
+  const filteredPembangunan = useMemo(() => {
+    return pembangunan
+      .filter((item) =>
+        pembangunanTahunFilter !== "all"
+          ? item.year.toString() === pembangunanTahunFilter
+          : true
+      )
+      .filter((item) =>
+        pembangunanStatusFilter !== "all"
+          ? item.status === pembangunanStatusFilter
+          : true
+      );
+  }, [pembangunan, pembangunanTahunFilter, pembangunanStatusFilter]);
+
+  // Pagination logic for Produk Hukum
+  const hukumPaginated = useMemo(() => {
+    const startIndex = (hukumCurrentPage - 1) * hukumItemsPerPage;
+    return filteredProdukHukum.slice(
+      startIndex,
+      startIndex + hukumItemsPerPage
+    );
+  }, [filteredProdukHukum, hukumCurrentPage, hukumItemsPerPage]);
+
+  // Pagination logic for Pembangunan
+  const pembangunanPaginated = useMemo(() => {
+    const startIndex = (pembangunanCurrentPage - 1) * pembangunanItemsPerPage;
+    return filteredPembangunan.slice(
+      startIndex,
+      startIndex + pembangunanItemsPerPage
+    );
+  }, [filteredPembangunan, pembangunanCurrentPage, pembangunanItemsPerPage]);
+
+  const hukumTotalPages = Math.ceil(
+    filteredProdukHukum.length / hukumItemsPerPage
+  );
+  const pembangunanTotalPages = Math.ceil(
+    filteredPembangunan.length / pembangunanItemsPerPage
+  );
+
+  // Handlers for Modals and CRUD operations
   const handleOpenHukumModal = (item?: ProdukHukum) => {
-    setEditingHukum(item || {});
+    setEditingHukum(
+      item || { year: new Date().getFullYear(), category: "Perdes" }
+    );
     setIsHukumModalOpen(true);
   };
 
@@ -346,7 +446,9 @@ export default function ManageProdukPage() {
   };
 
   const handleOpenPembangunanModal = (item?: Pembangunan) => {
-    setEditingPembangunan(item || {});
+    setEditingPembangunan(
+      item || { year: new Date().getFullYear(), status: "Direncanakan" }
+    );
     setPembangunanImageFile(null);
     setIsPembangunanModalOpen(true);
   };
@@ -384,17 +486,12 @@ export default function ManageProdukPage() {
   const handleSavePageData = async () => {
     setIsSavingPage(true);
     const formData = new FormData();
-
     const jsonData = {
       hero: { subtitle: pageData.hero?.subtitle },
       description: pageData.description,
     };
-
     formData.append("jsonData", JSON.stringify(jsonData));
-
-    if (heroImageFile) {
-      formData.append("heroImageFile", heroImageFile);
-    }
+    if (heroImageFile) formData.append("heroImageFile", heroImageFile);
 
     try {
       const response = await fetch("/api/produk-page", {
@@ -437,7 +534,6 @@ export default function ManageProdukPage() {
         onCancel={() => setConfirmAction(null)}
         message={confirmAction?.message || ""}
       />
-
       <ProdukHukumModal
         isOpen={isHukumModalOpen}
         onClose={() => setIsHukumModalOpen(false)}
@@ -445,7 +541,6 @@ export default function ManageProdukPage() {
         data={editingHukum}
         setData={setEditingHukum}
       />
-
       <PembangunanModal
         isOpen={isPembangunanModalOpen}
         onClose={() => setIsPembangunanModalOpen(false)}
@@ -541,11 +636,51 @@ export default function ManageProdukPage() {
 
         <TabsContent value="hukum" className="space-y-4">
           <DataCard
-            title="Produk Hukum"
+            title="Daftar Produk Hukum"
             description="Dokumen peraturan dan keputusan desa"
           >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Daftar Dokumen</h3>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+              <div className="flex flex-wrap gap-2">
+                <Select
+                  value={hukumTahunFilter}
+                  onValueChange={(value) => {
+                    setHukumTahunFilter(value);
+                    setHukumCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Semua Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Tahun</SelectItem>
+                    {hukumAvailableYears
+                      .filter((year) => year != null)
+                      .map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={hukumKategoriFilter}
+                  onValueChange={(value) => {
+                    setHukumKategoriFilter(value);
+                    setHukumCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Semua Kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Kategori</SelectItem>
+                    <SelectItem value="Perdes">Perdes</SelectItem>
+                    <SelectItem value="Keputusan Desa">
+                      Keputusan Desa
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <Button onClick={() => handleOpenHukumModal()}>
                 <Plus className="h-4 w-4 mr-2" />
                 Tambah Baru
@@ -562,7 +697,7 @@ export default function ManageProdukPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {produkHukum.map((item) => (
+                  {hukumPaginated.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">
                         {item.title}
@@ -591,23 +726,118 @@ export default function ManageProdukPage() {
                   ))}
                 </TableBody>
               </Table>
-              {produkHukum.length === 0 && (
+              {hukumPaginated.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  {`Belum ada produk hukum. Klik tombol "Tambah Baru" untuk
-                  menambahkan.`}
+                  Tidak ada data yang cocok dengan filter.
                 </div>
               )}
+            </div>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+              <Select
+                value={hukumItemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setHukumItemsPerPage(Number(value));
+                  setHukumCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10 per halaman</SelectItem>
+                  <SelectItem value="50">50 per halaman</SelectItem>
+                  <SelectItem value="100">100 per halaman</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setHukumCurrentPage(1)}
+                  disabled={hukumCurrentPage === 1}
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setHukumCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={hukumCurrentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm">
+                  Halaman {hukumCurrentPage} dari {hukumTotalPages || 1}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setHukumCurrentPage((p) => Math.min(hukumTotalPages, p + 1))
+                  }
+                  disabled={hukumCurrentPage === hukumTotalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setHukumCurrentPage(hukumTotalPages)}
+                  disabled={hukumCurrentPage === hukumTotalPages}
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </DataCard>
         </TabsContent>
 
         <TabsContent value="pembangunan" className="space-y-4">
           <DataCard
-            title="Pembangunan Fisik"
+            title="Daftar Pembangunan Fisik"
             description="Data proyek pembangunan dan infrastruktur desa"
           >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Daftar Proyek</h3>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+              <div className="flex flex-wrap gap-2">
+                <Select
+                  value={pembangunanTahunFilter}
+                  onValueChange={(value) => {
+                    setPembangunanTahunFilter(value);
+                    setPembangunanCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Semua Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Tahun</SelectItem>
+                    {pembangunanAvailableYears
+                      .filter((year) => year != null)
+                      .map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={pembangunanStatusFilter}
+                  onValueChange={(value) => {
+                    setPembangunanStatusFilter(value);
+                    setPembangunanCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Semua Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Status</SelectItem>
+                    <SelectItem value="Selesai">Selesai</SelectItem>
+                    <SelectItem value="Berlangsung">Berlangsung</SelectItem>
+                    <SelectItem value="Direncanakan">Direncanakan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <Button onClick={() => handleOpenPembangunanModal()}>
                 <Plus className="h-4 w-4 mr-2" />
                 Tambah Baru
@@ -625,7 +855,7 @@ export default function ManageProdukPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pembangunan.map((item) => (
+                  {pembangunanPaginated.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="font-medium">
                         {item.title}
@@ -655,12 +885,75 @@ export default function ManageProdukPage() {
                   ))}
                 </TableBody>
               </Table>
-              {pembangunan.length === 0 && (
+              {pembangunanPaginated.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  {`Belum ada data pembangunan. Klik tombol "Tambah Baru" untuk
-                  menambahkan.`}
+                  Tidak ada data yang cocok dengan filter.
                 </div>
               )}
+            </div>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+              <Select
+                value={pembangunanItemsPerPage.toString()}
+                onValueChange={(value) => {
+                  setPembangunanItemsPerPage(Number(value));
+                  setPembangunanCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10 per halaman</SelectItem>
+                  <SelectItem value="50">50 per halaman</SelectItem>
+                  <SelectItem value="100">100 per halaman</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPembangunanCurrentPage(1)}
+                  disabled={pembangunanCurrentPage === 1}
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setPembangunanCurrentPage((p) => Math.max(1, p - 1))
+                  }
+                  disabled={pembangunanCurrentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm">
+                  Halaman {pembangunanCurrentPage} dari{" "}
+                  {pembangunanTotalPages || 1}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setPembangunanCurrentPage((p) =>
+                      Math.min(pembangunanTotalPages, p + 1)
+                    )
+                  }
+                  disabled={pembangunanCurrentPage === pembangunanTotalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    setPembangunanCurrentPage(pembangunanTotalPages)
+                  }
+                  disabled={pembangunanCurrentPage === pembangunanTotalPages}
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </DataCard>
         </TabsContent>
