@@ -27,12 +27,13 @@ const poppins = Poppins({
 
 const dataNav = [
   { id: 0, name: "BERANDA", href: "/" },
-  { id: 1, name: "PROFIL", href: "/profil" },
-  { id: 2, name: "LAYANAN", href: "/layanan" },
-  { id: 3, name: "USAHA DESA", href: "/usaha-desa" },
-  { id: 4, name: "PERANGKAT DESA", href: "/perangkat-desa" },
-  { id: 5, name: "KONTAK", href: "/kontak" },
-  { id: 6, name: "PRODUK", href: "/produk-hukum-dan-fisik" },
+  { id: 1, name: "BERITA", href: "/berita" },
+  { id: 2, name: "PROFIL", href: "/profil" },
+  { id: 3, name: "LAYANAN", href: "/layanan" },
+  { id: 4, name: "USAHA DESA", href: "/usaha-desa" },
+  { id: 5, name: "PERANGKAT DESA", href: "/perangkat-desa" },
+  { id: 6, name: "KONTAK", href: "/kontak" },
+  { id: 7, name: "PRODUK", href: "/produk-hukum-dan-fisik" },
 ];
 
 export default function Navbar() {
@@ -64,7 +65,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-8">
           {dataNav.map((data) => (
             <Link

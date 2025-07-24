@@ -22,6 +22,7 @@ import {
   Settings,
   LogOut,
   MapPin,
+  Newspaper,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -63,6 +64,11 @@ const menuItems = [
     title: "Layanan",
     url: "/admin/layanan",
     icon: FileText,
+  },
+  {
+    title: "Berita",
+    url: "/admin/berita",
+    icon: Newspaper,
   },
   {
     title: "Kontak",
