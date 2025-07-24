@@ -15,7 +15,6 @@ async function getLayananData(): Promise<Layanan | null> {
   }
 }
 
-// Tipe props yang benar untuk halaman dengan segmen dinamis
 type FormPageProps = {
   params: {
     formId: string;
