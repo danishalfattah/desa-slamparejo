@@ -3,6 +3,7 @@ import Link from "next/link";
 
 async function getLayananData(): Promise<Layanan | null> {
   try {
+    // Pastikan NEXTAUTH_URL sudah diatur di environment variables Vercel
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/layanan`, {
       cache: "no-store",
     });
@@ -14,12 +15,14 @@ async function getLayananData(): Promise<Layanan | null> {
   }
 }
 
-// Hapus definisi Props dan gunakan langsung parameter dari Next.js
-export default async function FormPage({
-  params,
-}: {
-  params: { formId: string };
-}) {
+// Tipe props yang benar untuk halaman dengan segmen dinamis
+type FormPageProps = {
+  params: {
+    formId: string;
+  };
+};
+
+export default async function FormPage({ params }: FormPageProps) {
   const data = await getLayananData();
   const form = data?.forms.find((f: LayananForm) => f.id === params.formId);
 
