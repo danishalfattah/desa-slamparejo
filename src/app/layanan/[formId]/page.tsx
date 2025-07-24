@@ -14,13 +14,12 @@ async function getLayananData(): Promise<Layanan | null> {
   }
 }
 
-// Definisikan tipe props secara eksplisit
-type Props = {
+// Hapus definisi Props dan gunakan langsung parameter dari Next.js
+export default async function FormPage({
+  params,
+}: {
   params: { formId: string };
-};
-
-// Gunakan tipe Props yang sudah didefinisikan
-export default async function FormPage({ params }: Props) {
+}) {
   const data = await getLayananData();
   const form = data?.forms.find((f: LayananForm) => f.id === params.formId);
 
@@ -35,7 +34,6 @@ export default async function FormPage({ params }: Props) {
     );
   }
 
-  // Ensure the link is embeddable
   const embedLink = form.link.includes("?embedded=true")
     ? form.link
     : `${form.link.split("?")[0]}?embedded=true`;
