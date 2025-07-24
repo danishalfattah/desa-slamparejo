@@ -84,10 +84,9 @@ const LayananFormModal = ({
                     <Info className="h-4 w-4 text-muted-foreground cursor-pointer" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Cukup salin tautan formulir dari browser.</p>
+                    <p>Salin tautan Google Form dan tempel di sini.</p>
                     <p className="font-mono text-xs">
-                      Contoh:
-                      https://docs.google.com/forms/d/e/1FAIpQLS.../viewform
+                      Contoh: https://docs.google.com/forms/d/e/.../viewform
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -101,9 +100,6 @@ const LayananFormModal = ({
               }
               required
             />
-            <p className="text-sm text-muted-foreground">
-              Sistem akan otomatis mengubahnya menjadi tautan embed yang benar.
-            </p>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>

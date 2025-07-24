@@ -33,19 +33,6 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
     });
 }
 
-// Helper function to format Google Form links for embedding
-const formatGoogleFormLink = (url: string): string => {
-    if (!url || typeof url !== 'string') return "";
-    let baseUrl = url.split('?')[0];
-    if (!baseUrl.endsWith('/viewform')) {
-        if (baseUrl.endsWith('/')) {
-            baseUrl = baseUrl.slice(0, -1);
-        }
-        baseUrl = `${baseUrl}/viewform`;
-    }
-    return `${baseUrl}?embedded=true`;
-};
-
 const defaultData: Omit<Layanan, 'forms'> = {
     hero: {
         subtitle: "Layanan Desa Slamparejo dirancang untuk memberikan kemudahan, kenyamanan, dan kejelasan dalam setiap proses pelayanan.",
@@ -78,6 +65,9 @@ export async function GET() {
     const formsQuery = collection(db, FORMS_COLLECTION_NAME);
     const formsSnapshot = await getDocs(formsQuery);
     const forms = formsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as LayananForm));
+
+    // Mengurutkan formulir berdasarkan waktu pembuatan (yang paling lama duluan)
+    forms.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
 
     return NextResponse.json({ ...pageData, forms });
   } catch (error) {
@@ -123,8 +113,17 @@ export async function POST(request: Request) {
 
             for (const form of forms) {
                 const formDocRef = doc(db, FORMS_COLLECTION_NAME, form.id);
-                const formattedLink = formatGoogleFormLink(form.link);
-                await setDoc(formDocRef, { title: form.title, description: form.description, link: formattedLink }, { merge: true });
+                const docSnap = await getDoc(formDocRef);
+                
+                const dataToSet = {
+                    title: form.title,
+                    description: form.description,
+                    link: form.link,
+                    // Tambahkan createdAt jika belum ada (untuk formulir baru)
+                    createdAt: docSnap.exists() ? (docSnap.data().createdAt || Date.now()) : Date.now()
+                };
+
+                await setDoc(formDocRef, dataToSet, { merge: true });
             }
         }
 

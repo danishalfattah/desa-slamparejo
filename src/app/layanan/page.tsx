@@ -134,9 +134,10 @@ export default function LayananPage() {
                             </p>
                           </div>
                           <Link
-                            href={`/layanan/${form.id}`}
+                            href={form.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="mt-4"
-                            passHref
                           >
                             <button
                               type="button"
