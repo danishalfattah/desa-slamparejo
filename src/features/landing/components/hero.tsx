@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Playfair_Display } from "next/font/google";
 import { Poppins } from "next/font/google";
+import { Beranda } from "@/lib/types";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -12,12 +13,12 @@ const poppins = Poppins({
   weight: ["100", "400", "700"],
 });
 
-export default function Hero() {
+export default function Hero({ data }: { data: Beranda }) {
   return (
     <section className="w-full flex flex-col ">
       <div className="relative flex flex-col justify-center items-center h-screen">
         <Image
-          src="/landing-page.png"
+          src={data.hero.heroImage || "/landing-page.png"} // Menggunakan gambar dinamis
           alt="Desa Slamparejo"
           fill
           quality={100}
@@ -30,13 +31,12 @@ export default function Hero() {
           <h1
             className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}
           >
-            DESA SLAMPAREJO
+            {data.hero.title}
           </h1>
           <p
             className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
           >
-            Satu pintu digital untuk mengenal, berinteraksi, dan berkontribusi
-            dalam semangat kebersamaan membangun desa.
+            {data.hero.subtitle}
           </p>
         </div>
       </div>
@@ -54,16 +54,14 @@ export default function Hero() {
             <h2
               className={`${playfair.className} text-white text-2xl md:text-4xl font-normal tracking-[1.5px] mb-4`}
             >
-              Melayani dengan Hati Membangun dengan Aksi
+              {data.slogan.title}
             </h2>
           </div>
           <div className="md:w-1/2 flex items-center z-20 ">
             <p
               className={`${poppins.className}  text-white text-sm md:text-lg font-normal tracking-wider`}
             >
-              Mencerminkan komitmen Desa Slamparejo dalam memberikan pelayanan
-              yang tulus kepada warga serta mewujudkan pembangunan nyata yang
-              dirasakan manfaatnya oleh seluruh masyarakat.
+              {data.slogan.description}
             </p>
           </div>
         </div>

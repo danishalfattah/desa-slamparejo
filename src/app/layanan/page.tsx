@@ -1,28 +1,64 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display } from "next/font/google";
-import { Poppins } from "next/font/google";
+import { Playfair_Display, Poppins } from "next/font/google";
+import { Layanan } from "@/lib/types";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "700"],
 });
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "400", "700"],
-});
+const poppins = Poppins({ subsets: ["latin"], weight: ["100", "400", "700"] });
 
 export default function LayananPage() {
-  // To change the link for each button, just update the links in the `formLinks` array below (order matters, left-to-right):
-  
-  // Example: Replace "https://link1.com" with your actual form link.
+  const [data, setData] = useState<Layanan | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function getLayananData() {
+      try {
+        const res = await fetch("/api/layanan");
+        if (res.ok) {
+          setData(await res.json());
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data layanan:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getLayananData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">Memuat...</div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Gagal memuat data layanan.
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="w-full h-screen flex flex-col ">
         <div className="relative flex-1 flex flex-col justify-center items-center ">
           <Image
-            src="/landing-page.png"
+            src={data.hero?.heroImage || "/landing-page.png"}
             alt="Desa Slamparejo"
             fill
             quality={100}
@@ -43,8 +79,7 @@ export default function LayananPage() {
             <p
               className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
             >
-              Layanan Desa Slamparejo dirancang untuk memberikan kemudahan,
-              kenyamanan, dan kejelasan dalam setiap proses pelayanan.
+              {data.hero?.subtitle}
             </p>
           </div>
         </div>
@@ -54,61 +89,88 @@ export default function LayananPage() {
       <section
         className="relative w-full py-16 px-4 md:px-0"
         style={{
-          backgroundColor: '#0B4973',
+          backgroundColor: "#0B4973",
           backgroundImage: "url('/Patterns.png')",
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Left: Title & Description */}
           <div className="text-white md:pl-8">
             <h2
               className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
             >
-              Akses Layanan
+              {data.akses?.title || "Akses Layanan"}
             </h2>
             <p
-              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed`}
+              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed whitespace-pre-line`}
             >
-              Pilih layanan yang anda butuhkan,
-              <br />
-              Pengajuan akan di proses secara online melalui formulir resmi
+              {data.akses?.description ||
+                "Pilih layanan yang anda butuhkan, Pengajuan akan di proses secara online melalui formulir resmi"}
             </p>
           </div>
-          {/* Right: 2x2 Cards */}
-          <div className="grid grid-cols-1 gap-6">
-            <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-w-[220px] min-h-[200px]">
-              <div className="mb-2">
-                <h3 className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}>
-                  Kuesioner Survei Kepuasan Masyarakat
-                </h3>
-                <p className={`${poppins.className} text-gray-700 text-sm`}>
-                  Semua masukan yang masuk akan dibaca dan dipertimbangkan oleh perangkat desa sebagai bentuk perbaikan dan keterbukaan.
-                </p>
-              </div>
-              <Link
-                href="/layanan/kepuasan-masyarakat"
-                rel="noopener noreferrer"
-                className="mt-auto"
-                passHref
+          <div className="w-full max-w-md mx-auto">
+            {data.forms && data.forms.length > 0 ? (
+              <Carousel
+                opts={{ align: "start", loop: data.forms.length > 1 }}
+                className="w-full"
               >
-                <button
-                  type="button"
-                  className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                >
-                  Kirim Formulir
-                </button>
-              </Link>
-            </div>
+                <CarouselContent>
+                  {data.forms.map((form) => (
+                    <CarouselItem key={form.id}>
+                      <div className="p-1">
+                        <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-h-[220px]">
+                          <div>
+                            <h3
+                              className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
+                            >
+                              {form.title}
+                            </h3>
+                            <p
+                              className={`${poppins.className} text-gray-700 text-sm`}
+                            >
+                              {form.description}
+                            </p>
+                          </div>
+                          <Link
+                            href={form.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4"
+                          >
+                            <button
+                              type="button"
+                              className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                            >
+                              Isi Formulir
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {data.forms.length > 1 && (
+                  <>
+                    <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+                  </>
+                )}
+              </Carousel>
+            ) : (
+              <div className="bg-white rounded-xl shadow p-6 text-center">
+                <p>Belum ada layanan yang tersedia.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Info Section */}
       <section className="bg-white py-10 px-4 md:px-0">
-        <div className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}>
+        <div
+          className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}
+        >
           <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
@@ -186,7 +248,8 @@ export default function LayananPage() {
               Terpercaya
             </span>
             <p className="text-gray-600 text-sm text-center">
-              Kami menjaga kepercayaan Anda dengan proses yang transparan dan sangat aman
+              Kami menjaga kepercayaan Anda dengan proses yang transparan dan
+              sangat aman
             </p>
           </div>
         </div>

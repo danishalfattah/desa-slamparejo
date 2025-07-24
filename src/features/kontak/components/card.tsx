@@ -5,7 +5,7 @@ import { Ban, LucideProps } from "lucide-react";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["100", "400", "700"],
+  weight: ["400", "600", "700"],
 });
 
 type CardProps = {
@@ -25,12 +25,16 @@ export function Card({
   buttonText,
   children,
 }: CardProps) {
-const realChildren = React.isValidElement(children)
-  ? React.cloneElement(children, { color: "white" })
-  : <Ban color="white" />;
+  const realChildren = React.isValidElement(children) ? (
+    React.cloneElement(children, { color: "white" })
+  ) : (
+    <Ban color="white" />
+  );
 
   return (
-    <div className="mb-8 max-w-sm h-[422px] bg-white rounded-lg drop-shadow-lg p-6 flex flex-col justify-around items-center">
+    <div
+      className={`${poppins.className} mb-8 max-w-sm h-[422px] bg-white rounded-lg drop-shadow-lg p-6 flex flex-col justify-around items-center`}
+    >
       <div className="rounded-full size-[85px] bg-[#094B72] flex items-center justify-center">
         {realChildren}
       </div>
@@ -39,16 +43,12 @@ const realChildren = React.isValidElement(children)
           {title}
         </h3>
       </div>
-      <div className="w-3xs">
-        <p
-          className={`${poppins.className} text-[11px] font-semibold leading-[32px] text-center text-black`}
-        >
+      <div className="w-full px-4">
+        <p className="text-xs font-normal leading-relaxed text-center text-black">
           {description}
         </p>
       </div>
-      <p
-        className={`${poppins.className} text-black font-semibold text-base text-center`}
-      >
+      <p className="text-black font-semibold text-base text-center">
         {contactInfo}
       </p>
       <a
@@ -59,7 +59,7 @@ const realChildren = React.isValidElement(children)
       >
         <button
           type="button"
-          className={`${poppins.className} w-2xs rounded-lg bg-[#0B4973] text-white px-4 py-2 font-bold hover:bg-[#09395a] transition`}
+          className="w-auto rounded-lg bg-[#0B4973] text-white px-4 py-2 font-bold hover:bg-[#09395a] transition"
         >
           {buttonText}
         </button>
