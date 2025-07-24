@@ -8,18 +8,18 @@ const poppins = Poppins({
 });
 
 type HourEntryProps = {
-  type: boolean;
   days: string;
   hours: string;
 };
 
-export function HourEntry({ type, days, hours }: HourEntryProps) {
+export function HourEntry({ days, hours }: HourEntryProps) {
+  const isTutup = hours.toLowerCase() === "tutup";
   return (
     // Mengubah `items-center` menjadi `items-start md:items-center`
     <div className="flex flex-col items-start md:items-center md:flex-row justify-between w-full">
       <div className="flex flex-row items-center">
         <Clock
-          color={type ? "red" : "blue"}
+          color={isTutup ? "red" : "blue"}
           size={32}
           className="mr-4 shrink-0"
         />

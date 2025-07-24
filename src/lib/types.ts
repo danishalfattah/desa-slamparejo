@@ -101,7 +101,6 @@ export interface JamOperasionalItem {
   id: string;
   hari: string;
   jam: string;
-  isLibur: boolean;
 }
 
 export interface Kontak {

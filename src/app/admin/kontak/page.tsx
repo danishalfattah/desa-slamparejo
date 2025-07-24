@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Save, Loader2 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 
 export default function ManageKontakPage() {
   const [data, setData] = useState<Partial<Kontak>>({});
@@ -52,8 +51,8 @@ export default function ManageKontakPage() {
 
   const handleJamOperasionalChange = (
     index: number,
-    field: keyof JamOperasionalItem,
-    value: string | boolean
+    field: keyof Omit<JamOperasionalItem, "id" | "isLibur">,
+    value: string
   ) => {
     const updatedJam = [...(data.jamOperasional || [])];
     updatedJam[index] = { ...updatedJam[index], [field]: value };
@@ -252,43 +251,43 @@ export default function ManageKontakPage() {
           description="Atur jadwal layanan kantor desa"
         >
           <div className="space-y-4">
-            {(data.jamOperasional || []).map((item, index) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-3 items-center gap-4 p-2 border rounded-md"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor={`hari-${index}`}>Hari</Label>
-                  <Input
-                    id={`hari-${index}`}
-                    value={item.hari}
-                    onChange={(e) =>
-                      handleJamOperasionalChange(index, "hari", e.target.value)
-                    }
-                  />
+            {data.jamOperasional && data.jamOperasional.length > 0 ? (
+              data.jamOperasional.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-2 items-center gap-4 p-2 border rounded-md"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor={`hari-${index}`}>Hari</Label>
+                    <Input
+                      id={`hari-${index}`}
+                      value={item.hari}
+                      onChange={(e) =>
+                        handleJamOperasionalChange(
+                          index,
+                          "hari",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`jam-${index}`}>Jam</Label>
+                    <Input
+                      id={`jam-${index}`}
+                      value={item.jam}
+                      onChange={(e) =>
+                        handleJamOperasionalChange(index, "jam", e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor={`jam-${index}`}>Jam</Label>
-                  <Input
-                    id={`jam-${index}`}
-                    value={item.jam}
-                    onChange={(e) =>
-                      handleJamOperasionalChange(index, "jam", e.target.value)
-                    }
-                  />
-                </div>
-                <div className="flex items-center space-x-2 pt-6">
-                  <Switch
-                    id={`isLibur-${index}`}
-                    checked={item.isLibur}
-                    onCheckedChange={(checked) =>
-                      handleJamOperasionalChange(index, "isLibur", checked)
-                    }
-                  />
-                  <Label htmlFor={`isLibur-${index}`}>Libur</Label>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Tidak ada data jam operasional.
+              </p>
+            )}
           </div>
         </DataCard>
       </div>

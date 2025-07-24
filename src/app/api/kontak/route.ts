@@ -31,10 +31,10 @@ const defaultData: Kontak = {
         mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.6956236655833!2d112.75946407493598!3d-7.926825378926761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd62e89c51385f5%3A0xc864a6272e336681!2sKantor%20Desa%20Slamparejo!5e0!3m2!1sen!2sus!4v1752159631421!5m2!1sen!2sus"
     },
     jamOperasional: [
-        { id: "1", hari: "Senin - Kamis", jam: "08:00 - 15:30 WIB", isLibur: false },
-        { id: "2", hari: "Jumat", jam: "08:00 - 11:30 WIB", isLibur: false },
-        { id: "3", hari: "Sabtu - Minggu", jam: "Tutup", isLibur: true },
-        { id: "4", hari: "Hari Libur Nasional", jam: "Tutup", isLibur: true },
+        { id: "1", hari: "Senin - Kamis", jam: "08:00 - 15:30 WIB" },
+        { id: "2", hari: "Jumat", jam: "08:00 - 11:30 WIB" },
+        { id: "3", hari: "Sabtu - Minggu", jam: "Tutup" },
+        { id: "4", hari: "Hari Libur Nasional", jam: "Tutup" },
     ]
 };
 
@@ -65,8 +65,14 @@ export async function GET() {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return NextResponse.json(docSnap.data() as Kontak);
+      // Pastikan jamOperasional ada, jika tidak, gunakan default
+      const data = docSnap.data();
+      if (!data.jamOperasional) {
+        data.jamOperasional = defaultData.jamOperasional;
+      }
+      return NextResponse.json(data as Kontak);
     } else {
+      // Jika dokumen tidak ada, buat dengan data default lengkap
       await setDoc(docRef, defaultData as DocumentData);
       return NextResponse.json(defaultData);
     }

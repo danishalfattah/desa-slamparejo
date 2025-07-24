@@ -162,12 +162,7 @@ export default function KontakPage() {
           </div>
           <div className="shadow-lg grid grid-cols-1 gap-y-6 max-w-4xl mx-auto rounded-xl p-6 md:p-10">
             {(data.jamOperasional || []).map((item) => (
-              <HourEntry
-                key={item.id}
-                type={item.isLibur}
-                days={item.hari}
-                hours={item.jam}
-              />
+              <HourEntry key={item.id} days={item.hari} hours={item.jam} />
             ))}
           </div>
         </div>
