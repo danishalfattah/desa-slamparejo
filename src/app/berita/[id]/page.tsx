@@ -14,7 +14,7 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
-async function getBeritaDetail(id: string): Promise<Berita | null> {
+async function getBeritaDetail(id: any): Promise<Berita | null> {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
       cache: "no-store",
