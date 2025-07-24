@@ -3,7 +3,6 @@ import Link from "next/link";
 
 async function getLayananData(): Promise<Layanan | null> {
   try {
-    // Pastikan NEXTAUTH_URL sudah diatur di environment variables Vercel
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/layanan`, {
       cache: "no-store",
     });
