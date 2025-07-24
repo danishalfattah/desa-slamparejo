@@ -1,5 +1,3 @@
-// src/app/berita/[id]/page.tsx
-
 import { Berita } from "@/lib/types";
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
@@ -14,7 +12,7 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
-async function getBeritaDetail(id: any): Promise<Berita | null> {
+async function getBeritaDetail(id: string): Promise<Berita | null> {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
       cache: "no-store",
@@ -27,12 +25,21 @@ async function getBeritaDetail(id: any): Promise<Berita | null> {
   }
 }
 
+// Definisikan tipe untuk props halaman secara eksplisit
+type BeritaDetailPageProps = {
+  params: {
+    id: string;
+  };
+};
+
 export default async function BeritaDetailPage({
   params,
-}: {
-  params: { id: string };
-}) {
-  const berita = await getBeritaDetail(params.id);
+}: BeritaDetailPageProps) {
+  // Ambil id dari params (objek biasa, bukan promise)
+  const { id } = params;
+
+  // Gunakan id untuk mengambil data berita
+  const berita = await getBeritaDetail(id);
 
   if (!berita) {
     return (
