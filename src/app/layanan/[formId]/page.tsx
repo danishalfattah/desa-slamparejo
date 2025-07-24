@@ -14,13 +14,11 @@ async function getLayananData(): Promise<Layanan | null> {
   }
 }
 
-type FormPageProps = {
-  params: {
-    formId: string;
-  };
-};
-
-export default async function FormPage({ params }: FormPageProps) {
+export default async function FormPage({
+  params,
+}: {
+  params: { formId: string };
+}) {
   const data = await getLayananData();
   const form = data?.forms.find((f: LayananForm) => f.id === params.formId);
 
