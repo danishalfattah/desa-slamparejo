@@ -22,7 +22,7 @@ const PdfPreviewModal = ({
   src: string;
   onClose: () => void;
 }) => (
-  <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
+  <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-1000 p-4">
     <div className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col">
       <div className="flex justify-between items-center p-4 border-b">
         <h3 className="font-semibold">Preview Dokumen</h3>
@@ -175,7 +175,7 @@ export default function ProdukPage() {
         </div>
       </section>
 
-      <section className="bg-[#F9FCFC] py-16 px-4 md:px-0">
+      <section className="bg-[#F9FCFC]   py-16 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
           <div className="flex gap-4 mb-8">
             <button
@@ -221,48 +221,50 @@ export default function ProdukPage() {
                   {hukumItems.map((item) => (
                     <div
                       key={item.id}
-                      className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col md:flex-row items-start md:items-center gap-4`}
+                      className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg">
-                          <FileText size={24} />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="bg-blue-100 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
+                      <div className="flex flex-row  justify-between items-start md:items-center w-full">
+                        <div className="flex items-center  gap-4">
+                          <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg">
+                            <FileText size={24} />
+                          </div>
+                          <div>
+                            <span className="bg-blue-200 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
                               {item.category}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 mt-1">
                               Tahun {item.year}
-                            </span>
+                            </p>
                           </div>
-                          <h3 className="font-semibold text-base text-gray-800 mb-1">
-                            {item.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm font-normal">
-                            {item.description}
-                          </p>
+                        </div>
+                        <div className="flex gap-2 self-end    md:self-center mt-4 md:mt-0">
+                          <button
+                            onClick={() => handlePreview(item.link)}
+                            className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
+                          >
+                            <Eye size={16} />
+                            Lihat
+                          </button>
+                          <Link
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            passHref
+                          >
+                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
+                              <Download size={16} />
+                              Unduh
+                            </button>
+                          </Link>
                         </div>
                       </div>
-                      <div className="flex gap-2 self-end md:self-center mt-4 md:mt-0">
-                        <button
-                          onClick={() => handlePreview(item.link)}
-                          className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
-                        >
-                          <Eye size={16} />
-                          Lihat
-                        </button>
-                        <Link
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          passHref
-                        >
-                          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
-                            <Download size={16} />
-                            Unduh
-                          </button>
-                        </Link>
+                      <div className="w-full">
+                        <h3 className="font-semibold text-base text-gray-800 mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm font-normal">
+                          {item.description}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -292,7 +294,7 @@ export default function ProdukPage() {
                     {pembangunanItems.map((item) => (
                       <div
                         key={item.id}
-                        className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent hover:border-blue-500 transition-all duration-300`}
+                        className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
                       >
                         <div className="relative w-full h-40">
                           <Image
