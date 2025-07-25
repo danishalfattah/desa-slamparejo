@@ -20,19 +20,19 @@ export const metadata: Metadata = {
   // Menggunakan template judul untuk SEO yang lebih baik
   title: {
     template: "%s | Desa Slamparejo",
-    default: "Desa Slamparejo - Website Resmi Pemerintah Desa",
+    default: "Desa Slamparejo",
   },
   description:
     "Website resmi Desa Slamparejo Kecamatan Jabung, Malang. Akses layanan online, informasi perangkat desa, produk hukum, UMKM, dan pembangunan desa secara transparan dan mudah.",
   keywords:
     "Desa Slamparejo, Jabung, Malang, layanan desa, produk hukum, UMKM, perangkat desa, pembangunan desa, survei kepuasan masyarakat, formulir online",
   authors: [{ name: "MMD 32 FILKOM UB 2025" }],
-  metadataBase: new URL("https://desa-slamparejo.vercel.app"),
+  metadataBase: new URL("https://desaslamparejo.id"),
   openGraph: {
     title: "Desa Slamparejo - Layanan & Informasi Resmi",
     description:
       "Akses layanan, informasi, dan produk hukum Desa Slamparejo secara online. Transparan, cepat, dan terpercaya.",
-    url: "https://desa-slamparejo.vercel.app",
+    url: "https://desaslamparejo.id",
     siteName: "Desa Slamparejo",
     images: [
       {
