@@ -40,11 +40,13 @@ type Props = {
  * @param {Props} { params } - Menerima parameter dari URL, dalam hal ini `id` berita.
  * @returns {Promise<Metadata>} - Mengembalikan objek Metadata yang akan digunakan di <head> HTML.
  */
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(
+  props: Promise<Props>
+): Promise<Metadata> {
+  const { params } = await props;
   const { id } = params;
   const berita = await getBeritaDetail(id);
 
-  // Jika berita tidak ditemukan, kembalikan metadata default
   if (!berita) {
     return {
       title: "Berita Tidak Ditemukan",
@@ -53,10 +55,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // Buat deskripsi singkat dari konten berita (maksimal 160 karakter)
   const description = berita.content.substring(0, 160) + "...";
 
-  // Kembalikan objek Metadata yang dinamis berdasarkan data berita
   return {
     title: `${berita.title} | Desa Slamparejo`,
     description: description,
@@ -65,20 +65,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: description,
       images: [
         {
-          url: berita.imageUrl, // URL gambar utama berita
+          url: berita.imageUrl,
           width: 1200,
           height: 630,
           alt: berita.title,
         },
       ],
       locale: "id_ID",
-      type: "article", // Tipe konten adalah artikel
+      type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: berita.title,
       description: description,
-      images: [berita.imageUrl], // URL gambar untuk Twitter Card
+      images: [berita.imageUrl],
     },
   };
 }
@@ -89,11 +89,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Komponen React Server untuk menampilkan halaman detail berita.
  * @param {Props} { params } - Menerima parameter `id` dari URL.
  */
-export default async function BeritaDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function BeritaDetailPage(
+  props: Promise<{ params: { id: string } }>
+) {
+  const { params } = await props;
   const { id } = params;
   const berita = await getBeritaDetail(id);
 
