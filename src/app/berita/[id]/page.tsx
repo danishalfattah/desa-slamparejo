@@ -1,7 +1,9 @@
+// src/app/berita/[id]/page.tsx
+
 import { Berita } from "@/lib/types";
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
-import type { Metadata } from "next"; // Impor tipe Metadata
+import type { Metadata } from "next";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -13,12 +15,10 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
-// Fungsi untuk mengambil data detail berita dari API
 async function getBeritaDetail(id: string): Promise<Berita | null> {
   try {
-    // Menggunakan variabel environment untuk URL API
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
-      cache: "no-store", // Tidak menggunakan cache agar data selalu baru
+      cache: "no-store",
     });
     if (!res.ok) return null;
     return res.json();
@@ -28,22 +28,11 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
   }
 }
 
-// --- Implementasi SEO Dinamis ---
-
 type Props = {
   params: { id: string };
 };
 
-/**
- * Fungsi ini diekspor untuk menghasilkan metadata dinamis untuk halaman ini.
- * Next.js akan secara otomatis memanggil fungsi ini saat membangun atau merender halaman.
- * @param {Props} { params } - Menerima parameter dari URL, dalam hal ini `id` berita.
- * @returns {Promise<Metadata>} - Mengembalikan objek Metadata yang akan digunakan di <head> HTML.
- */
-export async function generateMetadata(
-  props: Promise<Props>
-): Promise<Metadata> {
-  const { params } = await props;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = params;
   const berita = await getBeritaDetail(id);
 
@@ -83,20 +72,10 @@ export async function generateMetadata(
   };
 }
 
-// --- Komponen Halaman ---
-
-/**
- * Komponen React Server untuk menampilkan halaman detail berita.
- * @param {Props} { params } - Menerima parameter `id` dari URL.
- */
-export default async function BeritaDetailPage(
-  props: Promise<{ params: { id: string } }>
-) {
-  const { params } = await props;
+export default async function BeritaDetailPage({ params }: Props) {
   const { id } = params;
   const berita = await getBeritaDetail(id);
 
-  // Tampilan jika berita tidak ditemukan
   if (!berita) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -105,7 +84,6 @@ export default async function BeritaDetailPage(
     );
   }
 
-  // Render halaman dengan data berita
   return (
     <main className="min-h-screen bg-white pt-24">
       <div className="max-w-4xl mx-auto px-4 py-8">
