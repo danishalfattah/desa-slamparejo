@@ -553,7 +553,7 @@ export default function ManageBeritaPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(berita.id!)}
                       >

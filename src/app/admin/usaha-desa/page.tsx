@@ -206,6 +206,7 @@ export default function ManageUsahaDesaPage() {
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Filter and Pagination State
   const [filter, setFilter] = useState("");
@@ -258,13 +259,17 @@ export default function ManageUsahaDesaPage() {
     setConfirmAction({
       message: "Yakin ingin menghapus data usaha ini?",
       action: async () => {
-        await fetch("/api/usaha-desa", {
+        const response = await fetch("/api/usaha-desa", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id }),
         });
         setConfirmAction(null);
-        fetchData();
+        if (response.ok) {
+          fetchData();
+          setSuccessMessage("Data usaha berhasil dihapus!");
+          setShowSuccessModal(true);
+        }
       },
     });
   };
@@ -295,6 +300,8 @@ export default function ManageUsahaDesaPage() {
       if (response.ok) {
         handleCloseModal();
         fetchData();
+        setSuccessMessage("Data usaha berhasil disimpan!");
+        setShowSuccessModal(true);
       } else {
         const errorData = await response.json();
         alert(`Gagal menyimpan data: ${errorData.error}`);
@@ -327,6 +334,7 @@ export default function ManageUsahaDesaPage() {
         body: formData,
       });
       if (response.ok) {
+        setSuccessMessage("Data Halaman Usaha Desa Berhasil Disimpan!");
         setShowSuccessModal(true);
         setHeroImageFile(null);
         fetchData();
@@ -354,7 +362,7 @@ export default function ManageUsahaDesaPage() {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        message="Data Halaman Usaha Desa Berhasil Disimpan!"
+        message={successMessage}
       />
       <ConfirmModal
         isOpen={!!confirmAction}
@@ -495,7 +503,7 @@ export default function ManageUsahaDesaPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
                         onClick={() => handleDelete(usaha.id!)}
                       >

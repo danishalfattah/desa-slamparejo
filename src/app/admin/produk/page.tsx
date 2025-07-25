@@ -322,6 +322,7 @@ export default function ManageProdukPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
   // Modal states
@@ -455,7 +456,7 @@ export default function ManageProdukPage() {
     setIsHukumSaving(true);
     try {
       const method = editingHukum.id ? "PUT" : "POST";
-      await fetch("/api/produk-hukum", {
+      const response = await fetch("/api/produk-hukum", {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -463,8 +464,12 @@ export default function ManageProdukPage() {
           id: editingHukum.id || undefined,
         }),
       });
-      setIsHukumModalOpen(false);
-      fetchAllData();
+      if (response.ok) {
+        setIsHukumModalOpen(false);
+        fetchAllData();
+        setSuccessMessage("Produk hukum berhasil disimpan!");
+        setShowSuccessModal(true);
+      }
     } catch (error) {
       console.error("Gagal menyimpan produk hukum:", error);
     } finally {
@@ -476,13 +481,17 @@ export default function ManageProdukPage() {
     setConfirmAction({
       message: "Yakin ingin menghapus produk hukum ini?",
       action: async () => {
-        await fetch("/api/produk-hukum", {
+        const response = await fetch("/api/produk-hukum", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id }),
         });
         setConfirmAction(null);
-        fetchAllData();
+        if (response.ok) {
+          fetchAllData();
+          setSuccessMessage("Produk hukum berhasil dihapus!");
+          setShowSuccessModal(true);
+        }
       },
     });
   };
@@ -507,9 +516,16 @@ export default function ManageProdukPage() {
         formData.append("imageFile", pembangunanImageFile);
 
       const method = editingPembangunan.id ? "PUT" : "POST";
-      await fetch("/api/pembangunan", { method, body: formData });
-      setIsPembangunanModalOpen(false);
-      fetchAllData();
+      const response = await fetch("/api/pembangunan", {
+        method,
+        body: formData,
+      });
+      if (response.ok) {
+        setIsPembangunanModalOpen(false);
+        fetchAllData();
+        setSuccessMessage("Data pembangunan berhasil disimpan!");
+        setShowSuccessModal(true);
+      }
     } catch (error) {
       console.error("Gagal menyimpan pembangunan:", error);
     } finally {
@@ -521,13 +537,17 @@ export default function ManageProdukPage() {
     setConfirmAction({
       message: "Yakin ingin menghapus data pembangunan ini?",
       action: async () => {
-        await fetch("/api/pembangunan", {
+        const response = await fetch("/api/pembangunan", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id }),
         });
         setConfirmAction(null);
-        fetchAllData();
+        if (response.ok) {
+          fetchAllData();
+          setSuccessMessage("Data pembangunan berhasil dihapus!");
+          setShowSuccessModal(true);
+        }
       },
     });
   };
@@ -548,6 +568,7 @@ export default function ManageProdukPage() {
         body: formData,
       });
       if (response.ok) {
+        setSuccessMessage("Konten halaman berhasil disimpan!");
         setShowSuccessModal(true);
         setHeroImageFile(null);
         fetchAllData();
@@ -575,7 +596,7 @@ export default function ManageProdukPage() {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        message="Data Halaman Produk Berhasil Disimpan!"
+        message={successMessage}
       />
       <ConfirmModal
         isOpen={!!confirmAction}
@@ -765,7 +786,7 @@ export default function ManageProdukPage() {
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="outline"
+                            variant="destructive"
                             size="sm"
                             onClick={() => handleDeleteHukum(item.id)}
                           >
@@ -924,7 +945,7 @@ export default function ManageProdukPage() {
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="outline"
+                            variant="destructive"
                             size="sm"
                             onClick={() => handleDeletePembangunan(item.id)}
                           >

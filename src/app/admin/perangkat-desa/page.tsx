@@ -34,7 +34,7 @@ const PerangkatFormModal = ({
   perangkat,
   setPerangkat,
   setImageFile,
-  isSaving, // Tambahkan prop isSaving
+  isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -43,7 +43,7 @@ const PerangkatFormModal = ({
   setPerangkat: (data: Partial<PerangkatDesa>) => void;
   imageFile: File | null;
   setImageFile: (file: File | null) => void;
-  isSaving: boolean; // Tambahkan tipe untuk isSaving
+  isSaving: boolean;
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -173,6 +173,7 @@ export default function ManagePerangkatDesaPage() {
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -207,13 +208,17 @@ export default function ManagePerangkatDesaPage() {
     setConfirmAction({
       message: "Yakin ingin menghapus data perangkat ini?",
       action: async () => {
-        await fetch("/api/perangkat-desa", {
+        const response = await fetch("/api/perangkat-desa", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id }),
         });
         setConfirmAction(null);
-        fetchData();
+        if (response.ok) {
+          fetchData();
+          setSuccessMessage("Data perangkat berhasil dihapus!");
+          setShowSuccessModal(true);
+        }
       },
     });
   };
@@ -243,6 +248,8 @@ export default function ManagePerangkatDesaPage() {
       if (response.ok) {
         handleCloseModal();
         fetchData();
+        setSuccessMessage("Data perangkat berhasil disimpan!");
+        setShowSuccessModal(true);
       } else {
         const errorData = await response.json();
         alert(`Gagal menyimpan data: ${errorData.error}`);
@@ -275,6 +282,7 @@ export default function ManagePerangkatDesaPage() {
         body: formData,
       });
       if (response.ok) {
+        setSuccessMessage("Data Halaman Perangkat Desa Berhasil Disimpan!");
         setShowSuccessModal(true);
         setHeroImageFile(null);
         fetchData();
@@ -302,7 +310,7 @@ export default function ManagePerangkatDesaPage() {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        message="Data Halaman Perangkat Desa Berhasil Disimpan!"
+        message={successMessage}
       />
       <ConfirmModal
         isOpen={!!confirmAction}
@@ -433,7 +441,7 @@ export default function ManagePerangkatDesaPage() {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="destructive"
                           size="sm"
                           onClick={() => handleDelete(perangkat.id!)}
                         >

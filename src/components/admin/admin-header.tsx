@@ -27,7 +27,7 @@ export function AdminHeader() {
         beranda: "Halaman Beranda",
         profil: "Profil Desa",
         "perangkat-desa": "Perangkat Desa",
-        produk: "Produk & Pembangunan",
+        produk: "Produk Hukum & Fisik",
         "usaha-desa": "Usaha Desa",
         layanan: "Layanan",
         kontak: "Kontak",
