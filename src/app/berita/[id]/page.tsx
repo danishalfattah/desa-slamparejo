@@ -30,13 +30,13 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
 
 // Definisikan tipe untuk props, ini akan digunakan oleh generateMetadata dan halaman
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 // 1. Export untuk generateMetadata
 // Menerima props secara langsung, tidak sebagai promise
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = params;
+  const { id } = await params;
   const berita = await getBeritaDetail(id);
 
   if (!berita) {
