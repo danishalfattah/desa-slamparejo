@@ -15,6 +15,7 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
+// Fungsi untuk mengambil data detail berita dari API
 async function getBeritaDetail(id: string): Promise<Berita | null> {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
@@ -28,10 +29,12 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
   }
 }
 
+// Definisikan tipe untuk props, BUKAN sebagai Promise
 type Props = {
   params: { id: string };
 };
 
+// Gunakan tipe 'Props' langsung tanpa Promise
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = params;
   const berita = await getBeritaDetail(id);
@@ -72,6 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Komponen Halaman: Terima props secara langsung, JANGAN di-await
 export default async function BeritaDetailPage({ params }: Props) {
   const { id } = params;
   const berita = await getBeritaDetail(id);
