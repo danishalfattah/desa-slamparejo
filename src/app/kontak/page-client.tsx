@@ -24,6 +24,14 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
     return phone.replace(/[()+\s-]/g, "");
   };
 
+  // Memisahkan data jam operasional untuk layout 2 kolom
+  const jamOperasionalBuka = (data.jamOperasional || []).filter(
+    (item) => item.jam.toLowerCase() !== "tutup"
+  );
+  const jamOperasionalTutup = (data.jamOperasional || []).filter(
+    (item) => item.jam.toLowerCase() === "tutup"
+  );
+
   return (
     <>
       <div className="w-full bg-pattern px-5 py-10 relative flex justify-center">
@@ -89,43 +97,50 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
         </div>
       </section>
 
-      <section className="bg-white py-10">
-        <div className="p-4 md:p-8 max-w-5xl mx-auto">
-          <div className="text-center md:text-left border-b border-black pb-4 w-full md:w-fit">
+      <section className="bg-white py-10 px-4">
+        <div className="p-[8px] sm:p-[12px] max-w-screen-xl mx-auto">
+          <div className="border-b border-black pb-2 sm:pb-4 w-fit">
             <h1
-              className={`${playfair.className} font-normal text-4xl md:text-5xl`}
+              className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
             >
               Jam Operasional
             </h1>
           </div>
-          <div className="my-4 md:my-6">
-            <p className={`${poppins.className} text-center md:text-left`}>
-              Kantor Desa Slamparejo melayani masyarakat pada jam berikut
-            </p>
-          </div>
-          <div className="shadow-lg grid grid-cols-1 gap-y-6 max-w-4xl mx-auto rounded-xl p-6 md:p-10">
-            {(data.jamOperasional || []).map((item) => (
-              <HourEntry key={item.id} days={item.hari} hours={item.jam} />
-            ))}
+          <p
+            className={`${poppins.className} text-sm sm:text-base md:text-lg text-gray-800 mt-3 sm:mt-4 leading-relaxed max-w-5xl`}
+          >
+            Kantor Desa Slamparejo melayani masyarakat pada jam berikut
+          </p>
+          <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="space-y-6">
+                {jamOperasionalBuka.map((item) => (
+                  <HourEntry key={item.id} days={item.hari} hours={item.jam} />
+                ))}
+              </div>
+              <div className="space-y-6">
+                {jamOperasionalTutup.map((item) => (
+                  <HourEntry key={item.id} days={item.hari} hours={item.jam} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
-      <section className="bg-white py-10">
-        <div className="p-4 md:p-8 max-w-5xl mx-auto">
-          <div className="text-center md:text-left border-b border-black pb-4 w-full md:w-fit">
+      <section className="bg-white py-10 px-4">
+        <div className="p-[8px] sm:p-[12px] max-w-screen-xl mx-auto">
+          <div className="border-b border-black pb-2 sm:pb-4 w-fit">
             <h1
-              className={`${playfair.className} font-normal text-4xl md:text-5xl`}
+              className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
             >
               Lokasi Kantor Desa
             </h1>
           </div>
-          <div className="my-4 md:my-6">
-            <p
-              className={`${poppins.className} font-normal leading-relaxed text-lg md:text-xl tracking-wide whitespace-pre-line text-center md:text-left`}
-            >
-              {data.lokasi.address}
-            </p>
-          </div>
+          <p
+            className={`${poppins.className} text-sm sm:text-base md:text-lg text-gray-800 mt-3 sm:mt-4 leading-relaxed max-w-5xl whitespace-pre-line`}
+          >
+            {data.lokasi.address}
+          </p>
         </div>
         <div className="px-4">
           <iframe

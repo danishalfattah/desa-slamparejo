@@ -15,18 +15,25 @@ type HourEntryProps = {
 export function HourEntry({ days, hours }: HourEntryProps) {
   const isTutup = hours.toLowerCase() === "tutup";
   return (
-    // Mengubah `items-center` menjadi `items-start md:items-center`
-    <div className="flex flex-col items-start md:items-center md:flex-row justify-between w-full">
-      <div className="flex flex-row items-center">
-        <Clock
-          color={isTutup ? "red" : "blue"}
-          size={32}
-          className="mr-4 shrink-0"
-        />
-        <p className={`${poppins.className} font-semibold text-lg`}>{days}</p>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center">
+        <div
+          className={`flex items-center justify-center w-10 h-10 rounded-full mr-4 ${
+            isTutup ? "bg-red-600" : "bg-blue-600"
+          }`}
+        >
+          <Clock color="white" size={20} />
+        </div>
+        <p
+          className={`${poppins.className} font-semibold text-base text-gray-800`}
+        >
+          {days}
+        </p>
       </div>
       <p
-        className={`${poppins.className} font-medium text-lg mt-1 md:mt-0 md:ml-4`}
+        className={`${poppins.className} font-medium text-base ${
+          isTutup ? "text-red-600" : "text-gray-800"
+        }`}
       >
         {hours}
       </p>

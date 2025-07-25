@@ -147,8 +147,8 @@ export default async function ProfilPage() {
               {data.visiMisi.description}
             </p>
           </div>
-          <div className="flex flex-col md:flex-row gap-10 justify-center">
-            <div className="bg-gray-50 p-8 rounded-lg shadow-md flex-1 max-w-md">
+          <div className="flex flex-col md:flex-row gap-10 justify-center items-center md:items-start">
+            <div className="bg-gray-50 p-8 rounded-lg shadow-md w-full max-w-md">
               <h2
                 className={`${playfair.className} text-2xl text-black md:text-3xl font-medium mb-6 text-center`}
               >
@@ -160,7 +160,7 @@ export default async function ProfilPage() {
                 {data.visiMisi.visi}
               </p>
             </div>
-            <div className="bg-gray-50 p-8 rounded-lg shadow-md flex-1 max-w-md">
+            <div className="bg-gray-50 p-8 rounded-lg shadow-md w-full max-w-md">
               <h2
                 className={`${playfair.className} text-2xl text-black md:text-3xl font-medium mb-6 text-center`}
               >
