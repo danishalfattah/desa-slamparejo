@@ -1,9 +1,8 @@
-// src/app/berita/page.tsx
-
 import { Berita, BeritaPageData } from "@/lib/types";
 import HeroBerita from "@/features/berita/hero";
 import DaftarBerita from "@/features/berita/berita";
 import DescBerita from "@/features/berita/desc";
+import { Metadata } from "next";
 
 async function getPageData(): Promise<{
   beritaList: Berita[];
@@ -26,6 +25,26 @@ async function getPageData(): Promise<{
     console.error("Gagal mengambil data berita:", error);
     return null;
   }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getPageData();
+  const description =
+    data?.pageData.hero.subtitle ||
+    "Kumpulan berita dan informasi terbaru seputar kegiatan dan perkembangan di Desa Slamparejo.";
+
+  return {
+    title: "Berita Desa",
+    description: description,
+    openGraph: {
+      title: "Berita Terbaru Desa Slamparejo",
+      description: description,
+    },
+    twitter: {
+      title: "Berita Terbaru Desa Slamparejo",
+      description: description,
+    },
+  };
 }
 
 export default async function BeritaPage() {

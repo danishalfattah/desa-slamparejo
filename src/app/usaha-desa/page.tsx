@@ -1,7 +1,10 @@
+// src/app/usaha-desa/page.tsx
+
 import HeroUsaha from "@/features/usaha-desa/hero";
 import DescUsaha from "@/features/usaha-desa/desc";
 import DaftarUsaha from "@/features/usaha-desa/usaha";
 import { Usaha, UsahaDesaPageData } from "@/lib/types";
+import type { Metadata } from "next";
 
 async function getUsahaDesaData(): Promise<{
   usahaList: Usaha[];
@@ -17,6 +20,26 @@ async function getUsahaDesaData(): Promise<{
     console.error("Gagal mengambil data usaha desa:", error);
     return null;
   }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getUsahaDesaData();
+  const description =
+    data?.pageData.description ||
+    "Temukan berbagai produk dan jasa unggulan dari UMKM Desa Slamparejo yang kreatif dan inovatif.";
+
+  return {
+    title: "Usaha Desa",
+    description: description,
+    openGraph: {
+      title: "UMKM dan Usaha Desa Slamparejo",
+      description: description,
+    },
+    twitter: {
+      title: "UMKM dan Usaha Desa Slamparejo",
+      description: description,
+    },
+  };
 }
 
 export default async function UsahaDesaPage() {

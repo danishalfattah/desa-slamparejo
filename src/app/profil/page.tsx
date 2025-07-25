@@ -1,7 +1,10 @@
+// src/app/profil/page.tsx
+
 import React from "react";
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Profil } from "@/lib/types";
+import { Metadata } from "next";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -26,6 +29,26 @@ async function getProfilData(): Promise<Profil | null> {
     console.error("Gagal mengambil data profil:", error);
     return null;
   }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getProfilData();
+  const description =
+    data?.hero.subtitle ||
+    "Profil lengkap Desa Slamparejo, mencakup visi, misi, sejarah, dan data demografi desa.";
+
+  return {
+    title: "Profil Desa",
+    description: description,
+    openGraph: {
+      title: "Profil Desa Slamparejo",
+      description: description,
+    },
+    twitter: {
+      title: "Profil Desa Slamparejo",
+      description: description,
+    },
+  };
 }
 
 export default async function ProfilPage() {
