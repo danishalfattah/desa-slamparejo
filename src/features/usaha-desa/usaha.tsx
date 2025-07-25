@@ -20,15 +20,16 @@ export default function DaftarUsaha({ dataUsaha }: { dataUsaha: Usaha[] }) {
   }
 
   return (
-    <section className="bg-[#F9FCFC] px-2 py-10 w-full">
+    // Menghapus padding horizontal `px-2` agar carousel bisa full-width di mobile
+    <section className="bg-[#F9FCFC] py-10 w-full">
       <Carousel
         opts={{
           align: "start",
           loop: true,
         }}
-        className="w-full max-w-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
+        className="w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto"
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="pl-4 -ml-2 md:pl-0 md:-ml-4">
           {dataUsaha.map((item) => (
             <CarouselItem
               key={item.id}
