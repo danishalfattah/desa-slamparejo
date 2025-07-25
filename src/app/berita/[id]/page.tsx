@@ -15,7 +15,6 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
-// Fungsi untuk mengambil data detail berita dari API
 async function getBeritaDetail(id: string): Promise<Berita | null> {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
@@ -29,12 +28,13 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
   }
 }
 
-// Definisikan tipe untuk props, BUKAN sebagai Promise
+// Definisikan tipe untuk props, ini akan digunakan oleh generateMetadata dan halaman
 type Props = {
   params: { id: string };
 };
 
-// Gunakan tipe 'Props' langsung tanpa Promise
+// 1. Export untuk generateMetadata
+// Menerima props secara langsung, tidak sebagai promise
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = params;
   const berita = await getBeritaDetail(id);
@@ -42,8 +42,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!berita) {
     return {
       title: "Berita Tidak Ditemukan",
-      description:
-        "Berita yang Anda cari tidak dapat ditemukan di website Desa Slamparejo.",
     };
   }
 
@@ -56,12 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: berita.title,
       description: description,
       images: [
-        {
-          url: berita.imageUrl,
-          width: 1200,
-          height: 630,
-          alt: berita.title,
-        },
+        { url: berita.imageUrl, width: 1200, height: 630, alt: berita.title },
       ],
       locale: "id_ID",
       type: "article",
@@ -75,9 +68,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Komponen Halaman: Terima props secara langsung, JANGAN di-await
-export default async function BeritaDetailPage({ params }: Props) {
-  const { id } = params;
+// 2. Export untuk komponen halaman
+// Menggunakan tipe Promise seperti yang Anda minta
+type BeritaDetailPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function BeritaDetailPage({
+  params,
+}: BeritaDetailPageProps) {
+  const { id } = await params;
   const berita = await getBeritaDetail(id);
 
   if (!berita) {
@@ -106,8 +106,8 @@ export default async function BeritaDetailPage({ params }: Props) {
             src={berita.imageUrl}
             alt={berita.title}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
           />
         </div>
