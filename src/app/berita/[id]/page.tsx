@@ -1,6 +1,7 @@
 import { Berita } from "@/lib/types";
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
+import type { Metadata } from "next"; // Impor tipe Metadata
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -12,10 +13,12 @@ const poppins = Poppins({
   weight: ["400", "600"],
 });
 
+// Fungsi untuk mengambil data detail berita dari API
 async function getBeritaDetail(id: string): Promise<Berita | null> {
   try {
+    // Menggunakan variabel environment untuk URL API
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/berita?id=${id}`, {
-      cache: "no-store",
+      cache: "no-store", // Tidak menggunakan cache agar data selalu baru
     });
     if (!res.ok) return null;
     return res.json();
@@ -25,22 +28,76 @@ async function getBeritaDetail(id: string): Promise<Berita | null> {
   }
 }
 
-// Definisikan tipe untuk props halaman, dengan params sebagai Promise
-type BeritaDetailPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
+// --- Implementasi SEO Dinamis ---
+
+type Props = {
+  params: { id: string };
 };
 
-export default async function BeritaDetailPage({
-  params,
-}: BeritaDetailPageProps) {
-  // Gunakan await untuk mendapatkan nilai dari promise params
-  const { id } = await params;
-
-  // Gunakan id untuk mengambil data berita
+/**
+ * Fungsi ini diekspor untuk menghasilkan metadata dinamis untuk halaman ini.
+ * Next.js akan secara otomatis memanggil fungsi ini saat membangun atau merender halaman.
+ * @param {Props} { params } - Menerima parameter dari URL, dalam hal ini `id` berita.
+ * @returns {Promise<Metadata>} - Mengembalikan objek Metadata yang akan digunakan di <head> HTML.
+ */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = params;
   const berita = await getBeritaDetail(id);
 
+  // Jika berita tidak ditemukan, kembalikan metadata default
+  if (!berita) {
+    return {
+      title: "Berita Tidak Ditemukan",
+      description:
+        "Berita yang Anda cari tidak dapat ditemukan di website Desa Slamparejo.",
+    };
+  }
+
+  // Buat deskripsi singkat dari konten berita (maksimal 160 karakter)
+  const description = berita.content.substring(0, 160) + "...";
+
+  // Kembalikan objek Metadata yang dinamis berdasarkan data berita
+  return {
+    title: `${berita.title} | Desa Slamparejo`,
+    description: description,
+    openGraph: {
+      title: berita.title,
+      description: description,
+      images: [
+        {
+          url: berita.imageUrl, // URL gambar utama berita
+          width: 1200,
+          height: 630,
+          alt: berita.title,
+        },
+      ],
+      locale: "id_ID",
+      type: "article", // Tipe konten adalah artikel
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: berita.title,
+      description: description,
+      images: [berita.imageUrl], // URL gambar untuk Twitter Card
+    },
+  };
+}
+
+// --- Komponen Halaman ---
+
+/**
+ * Komponen React Server untuk menampilkan halaman detail berita.
+ * @param {Props} { params } - Menerima parameter `id` dari URL.
+ */
+export default async function BeritaDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
+  const berita = await getBeritaDetail(id);
+
+  // Tampilan jika berita tidak ditemukan
   if (!berita) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -49,6 +106,7 @@ export default async function BeritaDetailPage({
     );
   }
 
+  // Render halaman dengan data berita
   return (
     <main className="min-h-screen bg-white pt-24">
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -66,8 +124,10 @@ export default async function BeritaDetailPage({
           <Image
             src={berita.imageUrl}
             alt={berita.title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
+            priority
           />
         </div>
         <div
