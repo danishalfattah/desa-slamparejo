@@ -18,7 +18,8 @@ export default function DaftarPerangkat({
 
   return (
     <section className="bg-[#f4f8fc] px-4 py-10">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+      {/* === PERUBAHAN DI SINI === */}
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 justify-items-center">
         {dataPerangkat.map((item) => (
           <Card
             key={item.id}

@@ -185,62 +185,103 @@ export default async function ProfilPage() {
               ></iframe>
             </div>
 
-            <div className="w-full overflow-x-auto">
+            {/* Container for Responsive Table/Cards */}
+            <div className="w-full">
               <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                <table
-                  className={`${poppins.className} w-full text-sm text-center border-separate border-spacing-x-2 border-spacing-y-2`}
-                >
-                  <thead>
-                    <tr>
-                      <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
-                        No
-                      </th>
-                      <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
-                        Wilayah
-                      </th>
-                      <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
-                        RT
-                      </th>
-                      <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
-                        RW
-                      </th>
-                      <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
-                        Penduduk
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-white font-semibold">
-                    {(data.demografi.tabelData || []).map((row, index) => (
-                      <tr key={row.id}>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
-                          {index + 1}
+                {/* Table for Medium screens and up */}
+                <div className="hidden md:block">
+                  <table
+                    className={`${poppins.className} w-full text-sm text-center border-separate border-spacing-x-2 border-spacing-y-2`}
+                  >
+                    <thead>
+                      <tr>
+                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                          No
+                        </th>
+                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                          Wilayah
+                        </th>
+                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                          RT
+                        </th>
+                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                          RW
+                        </th>
+                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                          Penduduk
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-white font-semibold">
+                      {(data.demografi.tabelData || []).map((row, index) => (
+                        <tr key={row.id}>
+                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                            {index + 1}
+                          </td>
+                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                            {row.wilayah}
+                          </td>
+                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                            {row.rt}
+                          </td>
+                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                            {row.rw}
+                          </td>
+                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                            {row.penduduk}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr>
+                        <td colSpan={2} className="p-3 bg-[#8FA7B5] rounded-lg">
+                          Jumlah
                         </td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
-                          {row.wilayah}
-                        </td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
-                          {row.rt}
-                        </td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
-                          {row.rw}
-                        </td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
-                          {row.penduduk}
+                        <td className="p-3 bg-[#8FA7B5] rounded-lg">37 RT</td>
+                        <td className="p-3 bg-[#8FA7B5] rounded-lg">5 RW</td>
+                        <td className="p-3 bg-[#8FA7B5] rounded-lg">
+                          5.797 JIWA
                         </td>
                       </tr>
-                    ))}
-                    <tr>
-                      <td colSpan={2} className="p-3 bg-[#8FA7B5] rounded-lg">
-                        Jumlah
-                      </td>
-                      <td className="p-3 bg-[#8FA7B5] rounded-lg">37 RT</td>
-                      <td className="p-3 bg-[#8FA7B5] rounded-lg">5 RW</td>
-                      <td className="p-3 bg-[#8FA7B5] rounded-lg">
-                        5.797 JIWA
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Card List for Mobile screens */}
+                <div className="md:hidden space-y-3">
+                  {(data.demografi.tabelData || []).map((row) => (
+                    <div
+                      key={row.id}
+                      className="bg-[#8FA7B5] text-white rounded-lg p-4 text-sm"
+                    >
+                      <h3 className="font-bold text-lg mb-2">{row.wilayah}</h3>
+                      <div className="grid grid-cols-2 gap-2 text-left">
+                        <div>
+                          <p className="font-light">Penduduk:</p>
+                          <p className="font-semibold">{row.penduduk}</p>
+                        </div>
+                        <div>
+                          <p className="font-light">RT / RW:</p>
+                          <p className="font-semibold">
+                            {row.rt} / {row.rw}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="bg-[#8FA7B5] text-white rounded-lg p-4 text-sm">
+                    <h3 className="font-bold text-lg mb-2">Jumlah</h3>
+                    <div className="grid grid-cols-2 gap-2 text-left">
+                      <div>
+                        <p className="font-light">Penduduk:</p>
+                        <p className="font-semibold">5.797 JIWA</p>
+                      </div>
+                      <div>
+                        <p className="font-light">RT / RW:</p>
+                        <p className="font-semibold">37 RT / 5 RW</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -258,8 +299,9 @@ export default async function ProfilPage() {
                 {data.demografi.description}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-8">
-              <div className="bg-white text-black rounded-md p-3 md:p-4 shadow-lg col-span-2">
+            {/* IMPROVEMENT: Made the stats cards stack on small screens */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-8">
+              <div className="bg-white text-black rounded-md p-3 md:p-4 shadow-lg sm:col-span-2">
                 <p className={`${poppins.className} text-xs mb-1`}>
                   Total Penduduk
                 </p>

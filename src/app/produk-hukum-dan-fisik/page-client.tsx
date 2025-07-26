@@ -231,8 +231,8 @@ export default function ProdukPageClient({
                       key={item.id}
                       className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
                     >
-                      <div className="flex flex-row justify-between  items-start sm:items-center w-full">
-                        <div className="flex items-center gap-4 mb-4 sm:mb-0">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
+                        <div className="flex items-center gap-4">
                           <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg flex-shrink-0">
                             <FileText size={24} />
                           </div>
@@ -245,10 +245,11 @@ export default function ProdukPageClient({
                             </p>
                           </div>
                         </div>
-                        <div className="flex gap-2 self-center flex-shrink-0">
+                        {/* === PERUBAHAN DIMULAI DI SINI === */}
+                        <div className="flex flex-row gap-2 w-full sm:w-auto">
                           <button
                             onClick={() => handlePreview(item.link)}
-                            className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
+                            className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center justify-center gap-2 text-sm"
                           >
                             <Eye size={16} />
                             Lihat
@@ -259,14 +260,15 @@ export default function ProdukPageClient({
                             rel="noopener noreferrer"
                             passHref
                           >
-                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
+                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2 text-sm">
                               <Download size={16} />
                               Unduh
                             </button>
                           </Link>
                         </div>
+                        {/* === PERUBAHAN SELESAI DI SINI === */}
                       </div>
-                      <div className="w-full pt-2  border-gray-100">
+                      <div className="w-full pt-2">
                         <h3 className="font-semibold text-base text-gray-800 mb-1">
                           {item.title}
                         </h3>
