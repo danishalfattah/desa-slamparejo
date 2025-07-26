@@ -18,6 +18,9 @@ export default function ManageProfilPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [sejarahImageFile1, setSejarahImageFile1] = useState<File | null>(null);
+  const [sejarahImageFile2, setSejarahImageFile2] = useState<File | null>(null);
+  const [sejarahImageFile3, setSejarahImageFile3] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,6 +126,15 @@ export default function ManageProfilPage() {
     if (heroImageFile) {
       formData.append("heroImageFile", heroImageFile);
     }
+    if (sejarahImageFile1) {
+      formData.append("sejarahImageFile1", sejarahImageFile1);
+    }
+    if (sejarahImageFile2) {
+      formData.append("sejarahImageFile2", sejarahImageFile2);
+    }
+    if (sejarahImageFile3) {
+      formData.append("sejarahImageFile3", sejarahImageFile3);
+    }
 
     try {
       const response = await fetch("/api/profil-desa", {
@@ -132,6 +144,9 @@ export default function ManageProfilPage() {
       if (response.ok) {
         setShowModal(true);
         setHeroImageFile(null); // Reset file input
+        setSejarahImageFile1(null);
+        setSejarahImageFile2(null);
+        setSejarahImageFile3(null);
         // Re-fetch data to show the new image and cleaned data
         const freshResponse = await fetch("/api/profil-desa");
         if (freshResponse.ok) {
@@ -468,6 +483,17 @@ export default function ManageProfilPage() {
         {/* Sejarah */}
         <DataCard title="Sejarah" description="Sejarah dan latar belakang desa">
           <div className="space-y-2">
+            <Label htmlFor="sejarah-title">Judul Sejarah</Label>
+            <Input
+              id="sejarah-title"
+              value={data.sejarah?.title || ""}
+              onChange={(e) =>
+                handleNestedChange("sejarah", "title", e.target.value)
+              }
+              disabled={isSaving}
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="sejarah">
               Narasi Sejarah (pisahkan paragraf dengan baris baru)
             </Label>
@@ -480,6 +506,42 @@ export default function ManageProfilPage() {
               rows={10}
               placeholder="Masukkan sejarah desa, asal usul nama, perkembangan dari masa ke masa..."
             />
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-2">
+                <Label htmlFor={`sejarah-image-${i}`}>Gambar Sejarah {i}</Label>
+                {data.sejarah?.sejarahImages?.[i - 1]?.src && (
+                  <div className="mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Gambar saat ini:
+                    </p>
+                    <Image
+                      src={data.sejarah.sejarahImages[i - 1].src}
+                      alt={`Preview Sejarah ${i}`}
+                      width={200}
+                      height={112}
+                      className="rounded-md object-cover border"
+                    />
+                  </div>
+                )}
+                <Input
+                  id={`sejarah-image-${i}`}
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    if (i === 1) setSejarahImageFile1(file);
+                    if (i === 2) setSejarahImageFile2(file);
+                    if (i === 3) setSejarahImageFile3(file);
+                  }}
+                  accept="image/png, image/jpeg, image/jpg"
+                  disabled={isSaving}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Unggah file baru untuk mengganti gambar {i}.
+                </p>
+              </div>
+            ))}
           </div>
         </DataCard>
       </div>

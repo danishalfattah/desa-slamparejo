@@ -97,6 +97,7 @@ export interface Profil {
   sejarah: {
     title: string;
     description: string;
+    sejarahImages: { src: string; alt: string }[];
   };
 }
 

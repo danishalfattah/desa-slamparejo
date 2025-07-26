@@ -32,7 +32,7 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
 }
 
 const defaultData: Profil = {
-    hero: { 
+    hero: {
         subtitle: "Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan.",
         heroImage: "/landing-page.png"
     },
@@ -56,7 +56,12 @@ const defaultData: Profil = {
     },
     sejarah: {
         title: "Sejarah Desa Slamparejo",
-        description: "Desa Slamparejo merupakan suatu desa di kecamatan Jabung..."
+        description: "Desa Slamparejo merupakan suatu desa di kecamatan Jabung...",
+        sejarahImages: [
+            { src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg", alt: "Mbah Gude" },
+            { src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg", alt: "Wilayah Peteguhan" },
+            { src: "/c20512021615f3918f726e5fb61f5c95c047e233.jpg", alt: "Dusun Busu" }
+        ]
     }
 };
 
@@ -84,8 +89,20 @@ export async function GET() {
   try {
     const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
     const docSnap = await getDoc(docRef);
+
     if (docSnap.exists()) {
-      return NextResponse.json(docSnap.data());
+      const fetchedData = docSnap.data();
+      // Gabungkan data yang ada dengan data default untuk memastikan semua properti ada
+      const finalData = {
+        ...defaultData,
+        ...fetchedData,
+        hero: { ...defaultData.hero, ...fetchedData.hero },
+        video: { ...defaultData.video, ...fetchedData.video },
+        visiMisi: { ...defaultData.visiMisi, ...fetchedData.visiMisi },
+        demografi: { ...defaultData.demografi, ...fetchedData.demografi },
+        sejarah: { ...defaultData.sejarah, ...fetchedData.sejarah },
+      };
+      return NextResponse.json(finalData);
     } else {
       await setDoc(docRef, defaultData);
       return NextResponse.json(defaultData);
@@ -105,6 +122,14 @@ export async function POST(request: Request) {
         const heroImageFile = formData.get('heroImageFile') as File | null;
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
+        const sejarahImageFile1 = formData.get('sejarahImageFile1') as File | null;
+        const sejarahImageFile2 = formData.get('sejarahImageFile2') as File | null;
+        const sejarahImageFile3 = formData.get('sejarahImageFile3') as File | null;
+
+        const newSejarahImageUrl1 = await handleFileUpload(sejarahImageFile1);
+        const newSejarahImageUrl2 = await handleFileUpload(sejarahImageFile2);
+        const newSejarahImageUrl3 = await handleFileUpload(sejarahImageFile3);
+
         const jsonDataString = formData.get('jsonData') as string;
         if (!jsonDataString) {
              return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
@@ -113,6 +138,12 @@ export async function POST(request: Request) {
         
         if (newHeroImageUrl) {
             dataToSave.hero.heroImage = newHeroImageUrl;
+        }
+
+        if (dataToSave.sejarah && dataToSave.sejarah.sejarahImages) {
+            if (newSejarahImageUrl1) dataToSave.sejarah.sejarahImages[0].src = newSejarahImageUrl1;
+            if (newSejarahImageUrl2) dataToSave.sejarah.sejarahImages[1].src = newSejarahImageUrl2;
+            if (newSejarahImageUrl3) dataToSave.sejarah.sejarahImages[2].src = newSejarahImageUrl3;
         }
 
         if (dataToSave.video && dataToSave.video.url) {

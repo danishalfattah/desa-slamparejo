@@ -62,15 +62,6 @@ export default async function ProfilPage() {
     );
   }
 
-  const sejarahImages = [
-    { src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg", alt: "Mbah Gude" },
-    {
-      src: "/fbe3d8867cd111f2607bcb45c706e8363663dc5f.jpg",
-      alt: "Wilayah Peteguhan",
-    },
-    { src: "/c20512021615f3918f726e5fb61f5c95c047e233.jpg", alt: "Dusun Busu" },
-  ];
-
   return (
     <main className="m-0 p-0 h-full overflow-x-hidden">
       {/* Hero Section */}
@@ -316,7 +307,7 @@ export default async function ProfilPage() {
             </div>
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
               <div className="w-full md:w-1/2 flex flex-col flex-grow gap-6">
-                {sejarahImages.map((img, idx) => (
+                {(data.sejarah.sejarahImages || []).map((img, idx) => (
                   <div
                     key={idx}
                     className="relative w-full flex-1 min-h-[150px]"
