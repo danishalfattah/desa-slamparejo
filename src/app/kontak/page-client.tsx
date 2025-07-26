@@ -43,8 +43,8 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
           className="z-0 object-cover"
           priority
         />
-        <div className="max-w-6xl  flex flex-col md:flex-row gap-0  ">
-          <div className="md:w-1/2  flex items-center z-50 ">
+        <div className="max-w-6xl w-full flex flex-col md:flex-row gap-0">
+          <div className="md:w-1/2 flex items-center z-50">
             <h2
               className={`${playfair.className} text-white text-2xl md:text-8xl font-normal tracking-[1.5px] mb-4`}
             >
@@ -53,9 +53,9 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
               Desa
             </h2>
           </div>
-          <div className="md:w-1/2 flex items-center ">
+          <div className="md:w-1/2 flex items-center">
             <p
-              className={`${poppins.className}  text-white text-sm md:text-lg font-normal tracking-wider`}
+              className={`${poppins.className} text-white text-sm md:text-lg font-normal tracking-wider`}
             >
               {data.description}
             </p>
@@ -63,9 +63,10 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
         </div>
       </div>
 
-      <section className="bg-[#F9FCFC] py-12 px-4 md:px-0">
-        <div className="max-w-7xl md:mx-auto">
-          <div className="flex flex-wrap md:flex-row flex-col md:justify-around items-center">
+      <section className="bg-[#F9FCFC] py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          {/* MODIFIED a few classes on this div below */}
+          <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-8">
             <Card
               title="Email Resmi"
               description="Kirim email untuk pertanyaan atau permohonan resmi"
@@ -98,7 +99,7 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
       </section>
 
       <section className="bg-white py-10 px-4">
-        <div className="p-[8px] sm:p-[12px] max-w-screen-xl mx-auto">
+        <div className="p-[8px] sm:p-[12px] max-w-6xl mx-auto">
           <div className="border-b border-black pb-2 sm:pb-4 w-fit">
             <h1
               className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
@@ -128,7 +129,7 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
         </div>
       </section>
       <section className="bg-white py-10 px-4">
-        <div className="p-[8px] sm:p-[12px] max-w-screen-xl mx-auto">
+        <div className="p-[8px] sm:p-[12px] max-w-6xl mx-auto">
           <div className="border-b border-black pb-2 sm:pb-4 w-fit">
             <h1
               className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
@@ -144,7 +145,7 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
         </div>
         <div className="px-4">
           <iframe
-            className="w-full max-w-5xl h-80 md:h-[450px] mx-auto my-10 rounded-lg shadow-lg"
+            className="w-full max-w-6xl h-80 md:h-[450px] mx-auto my-10 rounded-lg shadow-lg"
             src={data.lokasi.mapUrl}
             allowFullScreen={false}
             loading="lazy"
