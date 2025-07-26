@@ -1,10 +1,19 @@
+// src/app/produk-hukum-dan-fisik/page-client.tsx
+
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { ProdukHukum, Pembangunan } from "@/lib/types";
 import { Eye, Download, Scale, Construction, FileText } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -54,6 +63,12 @@ export default function ProdukPageClient({
   const [page, setPage] = useState(1);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // State untuk filter
+  const [hukumTahunFilter, setHukumTahunFilter] = useState("all");
+  const [hukumKategoriFilter, setHukumKategoriFilter] = useState("all");
+  const [pembangunanTahunFilter, setPembangunanTahunFilter] = useState("all");
+  const [pembangunanStatusFilter, setPembangunanStatusFilter] = useState("all");
+
   const handlePreview = (link: string) => {
     const regex =
       /(?:drive\.google\.com\/(?:file\/d\/|uc\?id=)|id=)([a-zA-Z0-9_-]{25,})/;
@@ -68,20 +83,61 @@ export default function ProdukPageClient({
     }
   };
 
-  const hukumTotal = produkHukumData.length;
-  const pembangunanTotal = pembangunanData.length;
+  // Data yang sudah difilter
+  const filteredProdukHukum = useMemo(() => {
+    return produkHukumData
+      .filter(
+        (item) =>
+          hukumTahunFilter === "all" ||
+          item.year.toString() === hukumTahunFilter
+      )
+      .filter(
+        (item) =>
+          hukumKategoriFilter === "all" || item.category === hukumKategoriFilter
+      );
+  }, [produkHukumData, hukumTahunFilter, hukumKategoriFilter]);
+
+  const filteredPembangunan = useMemo(() => {
+    return pembangunanData
+      .filter(
+        (item) =>
+          pembangunanTahunFilter === "all" ||
+          item.year.toString() === pembangunanTahunFilter
+      )
+      .filter(
+        (item) =>
+          pembangunanStatusFilter === "all" ||
+          item.status === pembangunanStatusFilter
+      );
+  }, [pembangunanData, pembangunanTahunFilter, pembangunanStatusFilter]);
+
+  const hukumTotal = filteredProdukHukum.length;
+  const pembangunanTotal = filteredPembangunan.length;
 
   const hukumPages = Math.ceil(hukumTotal / PAGE_SIZE);
   const pembangunanPages = Math.ceil(pembangunanTotal / PAGE_SIZE);
 
-  const hukumItems = produkHukumData.slice(
+  const hukumItems = filteredProdukHukum.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
-  const pembangunanItems = pembangunanData.slice(
+  const pembangunanItems = filteredPembangunan.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Selesai":
+        return "bg-green-600";
+      case "Berlangsung":
+        return "bg-yellow-500";
+      case "Direncanakan":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
 
   return (
     <>
@@ -125,59 +181,106 @@ export default function ProdukPageClient({
             </button>
           </div>
 
-          <>
-            {tab === "hukum" && (
+          {tab === "hukum" && (
+            <div>
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <Select
+                  value={hukumTahunFilter}
+                  onValueChange={(value) => {
+                    setHukumTahunFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Tahun</SelectItem>
+                    {[...new Set(produkHukumData.map((item) => item.year))].map(
+                      (year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={hukumKategoriFilter}
+                  onValueChange={(value) => {
+                    setHukumKategoriFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter Kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Kategori</SelectItem>
+                    <SelectItem value="Perdes">Perdes</SelectItem>
+                    <SelectItem value="Keputusan Desa">
+                      Keputusan Desa
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-4">
-                {hukumItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
-                  >
-                    <div className="flex flex-row justify-between  items-start sm:items-center w-full">
-                      <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                        <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg flex-shrink-0">
-                          <FileText size={24} />
+                {hukumItems.length > 0 ? (
+                  hukumItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`${poppins.className} bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4 border border-blue-100`}
+                    >
+                      <div className="flex flex-row justify-between  items-start sm:items-center w-full">
+                        <div className="flex items-center gap-4 mb-4 sm:mb-0">
+                          <div className="bg-blue-100 text-[#0B4973] p-3 rounded-lg flex-shrink-0">
+                            <FileText size={24} />
+                          </div>
+                          <div>
+                            <span className="bg-blue-200 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
+                              {item.category}
+                            </span>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Tahun {item.year}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <span className="bg-blue-200 text-[#0B4973] text-xs font-bold px-2.5 py-1 rounded-full">
-                            {item.category}
-                          </span>
-                          <p className="text-xs text-gray-500 mt-1">
-                            Tahun {item.year}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 self-center flex-shrink-0">
-                        <button
-                          onClick={() => handlePreview(item.link)}
-                          className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
-                        >
-                          <Eye size={16} />
-                          Lihat
-                        </button>
-                        <Link
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          passHref
-                        >
-                          <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
-                            <Download size={16} />
-                            Unduh
+                        <div className="flex gap-2 self-center flex-shrink-0">
+                          <button
+                            onClick={() => handlePreview(item.link)}
+                            className="bg-[#0B4973] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#09395a] transition flex items-center gap-2 text-sm"
+                          >
+                            <Eye size={16} />
+                            Lihat
                           </button>
-                        </Link>
+                          <Link
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            passHref
+                          >
+                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2 text-sm">
+                              <Download size={16} />
+                              Unduh
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="w-full pt-2  border-gray-100">
+                        <h3 className="font-semibold text-base text-gray-800 mb-1">
+                          {item.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm font-normal">
+                          {item.description}
+                        </p>
                       </div>
                     </div>
-                    <div className="w-full pt-2  border-gray-100">
-                      <h3 className="font-semibold text-base text-gray-800 mb-1">
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm font-normal">
-                        {item.description}
-                      </p>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10 text-gray-500">
+                    Tidak ada data yang cocok dengan filter yang dipilih.
                   </div>
-                ))}
+                )}
                 {hukumPages > 1 && (
                   <div className="flex justify-center gap-2 mt-8">
                     {Array.from({ length: hukumPages }, (_, i) => (
@@ -196,43 +299,95 @@ export default function ProdukPageClient({
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
-            {tab === "pembangunan" && (
+          {tab === "pembangunan" && (
+            <div>
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <Select
+                  value={pembangunanTahunFilter}
+                  onValueChange={(value) => {
+                    setPembangunanTahunFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter Tahun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Tahun</SelectItem>
+                    {[...new Set(pembangunanData.map((item) => item.year))].map(
+                      (year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={pembangunanStatusFilter}
+                  onValueChange={(value) => {
+                    setPembangunanStatusFilter(value);
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Filter Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Semua Status</SelectItem>
+                    <SelectItem value="Selesai">Selesai</SelectItem>
+                    <SelectItem value="Berlangsung">Berlangsung</SelectItem>
+                    <SelectItem value="Direncanakan">Direncanakan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {pembangunanItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
-                    >
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                          {item.status}
-                        </span>
-                      </div>
-                      <div className="p-4 flex flex-col flex-1">
-                        <h3 className="font-semibold text-base text-gray-800 mb-1">
-                          {item.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-4 flex-1 font-normal">
-                          {item.description}
-                        </p>
-                        <div className="border-t border-gray-200 pt-3 flex items-center justify-between text-xs text-gray-500 mt-auto">
-                          <span className="font-semibold">
-                            Anggaran: <b>{item.budget}</b>
+                  {pembangunanItems.length > 0 ? (
+                    pembangunanItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
+                      >
+                        <div className="relative w-full h-40">
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                          />
+                          <span
+                            className={`absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded-full ${getStatusColor(
+                              item.status
+                            )}`}
+                          >
+                            {item.status}
                           </span>
-                          <span className="font-semibold">{item.year}</span>
+                        </div>
+                        <div className="p-4 flex flex-col flex-1">
+                          <h3 className="font-semibold text-base text-gray-800 mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-4 flex-1 font-normal">
+                            {item.description}
+                          </p>
+                          <div className="border-t border-gray-200 pt-3 flex items-center justify-between text-xs text-gray-500 mt-auto">
+                            <span className="font-semibold">
+                              Anggaran: <b>{item.budget}</b>
+                            </span>
+                            <span className="font-semibold">{item.year}</span>
+                          </div>
                         </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-10 text-gray-500">
+                      Tidak ada data yang cocok dengan filter yang dipilih.
                     </div>
-                  ))}
+                  )}
                 </div>
                 {pembangunanPages > 1 && (
                   <div className="flex justify-center gap-2 mt-8">
@@ -252,8 +407,8 @@ export default function ProdukPageClient({
                   </div>
                 )}
               </div>
-            )}
-          </>
+            </div>
+          )}
         </div>
       </section>
     </>

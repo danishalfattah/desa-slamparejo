@@ -128,12 +128,18 @@ export default function ManageKontakPage() {
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="heroSubtitle">Subjudul Hero</Label>
+              <Label htmlFor="page-description">Deskripsi Halaman</Label>
               <Textarea
-                id="heroSubtitle"
-                name="heroSubtitle"
+                id="page-description"
                 value={data.hero?.subtitle || ""}
-                onChange={(e) => handleChange(e, "hero", "subtitle")}
+                onChange={(e) => {
+                  const newDescription = e.target.value;
+                  setData((prev) => ({
+                    ...prev,
+                    hero: { ...prev.hero, subtitle: newDescription },
+                    description: newDescription,
+                  }));
+                }}
                 rows={3}
               />
             </div>
@@ -163,16 +169,6 @@ export default function ManageKontakPage() {
               <p className="text-sm text-muted-foreground">
                 Unggah file baru untuk mengganti gambar hero.
               </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Deskripsi Kontak</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={data.description || ""}
-                onChange={(e) => handleChange(e)}
-                rows={3}
-              />
             </div>
           </div>
         </DataCard>

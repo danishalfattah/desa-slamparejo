@@ -210,9 +210,9 @@ export default function ManageProfilPage() {
         >
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+              <Label htmlFor="hero-description">Deskripsi Halaman</Label>
               <Textarea
-                id="hero-subtitle"
+                id="hero-description"
                 value={data.hero?.subtitle || ""}
                 onChange={(e) =>
                   handleNestedChange("hero", "subtitle", e.target.value)

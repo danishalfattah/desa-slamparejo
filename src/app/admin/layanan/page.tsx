@@ -270,13 +270,22 @@ export default function ManageLayananPage() {
       >
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="heroSubtitle">Subjudul Halaman</Label>
+            <Label htmlFor="page-description">Deskripsi Halaman</Label>
             <Textarea
-              id="heroSubtitle"
+              id="page-description"
               value={data.hero?.subtitle || ""}
-              onChange={(e) =>
-                handlePageDataChange("hero", "subtitle", e.target.value)
-              }
+              onChange={(e) => {
+                const newDescription = e.target.value;
+                setData((prev) => ({
+                  ...prev,
+                  hero: { ...prev.hero, subtitle: newDescription },
+                  akses: {
+                    ...prev.akses,
+                    description: newDescription,
+                    title: prev.akses?.title ?? "",
+                  },
+                }));
+              }}
               rows={3}
             />
           </div>
@@ -315,17 +324,6 @@ export default function ManageLayananPage() {
               onChange={(e) =>
                 handlePageDataChange("akses", "title", e.target.value)
               }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="aksesDescription">Deskripsi Akses Layanan</Label>
-            <Textarea
-              id="aksesDescription"
-              value={data.akses?.description || ""}
-              onChange={(e) =>
-                handlePageDataChange("akses", "description", e.target.value)
-              }
-              rows={3}
             />
           </div>
         </div>

@@ -413,7 +413,7 @@ export default function ManageBeritaPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+            <Label htmlFor="hero-subtitle">Deskripsi Halaman</Label>
             <Textarea
               id="hero-subtitle"
               value={pageData.hero?.subtitle || ""}

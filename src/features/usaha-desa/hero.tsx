@@ -1,3 +1,5 @@
+// src/features/usaha-desa/hero.tsx
+
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { UsahaDesaPageData } from "@/lib/types";
@@ -31,12 +33,14 @@ export default function HeroUsaha({
         />
         <div className="absolute inset-0  bg-black/40 z-10" />
         <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
-          <h1
-            className={`${playfair.className} text-white text-4xl md:text-6xl mb-6 tracking-[9px]`}
-          >
-            USAHA DESA
-          </h1>
-          <div className="w-full border-b-1 border-white rounded-b-lg mb-6" />
+          <div className="relative flex flex-col items-center w-fit mx-auto mb-6">
+            <h1
+              className={`${playfair.className} text-white text-4xl md:text-6xl tracking-[9px]`}
+            >
+              USAHA DESA
+            </h1>
+            <div className="w-full border-b-1 border-white rounded-b-lg mt-6" />
+          </div>
           <p
             className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8  md:leading-10 max-w-2xl mb-10 w-full`}
           >

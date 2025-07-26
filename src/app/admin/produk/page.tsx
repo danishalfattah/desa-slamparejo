@@ -556,7 +556,7 @@ export default function ManageProdukPage() {
     setIsSavingPage(true);
     const formData = new FormData();
     const jsonData = {
-      hero: { subtitle: pageData.hero?.subtitle },
+      hero: { subtitle: pageData.description },
       description: pageData.description,
     };
     formData.append("jsonData", JSON.stringify(jsonData));
@@ -631,31 +631,18 @@ export default function ManageProdukPage() {
       <DataCard title="Konten Halaman Produk Hukum dan Fisik">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="hero-subtitle">Subjudul Hero</Label>
+            <Label htmlFor="page-description">Deskripsi Halaman</Label>
             <Textarea
-              id="hero-subtitle"
-              value={pageData.hero?.subtitle || ""}
-              onChange={(e) =>
-                setPageData((prev) => ({
-                  ...prev,
-                  hero: { ...prev.hero, subtitle: e.target.value },
-                }))
-              }
-              rows={3}
-              disabled={isSavingPage}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Deskripsi Halaman</Label>
-            <Textarea
-              id="description"
+              id="page-description"
               value={pageData.description || ""}
-              onChange={(e) =>
+              onChange={(e) => {
+                const newDescription = e.target.value;
                 setPageData((prev) => ({
                   ...prev,
-                  description: e.target.value,
-                }))
-              }
+                  hero: { ...prev.hero, subtitle: newDescription },
+                  description: newDescription,
+                }));
+              }}
               rows={3}
               disabled={isSavingPage}
             />
