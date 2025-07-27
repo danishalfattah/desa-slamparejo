@@ -75,6 +75,11 @@ const menuItems = [
     url: "/admin/kontak",
     icon: Phone,
   },
+  {
+    title: "Pengaturan Akun",
+    url: "/admin/pengaturan",
+    icon: Settings,
+  },
 ];
 
 export function AppSidebar() {

@@ -18,6 +18,10 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Shield } from "lucide-react";
 
+// Impor Firebase auth dan fungsi signInWithEmailAndPassword dari sisi klien
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +37,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (mounted && status === "authenticated") {
-      // Use window.location for hard navigation to ensure proper state reset
       window.location.href = "/admin/dashboard";
     }
   }, [status, mounted]);
@@ -44,6 +47,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      // 1. Pertama, login ke Firebase di sisi browser
+      // Ini akan membuat sesi agar `auth.currentUser` dikenali di halaman lain
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // 2. Kemudian, login ke NextAuth untuk mendapatkan sesi proteksi halaman
       const result = await signIn("credentials", {
         redirect: false,
         email,
@@ -52,27 +60,31 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError("Email atau password salah.");
-        setIsLoading(false);
       } else if (result?.ok) {
-        // Use window.location for hard navigation after successful login
         window.location.href = "/admin/dashboard";
       }
-    } catch (error) {
-      setError("Terjadi kesalahan saat login.");
+    } catch (err: unknown) {
+      // Menangkap error dari Firebase atau NextAuth
+      console.error("Login Error:", err);
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "code" in err &&
+        typeof (err as { code?: string }).code === "string" &&
+        ((err as { code: string }).code === "auth/invalid-credential" ||
+          (err as { code: string }).code === "auth/wrong-password" ||
+          (err as { code: string }).code === "auth/user-not-found")
+      ) {
+        setError("Email atau password salah.");
+      } else {
+        setError("Terjadi kesalahan saat login.");
+      }
+    } finally {
       setIsLoading(false);
     }
   };
 
-  // Prevent hydration mismatch
-  if (!mounted) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-muted/50">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (status === "loading") {
+  if (!mounted || status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-muted/50">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -107,7 +119,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@desa.id"
+                placeholder="Email Address"
                 required
                 disabled={isLoading}
               />

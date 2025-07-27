@@ -18,6 +18,7 @@ import {
   MapPin,
   Phone,
   Newspaper,
+  Settings, // Impor ikon Settings
 } from "lucide-react";
 import Link from "next/link";
 
@@ -67,7 +68,7 @@ export default async function DashboardPage() {
     {
       title: "Berita",
       description: "Kelola berita dan informasi terbaru",
-      icon: Newspaper, // Tambahkan item baru
+      icon: Newspaper,
       href: "/admin/berita",
     },
     {
@@ -75,6 +76,12 @@ export default async function DashboardPage() {
       description: "Informasi kontak dan lokasi desa",
       icon: Phone,
       href: "/admin/kontak",
+    },
+    {
+      title: "Pengaturan Akun",
+      description: "Ubah password akun admin Anda",
+      icon: Settings, // Tambahkan item baru
+      href: "/admin/pengaturan",
     },
   ];
 

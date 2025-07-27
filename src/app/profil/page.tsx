@@ -172,8 +172,8 @@ export default async function ProfilPage() {
       {/* Demografi Section */}
       <section className="relative min-h-screen bg-cover bg-center py-10 px-5 pb-12 bg-[url('/c20512021615f3918f726e5fb61f5c95c047e233.jpg')]">
         <div className="absolute inset-0 bg-black/50 z-0"></div>
-        <div className="relative z-10 w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 text-white p-4 md:p-6 mb-10">
-          <div className="space-y-6 w-full order-last md:order-first">
+        <div className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-white p-4 md:p-6 mb-10">
+          <div className="space-y-6 w-full order-last md:order-first min-w-0">
             <div className="rounded-md overflow-hidden shadow-lg w-full">
               <iframe
                 className="w-full h-64 md:h-80"
@@ -185,29 +185,29 @@ export default async function ProfilPage() {
               ></iframe>
             </div>
 
-            {/* Container for Responsive Table/Cards */}
+            {/* Container for Responsive Table */}
             <div className="w-full">
-              <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg">
-                {/* Table for Medium screens and up */}
-                <div className="hidden md:block">
+              <div className="bg-white/95 backdrop-blur-sm p-2 sm:p-4 rounded-xl shadow-lg">
+                {/* Table for All Screens */}
+                <div>
                   <table
-                    className={`${poppins.className} w-full text-sm text-center border-separate border-spacing-x-2 border-spacing-y-2`}
+                    className={`${poppins.className} w-full text-center border-separate border-spacing-1 sm:border-spacing-2 text-[11px] sm:text-sm`}
                   >
                     <thead>
                       <tr>
-                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                        <th className="p-2 sm:p-3 bg-[#094B72] text-white font-semibold rounded-md sm:rounded-lg">
                           No
                         </th>
-                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                        <th className="p-2 sm:p-3 bg-[#094B72] text-white font-semibold rounded-md sm:rounded-lg">
                           Wilayah
                         </th>
-                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                        <th className="p-2 sm:p-3 bg-[#094B72] text-white font-semibold rounded-md sm:rounded-lg">
                           RT
                         </th>
-                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                        <th className="p-2 sm:p-3 bg-[#094B72] text-white font-semibold rounded-md sm:rounded-lg">
                           RW
                         </th>
-                        <th className="p-3 bg-[#094B72] text-white font-semibold rounded-lg">
+                        <th className="p-2 sm:p-3 bg-[#094B72] text-white font-semibold rounded-md sm:rounded-lg">
                           Penduduk
                         </th>
                       </tr>
@@ -215,78 +215,48 @@ export default async function ProfilPage() {
                     <tbody className="text-white font-semibold">
                       {(data.demografi.tabelData || []).map((row, index) => (
                         <tr key={row.id}>
-                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                          <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {index + 1}
                           </td>
-                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                          <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {row.wilayah}
                           </td>
-                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                          <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {row.rt}
                           </td>
-                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                          <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {row.rw}
                           </td>
-                          <td className="p-3 bg-[#8FA7B5] rounded-lg font-normal">
+                          <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {row.penduduk}
                           </td>
                         </tr>
                       ))}
                       <tr>
-                        <td colSpan={2} className="p-3 bg-[#8FA7B5] rounded-lg">
+                        <td
+                          colSpan={2}
+                          className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg"
+                        >
                           Jumlah
                         </td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg">37 RT</td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg">5 RW</td>
-                        <td className="p-3 bg-[#8FA7B5] rounded-lg">
+                        <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
+                          37 RT
+                        </td>
+                        <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
+                          5 RW
+                        </td>
+                        <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
                           5.797 JIWA
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-
-                {/* Card List for Mobile screens */}
-                <div className="md:hidden space-y-3">
-                  {(data.demografi.tabelData || []).map((row) => (
-                    <div
-                      key={row.id}
-                      className="bg-[#8FA7B5] text-white rounded-lg p-4 text-sm"
-                    >
-                      <h3 className="font-bold text-lg mb-2">{row.wilayah}</h3>
-                      <div className="grid grid-cols-2 gap-2 text-left">
-                        <div>
-                          <p className="font-light">Penduduk:</p>
-                          <p className="font-semibold">{row.penduduk}</p>
-                        </div>
-                        <div>
-                          <p className="font-light">RT / RW:</p>
-                          <p className="font-semibold">
-                            {row.rt} / {row.rw}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <div className="bg-[#8FA7B5] text-white rounded-lg p-4 text-sm">
-                    <h3 className="font-bold text-lg mb-2">Jumlah</h3>
-                    <div className="grid grid-cols-2 gap-2 text-left">
-                      <div>
-                        <p className="font-light">Penduduk:</p>
-                        <p className="font-semibold">5.797 JIWA</p>
-                      </div>
-                      <div>
-                        <p className="font-light">RT / RW:</p>
-                        <p className="font-semibold">37 RT / 5 RW</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <div>
               <h1
                 className={`${playfair.className} text-white font-medium text-3xl md:text-4xl leading-tight tracking-wider mb-4`}
@@ -299,7 +269,6 @@ export default async function ProfilPage() {
                 {data.demografi.description}
               </p>
             </div>
-            {/* IMPROVEMENT: Made the stats cards stack on small screens */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-8">
               <div className="bg-white text-black rounded-md p-3 md:p-4 shadow-lg sm:col-span-2">
                 <p className={`${poppins.className} text-xs mb-1`}>
