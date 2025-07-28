@@ -4,9 +4,7 @@
 import { usePathname } from "next/navigation";
 import Navbar from "@/features/navbar";
 import Footer from "@/features/footer";
-import React, { useState } from "react";
-import ChatIcon from "./chat-icon";
-import ChatBox from "./chat-box";
+import ChatWrapper from "./chat-wrapper"; // Import komponen baru
 
 export default function LayoutWrapper({
   children,
@@ -15,7 +13,6 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith("/admin");
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <>
@@ -24,11 +21,7 @@ export default function LayoutWrapper({
       {!isAdminPage && (
         <>
           <Footer />
-          {!isChatOpen ? (
-            <ChatIcon onClick={() => setIsChatOpen(true)} />
-          ) : (
-            <ChatBox onClose={() => setIsChatOpen(false)} />
-          )}
+          <ChatWrapper /> {/* Gunakan komponen baru di sini */}
         </>
       )}
     </>

@@ -22,7 +22,7 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
   const quickQuestions = [
     "Apa saja layanan yang tersedia?",
     "Bagaimana cara menghubungi perangkat desa?",
-    "Di mana lokasi kantor desa?",
+    "Siapa saja tim pembuat website ini?", // Pertanyaan baru yang relevan
   ];
 
   const scrollToBottom = () => {
@@ -41,12 +41,11 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
   }, []);
 
   const handleSend = async (question: string = input) => {
-    if (question.trim() === "") return;
+    if (question.trim() === "" || isLoading) return;
 
-    const newMessages: Message[] = [
-      ...messages,
-      { text: question, sender: "user" },
-    ];
+    const userMessage: Message = { text: question, sender: "user" };
+    const newMessages = [...messages, userMessage];
+
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
@@ -57,7 +56,8 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: question }),
+        // Mengirim seluruh riwayat percakapan
+        body: JSON.stringify({ history: newMessages }),
       });
 
       if (!response.ok) {
@@ -103,12 +103,12 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
             }`}
           >
             {msg.sender === "bot" && (
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
                 <Bot size={20} className="text-gray-600" />
               </div>
             )}
             <div
-              className={`p-3 rounded-lg max-w-[80%] ${
+              className={`p-3 rounded-lg max-w-[80%] break-words ${
                 msg.sender === "user"
                   ? "bg-blue-500 text-white rounded-br-none"
                   : "bg-gray-200 text-gray-800 rounded-bl-none"
@@ -117,7 +117,7 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
               <p className="text-sm">{msg.text}</p>
             </div>
             {msg.sender === "user" && (
-              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
                 <User size={20} className="text-white" />
               </div>
             )}
@@ -125,7 +125,7 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
         ))}
         {isLoading && (
           <div className="flex items-start gap-2.5 mb-4">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
               <Bot size={20} className="text-gray-600" />
             </div>
             <div className="p-3 rounded-lg bg-gray-200">
@@ -143,6 +143,7 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
               key={i}
               onClick={() => handleSend(q)}
               className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+              disabled={isLoading}
             >
               {q}
             </button>
@@ -161,7 +162,7 @@ export default function ChatBox({ onClose }: ChatBoxProps) {
           <button
             onClick={() => handleSend()}
             className="bg-[#0B4973] text-white p-2 rounded-full hover:bg-[#09395a] disabled:bg-gray-400"
-            disabled={isLoading}
+            disabled={isLoading || input.trim() === ""}
           >
             <Send size={18} />
           </button>

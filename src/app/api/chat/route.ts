@@ -1,99 +1,156 @@
 // src/app/api/chat/route.ts
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-import { google } from 'googleapis';
+import { 
+    Beranda, Profil, PerangkatDesa, Usaha, ProdukHukum, Pembangunan, Kontak, Layanan, Berita, FaqItem, JamOperasionalItem, LayananForm 
+} from "@/lib/types";
 
-const desaSlamparejoContext = `
-Anda adalah "Asisten Virtual Desa Slamparejo". Tugas Anda adalah memberikan informasi yang akurat dan relevan tentang Desa Slamparejo berdasarkan konteks yang disediakan. Konteks ini terdiri dari dua bagian: Informasi Statis (data inti dari website) dan Informasi Dinamis (hasil pencarian Google terkini).
+async function fetchWebsiteContext() {
+  const baseUrl = process.env.NEXTAUTH_URL;
+  if (!baseUrl) throw new Error("NEXTAUTH_URL is not defined.");
 
-Saat menjawab, prioritaskan informasi yang paling relevan, baik dari sumber statis maupun dinamis. Jawablah dengan ramah, jelas, dan profesional. Selalu berikan jawaban dalam Bahasa Indonesia. Jangan menjawab pertanyaan yang tidak ada hubungannya dengan Desa Slamparejo.
+  try {
+    const endpoints = [
+      'beranda', 'profil-desa', 'perangkat-desa',
+      'usaha-desa', 'produk-hukum', 'pembangunan',
+      'kontak', 'layanan', 'berita'
+    ];
+    const responses = await Promise.all(
+      endpoints.map(endpoint => fetch(`${baseUrl}/api/${endpoint}`, { cache: 'no-store' }))
+    );
+    const data = await Promise.all(responses.map(res => res.json()));
+    
+    const [berandaData, profilData, perangkatData, usahaData, produkHukumData, pembangunanData, kontakData, layananData, beritaData] = data;
 
----
-**[KONTEKS STATIS DARI WEBSITE DESA SLAMPAREJO]**
+    let context = "KONTEKS WEBSITE DESA SLAMPAREJO:\n\n";
+    
+    context += `## Informasi Umum Website:\n`;
+    context += `- Pembuat Website: Dibuat oleh tim Mahasiswa Membangun Desa (MMD) 32 dari Fakultas Ilmu Komputer (FILKOM), Universitas Brawijaya (UB) angkatan 2025.\n`;
+    context += `- Tim Pengembang: Lisa, Derisa, Samuel, Danish, Arif, Satrio, dan Kaneysha.\n`;
+    context += `- Tujuan Pembuatan: Dibuat sebagai bagian dari program pengabdian kepada masyarakat.\n\n`;
 
-**Informasi Umum:**
-- Slogan: Melayani dengan Hati Membangun dengan Aksi.
-- Website ini adalah platform digital untuk mengenal, berinteraksi, dan berkontribusi dalam membangun desa.
+    context += `## Halaman Beranda:\nSlogan: ${berandaData.slogan.title}\nDeskripsi Slogan: ${berandaData.slogan.description}\n\n`;
+    context += "FAQ (Pertanyaan Umum):\n";
+    (berandaData.faq || []).forEach((item: FaqItem) => {
+        context += `- Tanya: ${item.question}\n  Jawab: ${item.answer}\n`;
+    });
 
-**Layanan Desa:**
-- Layanan administrasi dilayani langsung di kantor desa. Jam operasional dan kontak resmi ada di halaman "Kontak Kami".
-- Aspirasi atau pengaduan bisa disampaikan melalui fitur "Kotak Saran" di website.
-- Formulir online yang tersedia: Surat Keterangan Usaha, Surat Keterangan Tidak Mampu, Surat Keterangan Domisili, dan Pengajuan Surat Pengantar Nikah.
+    context += `\n## Profil Desa:\nVisi: ${profilData.visiMisi.visi}\n`;
+    context += `Demografi: Total Penduduk ${profilData.demografi.totalPenduduk}, Laki-laki ${profilData.demografi.lakiLaki}, Perempuan ${profilData.demografi.perempuan}.\n`;
+    
+    context += `\n## Perangkat Desa:\n`;
+    (perangkatData.perangkatList || []).forEach((item: PerangkatDesa) => {
+        context += `- ${item.name}, Jabatan: ${item.title}.\n`;
+    });
+    const sekdes = (perangkatData.perangkatList || []).find((p: PerangkatDesa) => p.title.toLowerCase().includes('sekretaris desa'));
+    if (sekdes) context += `Sekretaris Desa (Sekdes) adalah ${sekdes.name}.\n`;
 
-**Profil Desa:**
-- Visi: Membangun Desa Slamparejo yang mandiri, sejahtera, dan berkelanjutan.
-- Misi: Meningkatkan kualitas pelayanan publik dan memperkuat perekonomian desa.
-- Demografi: Total penduduk 5.797 jiwa (2.900 laki-laki, 2.897 perempuan), terbagi menjadi Dusun Krajan dan Busu.
-- Sejarah: Desa Slamparejo berada di Kecamatan Jabung. Sejarah lengkapnya ada di halaman Profil.
+    context += `\n## Usaha Desa (UMKM):\n`;
+    (usahaData.usahaList || []).forEach((item: Usaha) => {
+        context += `- Nama: ${item.title}, Deskripsi: ${item.description}, Kontak: ${item.phone}\n`;
+    });
 
-**Perangkat Desa:**
-- Kepala Desa: Wahyudi
-- Sekretaris Desa: Muhammad Nuh
-- Kepala Urusan (Kaur): Keuangan (Siti Maimunah), Perencanaan (Wahyu Widodo), Tata Usaha & Umum (Novita).
-- Kepala Seksi (Kasi): Pemerintahan (Abdul Kirom), Kesejahteraan dan Sosial (M. Syamsul Arifin), Pelayanan (Ali).
-- Kepala Dusun (Kasun): Krajan (M. Anas), Busu (Asiono).
+    const totalProdukHukum = (produkHukumData || []).length;
+    context += `\n## Produk Hukum (Perdes & Keputusan Desa):\n`;
+    context += `Total terdapat ${totalProdukHukum} dokumen hukum. Berikut adalah beberapa contohnya:\n`;
+    (produkHukumData || []).slice(0, 5).forEach((item: ProdukHukum) => {
+        context += `- Judul: ${item.title}, Kategori: ${item.category}, Tahun: ${item.year}\n`;
+    });
 
-**Usaha Desa (UMKM):**
-- Terdapat berbagai UMKM seperti Yansen Farm (ayam dan telur), Rujak Cingur "Mak Tin", Nasi Geret Dahlia, Jamu Kampoeng, Bagus Sablon, dan Dimsum Rainda. Info kontak dan lokasi ada di halaman "Usaha Desa".
+    const totalPembangunan = (pembangunanData || []).length;
+    context += `\n## Pembangunan Fisik:\n`;
+    context += `Total terdapat ${totalPembangunan} proyek pembangunan. Berikut adalah beberapa contohnya:\n`;
+    (pembangunanData || []).slice(0, 5).forEach((item: Pembangunan) => {
+        context += `- Proyek: ${item.title}, Status: ${item.status}, Anggaran: ${item.budget}, Tahun: ${item.year}\n`;
+    });
 
-**Produk Hukum & Pembangunan:**
-- Website menyediakan akses ke dokumen resmi seperti Peraturan Desa (Perdes) dan Keputusan Desa.
-- Informasi proyek pembangunan fisik desa juga tersedia secara transparan.
+    context += `\n## Informasi Kontak:\nAlamat Kantor: ${kontakData.lokasi.address.replace(/\n/g, ' ')}\nEmail: ${kontakData.email}\nWhatsApp: ${kontakData.phone}\nInstagram: ${kontakData.instagram}\n`;
+    context += "Jam Operasional:\n";
+    (kontakData.jamOperasional || []).forEach((item: JamOperasionalItem) => {
+        context += `- ${item.hari}: ${item.jam}\n`;
+    });
 
-**Kontak:**
-- Email: desa.slamparejo@gmail.com
-- WhatsApp: 6287766747814
-- Instagram: @desaslamparejo
-- Alamat: Jl. Raya Slamparejo No.18, Dusun Krajan, Slamparejo, Kec. Jabung, Kabupaten Malang.
-- Jam Operasional Kantor: Senin - Kamis (08:00 - 15:30 WIB), Jumat (08:00 - 11:30 WIB). Sabtu, Minggu, dan hari libur nasional tutup.
+    context += `\n## Layanan Online:\n`;
+    (layananData.forms || []).forEach((item: LayananForm) => {
+        context += `- ${item.title}: ${item.description}\n`;
+    });
+    
+    const totalBerita = (beritaData || []).length;
+    context += `\n## Berita Terbaru:\n`;
+    context += `Total terdapat ${totalBerita} artikel berita. Berikut adalah beberapa judul berita teratas:\n`;
+    (beritaData || []).slice(0, 5).forEach((item: Berita) => {
+        context += `- Judul: ${item.title}\n`;
+    });
 
-**Berita:**
-- Website memiliki halaman "Berita" untuk informasi dan kegiatan terbaru.
+    return context;
+
+  } catch (error) {
+    console.error("Gagal membangun konteks dari API:", error);
+    return "Maaf, terjadi kesalahan saat mengambil data dari website.";
+  }
+}
+
+
+const instructionPrompt = `
+Anda adalah "Asisten Virtual Desa Slamparejo", chatbot yang cerdas, ramah, dan sangat membantu. Tujuan utama Anda adalah menjawab pertanyaan tentang Desa Slamparejo dengan akurat, menggunakan konteks yang disediakan sebagai sumber kebenaran utama, namun tetap fleksibel dan informatif. Anda juga harus bisa mengingat percakapan sebelumnya.
+
+**ATURAN UTAMA:**
+1.  **SUMBER FAKTA UTAMA:** Semua informasi yang **spesifik** mengenai Desa Slamparejo (seperti nama pejabat, data, kontak, dll.) **WAJIB** berasal dari **[KONTEKS WEBSITE DESA SLAMPAREJO]**.
+2.  **GUNAKAN PENGETAHUAN UMUM (FLEKSIBILITAS):** Anda **DIPERBOLEHKAN** dan **DIANJURKAN** untuk menggunakan pengetahuan umum Anda untuk menjelaskan istilah, singkatan, atau konsep umum (contoh: apa itu "Kasun", "Perdes", atau kepanjangan dari gelar akademik seperti "S.H.", "M.M.").
+3.  **MEMORI PERCAKAPAN:** Perhatikan riwayat percakapan untuk memahami konteks pertanyaan lanjutan (misalnya, kata ganti seperti "beliau", "itu", dll.).
+4.  **SINTESIS JAWABAN:** Gabungkan fakta dari konteks, pengetahuan umum, dan riwayat percakapan untuk memberikan jawaban yang lengkap dan alami. Jika ada informasi jumlah total, gunakan itu untuk menjawab pertanyaan "ada berapa".
+5.  **BATASAN PENGETAHUAN:** Jika sebuah **fakta spesifik** tentang Desa Slamparejo tidak ditemukan dalam konteks, jawab dengan jujur bahwa informasi tersebut tidak tersedia di website.
+6.  **FOKUS:** Tetap fokus pada hal-hal yang berkaitan dengan Desa Slamparejo. Tolak dengan sopan untuk menjawab pertanyaan di luar topik.
+7.  **BAHASA:** Selalu gunakan Bahasa Indonesia yang natural dan bersahabat.
+8.  **RINGKAS DAN LANGSUNG:** Berikan jawaban yang singkat, padat, dan langsung ke inti pertanyaan. Hindari penjelasan yang bertele-tele kecuali jika pengguna memintanya secara spesifik.
+
 ---
 `;
-
-async function searchGoogle(query: string): Promise<string> {
-    try {
-        const customsearch = google.customsearch('v1');
-        const res = await customsearch.cse.list({
-            cx: process.env.Search_ENGINE_ID,
-            q: query,
-            auth: process.env.GOOGLE_API_KEY,
-            num: 3,
-        });
-
-        const items = res.data.items;
-        if (!items || items.length === 0) {
-            return "Tidak ditemukan informasi relevan dari pencarian.";
-        }
-
-        return items.map(item => `Judul: ${item.title}\nKutipan: ${item.snippet}`).join('\n\n');
-    } catch (error) {
-        console.error("Google Search API error:", error);
-        return "Terjadi kesalahan saat melakukan pencarian informasi.";
-    }
-}
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt } = await req.json();
+    const { history } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY || !process.env.GOOGLE_API_KEY || !process.env.Search_ENGINE_ID) {
-        throw new Error("API keys atau Search Engine ID tidak terdefinisi di environment variables.");
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("API Key Gemini tidak ditemukan.");
+    }
+    if (!history || !Array.isArray(history) || history.length === 0) {
+      return NextResponse.json({ error: "Riwayat percakapan tidak valid" }, { status: 400 });
     }
 
-    const searchResults = await searchGoogle(prompt + " Desa Slamparejo");
-
-    const dynamicContext = `
-${searchResults}
-`;
-
-    const finalPrompt = desaSlamparejoContext + dynamicContext + `**Pertanyaan Pengguna:** "${prompt}"\n\n**Jawaban Anda:**`;
+    const websiteContext = await fetchWebsiteContext();
+    const systemInstruction = `${instructionPrompt}\n[KONTEKS WEBSITE DESA SLAMPAREJO]:\n${websiteContext}`;
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash",
+      systemInstruction: systemInstruction,
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      ]
+    });
     
-    const result = await model.generateContent(finalPrompt);
+    let historyForGemini = history;
+    if (historyForGemini.length > 0 && historyForGemini[0].sender === 'bot') {
+        historyForGemini = historyForGemini.slice(1);
+    }
+    
+    const lastMessage = historyForGemini.pop();
+    const pastHistory = historyForGemini;
+
+    const geminiHistory = pastHistory.map((msg: { sender: string, text: string }) => ({
+      role: msg.sender === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }],
+    }));
+
+    const chat = model.startChat({
+      history: geminiHistory,
+    });
+
+    const result = await chat.sendMessage(lastMessage.text);
     const response = result.response;
     const text = response.text();
 
