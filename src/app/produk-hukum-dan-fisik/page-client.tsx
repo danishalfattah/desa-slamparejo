@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { ProdukHukum, Pembangunan } from "@/lib/types";
-import { Eye, Download, Scale, Construction, FileText } from "lucide-react";
+import { Eye, Download, Scale, Construction, FileText, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,6 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -55,6 +62,71 @@ const PdfPreviewModal = ({
   </div>
 );
 
+// Komponen Modal untuk Preview Gambar Pembangunan
+const ImagePreviewModal = ({
+  images,
+  onClose,
+}: {
+  images: { before: string; after: string | null };
+  onClose: () => void;
+}) => (
+  <div
+    className="fixed inset-0 bg-black/80 flex items-center justify-center z-[1001] p-4"
+    onClick={onClose}
+  >
+    <div
+      className="bg-transparent rounded-lg w-full max-w-5xl h-auto relative"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={onClose}
+        className="absolute -top-10 right-0 text-white bg-gray-800/50 hover:bg-gray-700/80 rounded-full p-2 z-20"
+        aria-label="Tutup pratinjau gambar"
+      >
+        <X size={24} />
+      </button>
+      <Carousel opts={{ loop: !!images.after }} className="w-full">
+        <CarouselContent>
+          <CarouselItem>
+            <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+              <Image
+                src={images.before}
+                alt="Preview Sebelum"
+                fill
+                className="object-contain rounded-lg"
+              />
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm font-bold px-4 py-2 rounded-full">
+                SEBELUM
+              </div>
+            </div>
+          </CarouselItem>
+          {images.after && (
+            <CarouselItem>
+              <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+                <Image
+                  src={images.after}
+                  alt="Preview Sesudah"
+                  fill
+                  className="object-contain rounded-lg"
+                />
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm font-bold px-4 py-2 rounded-full">
+                  SESUDAH
+                </div>
+              </div>
+            </CarouselItem>
+          )}
+        </CarouselContent>
+        {images.after && (
+          <>
+            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
+            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+          </>
+        )}
+      </Carousel>
+    </div>
+  </div>
+);
+
 interface ProdukPageClientProps {
   produkHukumData: ProdukHukum[];
   pembangunanData: Pembangunan[];
@@ -69,6 +141,10 @@ export default function ProdukPageClient({
   const [tab, setTab] = useState("hukum");
   const [page, setPage] = useState(1);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<{
+    before: string;
+    after: string | null;
+  } | null>(null);
 
   // State untuk filter
   const [hukumTahunFilter, setHukumTahunFilter] = useState("all");
@@ -150,6 +226,12 @@ export default function ProdukPageClient({
     <>
       {previewUrl && (
         <PdfPreviewModal src={previewUrl} onClose={() => setPreviewUrl(null)} />
+      )}
+      {imagePreview && (
+        <ImagePreviewModal
+          images={imagePreview}
+          onClose={() => setImagePreview(null)}
+        />
       )}
       <section className="bg-[#F9FCFC] py-16 px-4 md:px-0">
         <div className="max-w-5xl mx-auto">
@@ -253,7 +335,6 @@ export default function ProdukPageClient({
                             </p>
                           </div>
                         </div>
-                        {/* === PERUBAHAN DIMULAI DI SINI === */}
                         <div className="flex flex-row gap-2 w-full sm:w-auto">
                           <button
                             onClick={() => handlePreview(item.link)}
@@ -274,7 +355,6 @@ export default function ProdukPageClient({
                             </button>
                           </Link>
                         </div>
-                        {/* === PERUBAHAN SELESAI DI SINI === */}
                       </div>
                       <div className="w-full pt-2">
                         <h3 className="font-semibold text-base text-gray-800 mb-1">
@@ -362,17 +442,32 @@ export default function ProdukPageClient({
                         key={item.id}
                         className={`${poppins.className} bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col group border-2 border-transparent  transition-all duration-300`}
                       >
-                        <div className="relative w-full h-40">
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            fill
-                            className="object-cover"
-                          />
+                        <div
+                          className="relative w-full h-48 group/image cursor-pointer"
+                          onClick={() =>
+                            setImagePreview({
+                              before: item.imageBefore,
+                              after: item.imageAfter,
+                            })
+                          }
+                        >
+                          <div className="relative w-full h-48">
+                            <Image
+                              src={item.imageBefore}
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity duration-300">
+                            <p className="text-white font-bold text-lg">
+                              Lihat Gambar
+                            </p>
+                          </div>
                           <span
                             className={`absolute top-2 left-2 text-white text-xs font-bold px-2.5 py-1 rounded-full ${getStatusColor(
                               item.status
-                            )}`}
+                            )} z-10`}
                           >
                             {item.status}
                           </span>

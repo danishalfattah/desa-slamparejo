@@ -60,14 +60,17 @@ export async function POST(request: Request) {
     if (!await isAuthorized()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     try {
         const formData = await request.formData();
-        const file = formData.get('imageFile') as File | null;
-        const image = await handleFileUpload(file);
+        const imageBeforeFile = formData.get('imageBeforeFile') as File | null;
+        const imageAfterFile = formData.get('imageAfterFile') as File | null;
 
-        if (!image) {
-            return NextResponse.json({ error: 'File gambar diperlukan' }, { status: 400 });
+        const imageBefore = await handleFileUpload(imageBeforeFile);
+        const imageAfter = await handleFileUpload(imageAfterFile);
+
+        if (!imageBefore || !imageAfter) {
+            return NextResponse.json({ error: 'Gambar Sebelum dan Sesudah diperlukan' }, { status: 400 });
         }
 
-        const newData: Omit<Pembangunan, 'id' | 'image'> = {
+        const newData: Omit<Pembangunan, 'id' | 'imageBefore' | 'imageAfter'> = {
             title: formData.get('title') as string,
             description: formData.get('description') as string,
             budget: formData.get('budget') as string,
@@ -75,8 +78,8 @@ export async function POST(request: Request) {
             status: formData.get('status') as string,
         };
 
-        const docRef = await addDoc(collection(db, COLLECTION_NAME), { ...newData, image });
-        return NextResponse.json({ ...newData, image, id: docRef.id }, { status: 201 });
+        const docRef = await addDoc(collection(db, COLLECTION_NAME), { ...newData, imageBefore, imageAfter });
+        return NextResponse.json({ ...newData, imageBefore, imageAfter, id: docRef.id }, { status: 201 });
     } catch (error) {
         console.error("Firebase POST Error:", error);
         return NextResponse.json({ error: 'Failed to create data' }, { status: 500 });
@@ -90,10 +93,13 @@ export async function PUT(request: Request) {
         const id = formData.get('id') as string;
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-        const file = formData.get('imageFile') as File | null;
-        const image = await handleFileUpload(file);
+        const imageBeforeFile = formData.get('imageBeforeFile') as File | null;
+        const imageAfterFile = formData.get('imageAfterFile') as File | null;
 
-        const dataToUpdate: Omit<Pembangunan, 'id' | 'image'> = {
+        const imageBefore = await handleFileUpload(imageBeforeFile);
+        const imageAfter = await handleFileUpload(imageAfterFile);
+
+        const dataToUpdate: Omit<Pembangunan, 'id' | 'imageBefore' | 'imageAfter'> = {
             title: formData.get('title') as string,
             description: formData.get('description') as string,
             budget: formData.get('budget') as string,
@@ -101,7 +107,11 @@ export async function PUT(request: Request) {
             status: formData.get('status') as string,
         };
 
-        const finalData = { ...dataToUpdate, ...(image && { image }) };
+        const finalData = { 
+            ...dataToUpdate, 
+            ...(imageBefore && { imageBefore }),
+            ...(imageAfter && { imageAfter }),
+        };
 
         const pembangunanDoc = doc(db, COLLECTION_NAME, id);
         await updateDoc(pembangunanDoc, finalData);

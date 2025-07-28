@@ -379,7 +379,8 @@ const PembangunanModal = ({
   onSubmit,
   data,
   setData,
-  setImageFile,
+  setImageBeforeFile,
+  setImageAfterFile,
   isSaving,
 }: {
   isOpen: boolean;
@@ -387,17 +388,37 @@ const PembangunanModal = ({
   onSubmit: (e: FormEvent) => void;
   data: Partial<Pembangunan>;
   setData: (data: Partial<Pembangunan>) => void;
-  imageFile: File | null;
-  setImageFile: (file: File | null) => void;
+  setImageBeforeFile: (file: File | null) => void;
+  setImageAfterFile: (file: File | null) => void;
   isSaving: boolean;
 }) => {
   const handleChange = (name: string, value: string | number) => {
-    setData({ ...data, [name]: name === "year" ? Number(value) : value });
+    const updatedData = {
+      ...data,
+      [name]: name === "year" ? Number(value) : value,
+    };
+    if (name === "status" && value !== "Selesai") {
+      // Clear after image if status is no longer 'Selesai'
+      delete updatedData.imageAfter;
+      setImageAfterFile(null);
+    }
+    setData(updatedData);
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]);
+  const handleFileChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    type: "before" | "after"
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      if (type === "before") {
+        setImageBeforeFile(e.target.files[0]);
+      } else {
+        setImageAfterFile(e.target.files[0]);
+      }
+    }
   };
+
+  const isSelesai = data.status === "Selesai";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -429,33 +450,73 @@ const PembangunanModal = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="imageFile">Gambar Pembangunan</Label>
-            {data.id && data.image && (
+            <Label>Gambar Pembangunan</Label>
+            {data.id && (data.imageBefore || data.imageAfter) && (
               <div className="mb-2">
                 <p className="text-sm text-muted-foreground mb-2">
                   Gambar saat ini:
                 </p>
-                <Image
-                  src={data.image || "/placeholder.svg"}
-                  alt={data.title || "Gambar saat ini"}
-                  width={80}
-                  height={80}
-                  className="rounded-md object-cover border"
-                />
+                <div className="flex gap-2">
+                  {data.imageBefore && (
+                    <div>
+                      <p className="text-xs text-center mb-1">Sebelum</p>
+                      <Image
+                        src={data.imageBefore}
+                        alt="Gambar Sebelum"
+                        width={80}
+                        height={80}
+                        className="rounded-md object-cover border"
+                      />
+                    </div>
+                  )}
+                  {data.imageAfter && (
+                    <div>
+                      <p className="text-xs text-center mb-1">Sesudah</p>
+                      <Image
+                        src={data.imageAfter}
+                        alt="Gambar Sesudah"
+                        width={80}
+                        height={80}
+                        className="rounded-md object-cover border"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-            <Input
-              id="imageFile"
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*"
-              required={!data.id}
-              disabled={isSaving}
-            />
-            <p className="text-sm text-muted-foreground">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="imageBeforeFile">Foto Sebelum</Label>
+                <Input
+                  id="imageBeforeFile"
+                  type="file"
+                  onChange={(e) => handleFileChange(e, "before")}
+                  accept="image/*"
+                  required={!data.id}
+                  disabled={isSaving}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="imageAfterFile">Foto Sesudah</Label>
+                <Input
+                  id="imageAfterFile"
+                  type="file"
+                  onChange={(e) => handleFileChange(e, "after")}
+                  accept="image/*"
+                  required={!data.id && isSelesai}
+                  disabled={isSaving || !isSelesai}
+                />
+                {!isSelesai && (
+                  <p className="text-xs text-muted-foreground">
+                    {`Hanya bisa diisi jika status "Selesai".`}
+                  </p>
+                )}
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground pt-2">
               {data.id
                 ? "Unggah file baru untuk mengganti gambar."
-                : "File gambar wajib diunggah."}
+                : "Gambar 'Sebelum' wajib diunggah."}
             </p>
           </div>
           <div className="space-y-2">
@@ -484,7 +545,7 @@ const PembangunanModal = ({
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
-                value={data.status || "Selesai"}
+                value={data.status || "Direncanakan"}
                 onValueChange={(value) => handleChange("status", value)}
                 disabled={isSaving}
               >
@@ -541,9 +602,11 @@ export default function ManageProdukPage() {
   const [editingPembangunan, setEditingPembangunan] = useState<
     Partial<Pembangunan>
   >({});
-  const [pembangunanImageFile, setPembangunanImageFile] = useState<File | null>(
-    null
-  );
+  const [pembangunanImageBeforeFile, setPembangunanImageBeforeFile] =
+    useState<File | null>(null);
+  const [pembangunanImageAfterFile, setPembangunanImageAfterFile] =
+    useState<File | null>(null);
+
   const [confirmAction, setConfirmAction] = useState<{
     action: () => void;
     message: string;
@@ -791,20 +854,35 @@ export default function ManageProdukPage() {
     setEditingPembangunan(
       item || { year: new Date().getFullYear(), status: "Direncanakan" }
     );
-    setPembangunanImageFile(null);
+    setPembangunanImageBeforeFile(null);
+    setPembangunanImageAfterFile(null);
     setIsPembangunanModalOpen(true);
   };
 
   const handleSavePembangunan = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (
+      editingPembangunan.status === "Selesai" &&
+      !pembangunanImageAfterFile &&
+      !editingPembangunan.imageAfter
+    ) {
+      alert("Untuk status 'Selesai', gambar 'Sesudah' wajib diunggah.");
+      return;
+    }
+
     setIsPembangunanSaving(true);
     try {
       const formData = new FormData();
-      Object.entries(editingPembangunan).forEach(([key, value]) =>
-        formData.append(key, String(value))
-      );
-      if (pembangunanImageFile)
-        formData.append("imageFile", pembangunanImageFile);
+      Object.entries(editingPembangunan).forEach(([key, value]) => {
+        if (value) {
+          formData.append(key, String(value));
+        }
+      });
+      if (pembangunanImageBeforeFile)
+        formData.append("imageBeforeFile", pembangunanImageBeforeFile);
+      if (pembangunanImageAfterFile && editingPembangunan.status === "Selesai")
+        formData.append("imageAfterFile", pembangunanImageAfterFile);
 
       const method = editingPembangunan.id ? "PUT" : "POST";
       const response = await fetch("/api/pembangunan", {
@@ -927,8 +1005,8 @@ export default function ManageProdukPage() {
         onSubmit={handleSavePembangunan}
         data={editingPembangunan}
         setData={setEditingPembangunan}
-        imageFile={pembangunanImageFile}
-        setImageFile={setPembangunanImageFile}
+        setImageBeforeFile={setPembangunanImageBeforeFile}
+        setImageAfterFile={setPembangunanImageAfterFile}
         isSaving={isPembangunanSaving}
       />
 

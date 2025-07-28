@@ -30,7 +30,8 @@ export interface ProdukHukum {
 
 export interface Pembangunan {
   id: string;
-  image: string;
+  imageBefore: string; // Diubah dari 'image'
+  imageAfter: string;  // Ditambahkan
   status: string;
   title: string;
   description: string;
