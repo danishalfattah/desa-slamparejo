@@ -19,6 +19,11 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 const PAGE_SIZE = 6;
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 // Komponen Modal untuk Preview PDF
 const PdfPreviewModal = ({
   src,
@@ -53,11 +58,13 @@ const PdfPreviewModal = ({
 interface ProdukPageClientProps {
   produkHukumData: ProdukHukum[];
   pembangunanData: Pembangunan[];
+  kategoriData: Category[];
 }
 
 export default function ProdukPageClient({
   produkHukumData,
   pembangunanData,
+  kategoriData,
 }: ProdukPageClientProps) {
   const [tab, setTab] = useState("hukum");
   const [page, setPage] = useState(1);
@@ -217,10 +224,11 @@ export default function ProdukPageClient({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Semua Kategori</SelectItem>
-                    <SelectItem value="Perdes">Perdes</SelectItem>
-                    <SelectItem value="Keputusan Desa">
-                      Keputusan Desa
-                    </SelectItem>
+                    {kategoriData.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

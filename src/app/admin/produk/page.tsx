@@ -48,8 +48,196 @@ import {
   ChevronsRight,
   ChevronLeft,
   ChevronRight,
+  Settings,
 } from "lucide-react";
 import { SuccessModal } from "@/components/admin/success-modal";
+import { Separator } from "@/components/ui/separator";
+import React from "react";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+// --- Komponen Modal untuk Kelola Kategori ---
+const ManageCategoryModal = ({
+  isOpen,
+  onClose,
+  categories,
+  onDeleteCategory,
+  onEditCategory,
+  isSaving,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  categories: Category[];
+  onDeleteCategory: (id: string, name: string) => void;
+  onEditCategory: (id: string, oldName: string, newName: string) => void;
+  isSaving: boolean;
+}) => {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
+  const handleEditClick = (category: Category) => {
+    setEditingId(category.id);
+    setEditingName(category.name);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingId && editingName.trim()) {
+      const oldCategory = categories.find((c) => c.id === editingId);
+      if (oldCategory) {
+        onEditCategory(editingId, oldCategory.name, editingName.trim());
+        setEditingId(null);
+      }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingName("");
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Kelola Kategori Produk Hukum</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Ubah atau hapus nama kategori yang sudah ada. Kategori default tidak
+            dapat dihapus.
+          </p>
+          <div className="mt-2 space-y-1 max-h-72 overflow-y-auto border rounded-md p-1">
+            {categories.map((cat, index) => (
+              <React.Fragment key={cat.id}>
+                <div className="flex items-center justify-between hover:bg-muted/50 p-2 rounded-md">
+                  {editingId === cat.id ? (
+                    <Input
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      className="h-8"
+                      autoFocus
+                      onKeyDown={(e) => e.key === "Enter" && handleSaveEdit()}
+                    />
+                  ) : (
+                    <span className="text-sm">{cat.name}</span>
+                  )}
+
+                  <div className="flex items-center gap-1">
+                    {editingId === cat.id ? (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={handleSaveEdit}
+                          disabled={isSaving}
+                        >
+                          Simpan
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleCancelEdit}
+                        >
+                          Batal
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditClick(cat)}
+                          disabled={isSaving}
+                          className="h-8 w-8"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {cat.name !== "Perdes" &&
+                          cat.name !== "Keputusan Desa" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => onDeleteCategory(cat.id, cat.name)}
+                              disabled={isSaving}
+                              className="h-8 w-8"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          )}
+                      </>
+                    )}
+                  </div>
+                </div>
+                {index < categories.length - 1 && <Separator />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// --- Komponen Modal untuk Tambah Kategori ---
+const AddCategoryModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  isSaving,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (name: string) => Promise<void>;
+  isSaving: boolean;
+}) => {
+  const [name, setName] = useState("");
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSave(name).then(() => setName(""));
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Tambah Kategori Baru</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="new-category-name">Nama Kategori</Label>
+            <Input
+              id="new-category-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isSaving}
+              autoFocus
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSaving}
+            >
+              Batal
+            </Button>
+            <Button type="submit" disabled={isSaving || !name.trim()}>
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Simpan"
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const ProdukHukumModal = ({
   isOpen,
@@ -58,6 +246,8 @@ const ProdukHukumModal = ({
   data,
   setData,
   isSaving,
+  categories,
+  onOpenAddCategoryModal,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -65,6 +255,8 @@ const ProdukHukumModal = ({
   data: Partial<ProdukHukum>;
   setData: (data: Partial<ProdukHukum>) => void;
   isSaving: boolean;
+  categories: Category[];
+  onOpenAddCategoryModal: () => void;
 }) => {
   const handleChange = (name: string, value: string | number) => {
     setData({ ...data, [name]: name === "year" ? Number(value) : value });
@@ -124,16 +316,35 @@ const ProdukHukumModal = ({
             <div className="space-y-2">
               <Label htmlFor="category">Kategori</Label>
               <Select
-                value={data.category || "Perdes"}
-                onValueChange={(value) => handleChange("category", value)}
+                value={data.category || undefined}
+                onValueChange={(value) => {
+                  if (value === "add-new") {
+                    onOpenAddCategoryModal();
+                  } else {
+                    handleChange("category", value);
+                  }
+                }}
                 disabled={isSaving}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Pilih kategori" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Perdes">Perdes</SelectItem>
-                  <SelectItem value="Keputusan Desa">Keputusan Desa</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                  <Separator className="my-1" />
+                  <SelectItem
+                    value="add-new"
+                    onSelect={(e) => e.preventDefault()}
+                  >
+                    <div className="flex items-center">
+                      <Plus className="h-4 w-4 mr-2" />
+                      <span>Tambah Kategori Baru</span>
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -147,7 +358,7 @@ const ProdukHukumModal = ({
             >
               Batal
             </Button>
-            <Button type="submit" disabled={isSaving}>
+            <Button type="submit" disabled={isSaving || !data.category}>
               {isSaving ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
@@ -313,19 +524,17 @@ const PembangunanModal = ({
 };
 
 export default function ManageProdukPage() {
-  // Data states
   const [produkHukum, setProdukHukum] = useState<ProdukHukum[]>([]);
   const [pembangunan, setPembangunan] = useState<Pembangunan[]>([]);
   const [pageData, setPageData] = useState<Partial<ProdukPageData>>({});
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  // UI states
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingPage, setIsSavingPage] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
-  // Modal states
   const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
   const [isPembangunanModalOpen, setIsPembangunanModalOpen] = useState(false);
@@ -342,29 +551,45 @@ export default function ManageProdukPage() {
   const [isHukumSaving, setIsHukumSaving] = useState(false);
   const [isPembangunanSaving, setIsPembangunanSaving] = useState(false);
 
-  // Filter & Pagination states for Produk Hukum
   const [hukumCurrentPage, setHukumCurrentPage] = useState(1);
   const [hukumItemsPerPage, setHukumItemsPerPage] = useState(10);
   const [hukumTahunFilter, setHukumTahunFilter] = useState("all");
   const [hukumKategoriFilter, setHukumKategoriFilter] = useState("all");
 
-  // Filter & Pagination states for Pembangunan
   const [pembangunanCurrentPage, setPembangunanCurrentPage] = useState(1);
   const [pembangunanItemsPerPage, setPembangunanItemsPerPage] = useState(10);
   const [pembangunanTahunFilter, setPembangunanTahunFilter] = useState("all");
   const [pembangunanStatusFilter, setPembangunanStatusFilter] = useState("all");
+  const [isManageCategoryModalOpen, setIsManageCategoryModalOpen] =
+    useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [isCategorySaving, setIsCategorySaving] = useState(false);
+
+  const fetchCategories = async () => {
+    try {
+      const kategoriRes = await fetch("/api/produk-hukum-kategori");
+      if (kategoriRes.ok) {
+        setCategories(await kategoriRes.json());
+      }
+    } catch (error) {
+      console.error("Gagal mengambil kategori:", error);
+    }
+  };
 
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [hukumRes, pembangunanRes, pageRes] = await Promise.all([
-        fetch("/api/produk-hukum"),
-        fetch("/api/pembangunan"),
-        fetch("/api/produk-page"),
-      ]);
+      const [hukumRes, pembangunanRes, pageRes, kategoriRes] =
+        await Promise.all([
+          fetch("/api/produk-hukum"),
+          fetch("/api/pembangunan"),
+          fetch("/api/produk-page"),
+          fetch("/api/produk-hukum-kategori"),
+        ]);
       setProdukHukum(await hukumRes.json());
       setPembangunan(await pembangunanRes.json());
       setPageData(await pageRes.json());
+      setCategories(await kategoriRes.json());
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -376,7 +601,80 @@ export default function ManageProdukPage() {
     fetchAllData();
   }, []);
 
-  // Get unique years for filters
+  const handleAddCategory = async (name: string) => {
+    setIsCategorySaving(true);
+    try {
+      const response = await fetch("/api/produk-hukum-kategori", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (response.ok) {
+        const newCat = await response.json();
+        setSuccessMessage("Kategori baru berhasil ditambahkan!");
+        setShowSuccessModal(true);
+        await fetchCategories();
+        setEditingHukum((prev) => ({ ...prev, category: newCat.name }));
+        setIsAddCategoryModalOpen(false);
+      } else {
+        alert("Gagal menambahkan kategori. Mungkin sudah ada.");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCategorySaving(false);
+    }
+  };
+
+  const handleDeleteCategory = (id: string, name: string) => {
+    setConfirmAction({
+      message: `Yakin ingin menghapus kategori "${name}"? Ini tidak akan menghapus produk hukum yang sudah ada.`,
+      action: async () => {
+        setIsCategorySaving(true);
+        try {
+          await fetch("/api/produk-hukum-kategori", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          });
+          setSuccessMessage("Kategori berhasil dihapus!");
+          setShowSuccessModal(true);
+          await fetchCategories();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+          alert("Gagal menghapus kategori.");
+        } finally {
+          setIsCategorySaving(false);
+          setConfirmAction(null);
+        }
+      },
+    });
+  };
+
+  const handleEditCategory = async (
+    id: string,
+    oldName: string,
+    newName: string
+  ) => {
+    if (newName === oldName) return;
+    setIsCategorySaving(true);
+    try {
+      await fetch("/api/produk-hukum-kategori", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, newName, oldName }),
+      });
+      setSuccessMessage("Kategori berhasil diperbarui!");
+      setShowSuccessModal(true);
+      await fetchAllData();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      alert("Gagal mengedit kategori.");
+    } finally {
+      setIsCategorySaving(false);
+    }
+  };
+
   const hukumAvailableYears = useMemo(
     () =>
       [...new Set(produkHukum.map((item) => item.year))].sort((a, b) => b - a),
@@ -388,7 +686,6 @@ export default function ManageProdukPage() {
     [pembangunan]
   );
 
-  // Memoized filtered data for Produk Hukum
   const filteredProdukHukum = useMemo(() => {
     return produkHukum
       .filter((item) =>
@@ -403,7 +700,6 @@ export default function ManageProdukPage() {
       );
   }, [produkHukum, hukumTahunFilter, hukumKategoriFilter]);
 
-  // Memoized filtered data for Pembangunan
   const filteredPembangunan = useMemo(() => {
     return pembangunan
       .filter((item) =>
@@ -418,7 +714,6 @@ export default function ManageProdukPage() {
       );
   }, [pembangunan, pembangunanTahunFilter, pembangunanStatusFilter]);
 
-  // Pagination logic for Produk Hukum
   const hukumPaginated = useMemo(() => {
     const startIndex = (hukumCurrentPage - 1) * hukumItemsPerPage;
     return filteredProdukHukum.slice(
@@ -427,7 +722,6 @@ export default function ManageProdukPage() {
     );
   }, [filteredProdukHukum, hukumCurrentPage, hukumItemsPerPage]);
 
-  // Pagination logic for Pembangunan
   const pembangunanPaginated = useMemo(() => {
     const startIndex = (pembangunanCurrentPage - 1) * pembangunanItemsPerPage;
     return filteredPembangunan.slice(
@@ -443,11 +737,8 @@ export default function ManageProdukPage() {
     filteredPembangunan.length / pembangunanItemsPerPage
   );
 
-  // Handlers for Modals and CRUD operations
   const handleOpenHukumModal = (item?: ProdukHukum) => {
-    setEditingHukum(
-      item || { year: new Date().getFullYear(), category: "Perdes" }
-    );
+    setEditingHukum(item || { year: new Date().getFullYear(), category: "" });
     setIsHukumModalOpen(true);
   };
 
@@ -604,6 +895,22 @@ export default function ManageProdukPage() {
         onCancel={() => setConfirmAction(null)}
         message={confirmAction?.message || ""}
       />
+
+      <AddCategoryModal
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        onSave={handleAddCategory}
+        isSaving={isCategorySaving}
+      />
+      <ManageCategoryModal
+        isOpen={isManageCategoryModalOpen}
+        onClose={() => setIsManageCategoryModalOpen(false)}
+        categories={categories}
+        onDeleteCategory={handleDeleteCategory}
+        onEditCategory={handleEditCategory}
+        isSaving={isCategorySaving}
+      />
+
       <ProdukHukumModal
         isOpen={isHukumModalOpen}
         onClose={() => setIsHukumModalOpen(false)}
@@ -611,6 +918,8 @@ export default function ManageProdukPage() {
         data={editingHukum}
         setData={setEditingHukum}
         isSaving={isHukumSaving}
+        categories={categories}
+        onOpenAddCategoryModal={() => setIsAddCategoryModalOpen(true)}
       />
       <PembangunanModal
         isOpen={isPembangunanModalOpen}
@@ -707,7 +1016,7 @@ export default function ManageProdukPage() {
                     setHukumCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Semua Tahun" />
                   </SelectTrigger>
                   <SelectContent>
@@ -728,22 +1037,32 @@ export default function ManageProdukPage() {
                     setHukumCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Semua Kategori" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Semua Kategori</SelectItem>
-                    <SelectItem value="Perdes">Perdes</SelectItem>
-                    <SelectItem value="Keputusan Desa">
-                      Keputusan Desa
-                    </SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={() => handleOpenHukumModal()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Tambah Baru
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsManageCategoryModalOpen(true)}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Kelola Kategori
+                </Button>
+                <Button onClick={() => handleOpenHukumModal()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Tambah Baru
+                </Button>
+              </div>
             </div>
             <div className="border rounded-lg">
               <Table>
