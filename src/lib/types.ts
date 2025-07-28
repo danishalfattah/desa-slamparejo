@@ -133,6 +133,12 @@ export interface LayananForm {
   createdAt?: number; // Ditambahkan untuk pengurutan
 }
 
+export interface PersyaratanLayananItem {
+    id: string;
+    title: string;
+    content: string;
+}
+
 export interface Layanan {
   hero: {
     subtitle: string;
@@ -142,6 +148,7 @@ export interface Layanan {
     title: string;
     description: string;
   };
+  persyaratan?: PersyaratanLayananItem[];
   forms: LayananForm[];
 }
 

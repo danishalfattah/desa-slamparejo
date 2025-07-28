@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, type FormEvent } from "react";
-import type { Layanan, LayananForm } from "@/lib/types";
+import type { Layanan, LayananForm, PersyaratanLayananItem } from "@/lib/types";
 import Image from "next/image";
 import { PageHeader } from "@/components/admin/page-header";
 import { DataCard } from "@/components/admin/data-card";
@@ -113,9 +113,76 @@ const LayananFormModal = ({
   );
 };
 
+// Modal for Persyaratan CRUD
+const PersyaratanModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  itemData,
+  setItemData,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (item: PersyaratanLayananItem) => void;
+  itemData: Partial<PersyaratanLayananItem>;
+  setItemData: (item: Partial<PersyaratanLayananItem>) => void;
+}) => {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSave(itemData as PersyaratanLayananItem);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {itemData.id ? "Edit Persyaratan" : "Tambah Persyaratan"}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="persyaratan-title">Judul Persyaratan</Label>
+            <Input
+              id="persyaratan-title"
+              value={itemData.title || ""}
+              onChange={(e) =>
+                setItemData({ ...itemData, title: e.target.value })
+              }
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="persyaratan-content">
+              Isi Persyaratan (satu per baris)
+            </Label>
+            <Textarea
+              id="persyaratan-content"
+              value={itemData.content || ""}
+              onChange={(e) =>
+                setItemData({ ...itemData, content: e.target.value })
+              }
+              rows={5}
+              required
+              placeholder="1. Poin pertama..."
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Batal
+            </Button>
+            <Button type="submit">Simpan</Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default function ManageLayananPage() {
   const [data, setData] = useState<Partial<Layanan>>({
     forms: [],
+    persyaratan: [],
     akses: { title: "", description: "" },
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -123,11 +190,16 @@ export default function ManageLayananPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
-  // Modal State
+  // Modal State for Forms
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingForm, setEditingForm] = useState<Partial<LayananForm> | null>(
     null
   );
+
+  // Modal State for Persyaratan
+  const [isPersyaratanModalOpen, setIsPersyaratanModalOpen] = useState(false);
+  const [editingPersyaratan, setEditingPersyaratan] =
+    useState<Partial<PersyaratanLayananItem> | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,6 +229,7 @@ export default function ManageLayananPage() {
     }));
   };
 
+  // --- Form Handlers ---
   const handleOpenFormModal = (form?: LayananForm) => {
     setEditingForm(
       form || { id: crypto.randomUUID(), title: "", description: "", link: "" }
@@ -174,12 +247,7 @@ export default function ManageLayananPage() {
         f.id === formToSave.id ? formToSave : f
       );
     } else {
-      if (existingForms.length < 4) {
-        updatedForms = [...existingForms, formToSave];
-      } else {
-        alert("Anda hanya dapat menambahkan maksimal 4 formulir.");
-        updatedForms = existingForms;
-      }
+      updatedForms = [...existingForms, formToSave];
     }
     setData((prev) => ({ ...prev, forms: updatedForms }));
     setIsFormModalOpen(false);
@@ -190,6 +258,38 @@ export default function ManageLayananPage() {
     setData((prev) => ({
       ...prev,
       forms: (prev.forms || []).filter((form) => form.id !== id),
+    }));
+  };
+
+  // --- Persyaratan Handlers ---
+  const handleOpenPersyaratanModal = (item?: PersyaratanLayananItem) => {
+    setEditingPersyaratan(
+      item || { id: crypto.randomUUID(), title: "", content: "" }
+    );
+    setIsPersyaratanModalOpen(true);
+  };
+
+  const handleSavePersyaratan = (itemToSave: PersyaratanLayananItem) => {
+    const existingItems = data.persyaratan || [];
+    const itemIndex = existingItems.findIndex((i) => i.id === itemToSave.id);
+
+    let updatedItems;
+    if (itemIndex > -1) {
+      updatedItems = existingItems.map((i) =>
+        i.id === itemToSave.id ? itemToSave : i
+      );
+    } else {
+      updatedItems = [...existingItems, itemToSave];
+    }
+    setData((prev) => ({ ...prev, persyaratan: updatedItems }));
+    setIsPersyaratanModalOpen(false);
+    setEditingPersyaratan(null);
+  };
+
+  const removePersyaratan = (id: string) => {
+    setData((prev) => ({
+      ...prev,
+      persyaratan: (prev.persyaratan || []).filter((item) => item.id !== id),
     }));
   };
 
@@ -250,6 +350,16 @@ export default function ManageLayananPage() {
         />
       )}
 
+      {editingPersyaratan && (
+        <PersyaratanModal
+          isOpen={isPersyaratanModalOpen}
+          onClose={() => setIsPersyaratanModalOpen(false)}
+          onSave={handleSavePersyaratan}
+          itemData={editingPersyaratan}
+          setItemData={setEditingPersyaratan}
+        />
+      )}
+
       <PageHeader
         title="Kelola Halaman Layanan"
         description="Atur konten dan formulir layanan desa"
@@ -279,11 +389,6 @@ export default function ManageLayananPage() {
                 setData((prev) => ({
                   ...prev,
                   hero: { ...prev.hero, subtitle: newDescription },
-                  akses: {
-                    ...prev.akses,
-                    description: newDescription,
-                    title: prev.akses?.title ?? "",
-                  },
                 }));
               }}
               rows={3}
@@ -316,8 +421,16 @@ export default function ManageLayananPage() {
               Unggah file baru untuk mengganti gambar hero.
             </p>
           </div>
+        </div>
+      </DataCard>
+
+      <DataCard
+        title="Akses Layanan & Formulir"
+        description="Kelola judul, deskripsi, dan daftar formulir layanan."
+      >
+        <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="aksesTitle">Judul Akses Layanan</Label>
+            <Label htmlFor="aksesTitle">Judul Bagian Akses Layanan</Label>
             <Input
               id="aksesTitle"
               value={data.akses?.title || ""}
@@ -326,35 +439,83 @@ export default function ManageLayananPage() {
               }
             />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="aksesDescription">
+              Deskripsi Bagian Akses Layanan
+            </Label>
+            <Textarea
+              id="aksesDescription"
+              value={data.akses?.description || ""}
+              onChange={(e) =>
+                handlePageDataChange("akses", "description", e.target.value)
+              }
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-md font-medium">Daftar Formulir</h3>
+            {(data.forms || []).map((form) => (
+              <Card key={form.id}>
+                <CardContent className="flex justify-between items-center ">
+                  <div>
+                    <h4 className="font-semibold">{form.title}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {form.description}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenFormModal(form)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeForm(form.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            <Button onClick={() => handleOpenFormModal()} variant="outline">
+              <Plus className="h-4 w-4 mr-2" /> Tambah Formulir
+            </Button>
+          </div>
         </div>
       </DataCard>
 
       <DataCard
-        title="Formulir Layanan"
-        description="Kelola formulir layanan yang tersedia. Maksimal 4 formulir."
+        title="Persyaratan Layanan"
+        description="Kelola daftar persyaratan dalam format akordion."
       >
         <div className="space-y-4">
-          {(data.forms || []).map((form) => (
-            <Card key={form.id}>
-              <CardContent className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold">{form.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {form.description}
+          {(data.persyaratan || []).map((item) => (
+            <Card key={item.id}>
+              <CardContent className="flex justify-between items-start ">
+                <div className="flex-1">
+                  <h4 className="font-semibold">{item.title}</h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {item.content}
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleOpenFormModal(form)}
+                    onClick={() => handleOpenPersyaratanModal(item)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => removeForm(form.id)}
+                    onClick={() => removePersyaratan(item.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -362,11 +523,12 @@ export default function ManageLayananPage() {
               </CardContent>
             </Card>
           ))}
-          {(data.forms?.length || 0) < 4 && (
-            <Button onClick={() => handleOpenFormModal()} variant="outline">
-              <Plus className="h-4 w-4 mr-2" /> Tambah Formulir
-            </Button>
-          )}
+          <Button
+            onClick={() => handleOpenPersyaratanModal()}
+            variant="outline"
+          >
+            <Plus className="h-4 w-4 mr-2" /> Tambah Persyaratan
+          </Button>
         </div>
       </DataCard>
     </div>

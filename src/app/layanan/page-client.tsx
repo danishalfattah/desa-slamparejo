@@ -11,6 +11,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -107,7 +113,42 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
         </div>
       </section>
 
-      <section className="bg-white py-10 px-4 md:px-0">
+      {/* Persyaratan Layanan Section */}
+      {data.persyaratan && data.persyaratan.length > 0 && (
+        <section className="bg-white py-16 px-4 md:px-0">
+          <div className="max-w-4xl mx-auto">
+            <div className="border-b border-black pb-2 sm:pb-4 w-fit mb-12">
+              <h1
+                className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
+              >
+                Persyaratan Layanan
+              </h1>
+            </div>
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {data.persyaratan.map((item) => (
+                <AccordionItem
+                  key={item.id}
+                  value={`item-${item.id}`}
+                  className="border-b-0"
+                >
+                  <AccordionTrigger className="text-lg bg-gray-50 hover:bg-gray-100 px-6 py-4 rounded-lg font-semibold text-gray-800 text-left">
+                    {item.title}
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4 pb-6 px-6">
+                    <ol className="list-decimal list-inside space-y-2 pl-4 text-gray-700">
+                      {item.content.split("\n").map((line, index) => (
+                        <li key={index}>{line.replace(/^\d+\.\s*/, "")}</li>
+                      ))}
+                    </ol>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
+
+      <section className="bg-gray-50 py-10 px-4 md:px-0">
         <div
           className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}
         >
