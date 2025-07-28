@@ -17,6 +17,7 @@ const PAGE_COLLECTION_NAME = "konten-halaman";
 const PAGE_DOCUMENT_ID = "layanan";
 const FORMS_COLLECTION_NAME = "layanan-forms";
 const PERSYARATAN_COLLECTION_NAME = "layanan-persyaratan";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 
 // Helper function to upload files
@@ -112,6 +113,9 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
         const jsonDataString = formData.get('jsonData') as string;

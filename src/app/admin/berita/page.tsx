@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -69,6 +70,9 @@ const BeritaFormModal = ({
   setImageFile: (file: File | null) => void;
   isSaving: boolean;
 }) => {
+  const [fileError, setFileError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -77,8 +81,16 @@ const BeritaFormModal = ({
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    setFileError("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        setImageFile(null);
+        return;
+      }
+      setImageFile(file);
     }
   };
 
@@ -141,9 +153,14 @@ const BeritaFormModal = ({
             />
             <p className="text-sm text-muted-foreground">
               {berita.id
-                ? "Unggah file baru untuk mengganti gambar."
-                : "File gambar wajib diunggah."}
+                ? "Unggah file baru untuk mengganti gambar. Maks 2MB."
+                : "File gambar wajib diunggah. Maks 2MB."}
             </p>
+            {fileError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription>{fileError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <div className="flex justify-end gap-2 pt-4">
             <Button
@@ -185,6 +202,8 @@ export default function ManageBeritaPage() {
   const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [heroImageError, setHeroImageError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -210,6 +229,24 @@ export default function ManageBeritaPage() {
   useEffect(() => {
     fetchAllData();
   }, []);
+
+  const handleFileChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    fileStateSetter: React.Dispatch<React.SetStateAction<File | null>>,
+    errorStateSetter: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const file = e.target.files?.[0];
+    errorStateSetter(""); // Clear previous error
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        errorStateSetter("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = ""; // Reset input file
+        fileStateSetter(null);
+        return;
+      }
+      fileStateSetter(file);
+    }
+  };
 
   const filteredBerita = useMemo(() => {
     return beritaList.filter((berita) => {
@@ -449,13 +486,20 @@ export default function ManageBeritaPage() {
             <Input
               id="hero-image"
               type="file"
-              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              onChange={(e) =>
+                handleFileChange(e, setHeroImageFile, setHeroImageError)
+              }
               accept="image/png, image/jpeg, image/jpg"
               disabled={isSavingPage}
             />
             <p className="text-sm text-muted-foreground">
-              Unggah file baru untuk mengganti gambar hero.
+              Unggah file baru untuk mengganti gambar hero. Maks 2MB.
             </p>
+            {heroImageError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription>{heroImageError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <div className="flex justify-end">
             <Button onClick={handleSavePageData} disabled={isSavingPage}>

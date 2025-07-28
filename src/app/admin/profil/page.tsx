@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, Loader2 } from "lucide-react";
 
@@ -21,6 +22,11 @@ export default function ManageProfilPage() {
   const [sejarahImageFile1, setSejarahImageFile1] = useState<File | null>(null);
   const [sejarahImageFile2, setSejarahImageFile2] = useState<File | null>(null);
   const [sejarahImageFile3, setSejarahImageFile3] = useState<File | null>(null);
+  const [heroImageError, setHeroImageError] = useState("");
+  const [sejarahImageError1, setSejarahImageError1] = useState("");
+  const [sejarahImageError2, setSejarahImageError2] = useState("");
+  const [sejarahImageError3, setSejarahImageError3] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,6 +81,24 @@ export default function ManageProfilPage() {
       ...prev,
       [section]: { ...(prev[section] as object), [field]: value },
     }));
+  };
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fileStateSetter: React.Dispatch<React.SetStateAction<File | null>>,
+    errorStateSetter: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const file = e.target.files?.[0];
+    errorStateSetter("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        errorStateSetter("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        fileStateSetter(null);
+        return;
+      }
+      fileStateSetter(file);
+    }
   };
 
   const handleDemografiTableChange = (
@@ -255,13 +279,20 @@ export default function ManageProfilPage() {
               <Input
                 id="hero-image"
                 type="file"
-                onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+                onChange={(e) =>
+                  handleFileChange(e, setHeroImageFile, setHeroImageError)
+                }
                 accept="image/png, image/jpeg, image/jpg"
                 disabled={isSaving}
               />
               <p className="text-sm text-muted-foreground">
-                Unggah file baru untuk mengganti gambar hero.
+                Unggah file baru untuk mengganti gambar hero. Maks 2MB.
               </p>
+              {heroImageError && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertDescription>{heroImageError}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
         </DataCard>
@@ -529,17 +560,46 @@ export default function ManageProfilPage() {
                   id={`sejarah-image-${i}`}
                   type="file"
                   onChange={(e) => {
-                    const file = e.target.files?.[0] || null;
-                    if (i === 1) setSejarahImageFile1(file);
-                    if (i === 2) setSejarahImageFile2(file);
-                    if (i === 3) setSejarahImageFile3(file);
+                    if (i === 1)
+                      handleFileChange(
+                        e,
+                        setSejarahImageFile1,
+                        setSejarahImageError1
+                      );
+                    if (i === 2)
+                      handleFileChange(
+                        e,
+                        setSejarahImageFile2,
+                        setSejarahImageError2
+                      );
+                    if (i === 3)
+                      handleFileChange(
+                        e,
+                        setSejarahImageFile3,
+                        setSejarahImageError3
+                      );
                   }}
                   accept="image/png, image/jpeg, image/jpg"
                   disabled={isSaving}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Unggah file baru untuk mengganti gambar {i}.
+                  Unggah file baru untuk mengganti gambar {i}. Maks 2MB.
                 </p>
+                {i === 1 && sejarahImageError1 && (
+                  <Alert variant="destructive" className="mt-2">
+                    <AlertDescription>{sejarahImageError1}</AlertDescription>
+                  </Alert>
+                )}
+                {i === 2 && sejarahImageError2 && (
+                  <Alert variant="destructive" className="mt-2">
+                    <AlertDescription>{sejarahImageError2}</AlertDescription>
+                  </Alert>
+                )}
+                {i === 3 && sejarahImageError3 && (
+                  <Alert variant="destructive" className="mt-2">
+                    <AlertDescription>{sejarahImageError3}</AlertDescription>
+                  </Alert>
+                )}
               </div>
             ))}
           </div>

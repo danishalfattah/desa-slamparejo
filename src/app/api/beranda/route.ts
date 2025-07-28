@@ -1,3 +1,4 @@
+// src/app/api/beranda/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -15,6 +16,7 @@ cloudinary.config({
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "beranda";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 // Fungsi helper untuk unggah file ke Cloudinary
 async function handleFileUpload(file: File | null): Promise<string | null> {
@@ -91,6 +93,14 @@ export async function POST(request: Request) {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
         const launchingImageFile = formData.get('launchingImageFile') as File | null;
+
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file hero tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+
+        if (launchingImageFile && launchingImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file launching tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
         const newLaunchingImageUrl = await handleFileUpload(launchingImageFile);

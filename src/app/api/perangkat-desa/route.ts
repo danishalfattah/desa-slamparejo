@@ -1,3 +1,4 @@
+// src/app/api/perangkat-desa/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -16,6 +17,7 @@ cloudinary.config({
 const PERANGKAT_COLLECTION_NAME = "perangkat-desa";
 const PAGE_CONTENT_COLLECTION_NAME = "konten-halaman";
 const PAGE_CONTENT_DOCUMENT_ID = "perangkat-desa";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 
 async function isAuthorized() {
@@ -83,6 +85,9 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const file = formData.get('imageFile') as File | null;
+        if (file && file.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const imageUrl = await handleFileUpload(file);
 
         if (!imageUrl) {
@@ -112,6 +117,9 @@ export async function PUT(request: Request) {
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
         const file = formData.get('imageFile') as File | null;
+        if (file && file.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const imageUrl = await handleFileUpload(file);
         
         const dataToUpdate: Partial<Omit<PerangkatDesa, 'id' | 'imageUrl'>> = {
@@ -153,6 +161,9 @@ export async function PATCH(request: Request) {
     try {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
         const jsonDataString = formData.get('jsonData') as string;

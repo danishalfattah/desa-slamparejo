@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -68,6 +69,9 @@ const UsahaFormModal = ({
   setImageFile: (file: File | null) => void;
   isSaving: boolean;
 }) => {
+  const [fileError, setFileError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -76,8 +80,16 @@ const UsahaFormModal = ({
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    setFileError("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        setImageFile(null);
+        return;
+      }
+      setImageFile(file);
     }
   };
 
@@ -152,9 +164,14 @@ const UsahaFormModal = ({
             />
             <p className="text-sm text-muted-foreground">
               {usaha.id
-                ? "Unggah file baru untuk mengganti gambar."
-                : "File gambar wajib diunggah."}
+                ? "Unggah file baru untuk mengganti gambar. Maks 2MB."
+                : "File gambar wajib diunggah. Maks 2MB."}
             </p>
+            {fileError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription>{fileError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="maps">URL Google Maps</Label>
@@ -207,6 +224,8 @@ export default function ManageUsahaDesaPage() {
   const [isModalSaving, setIsModalSaving] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [heroImageError, setHeroImageError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   // Filter and Pagination State
   const [filter, setFilter] = useState("");
@@ -243,6 +262,20 @@ export default function ManageUsahaDesaPage() {
   }, [filteredUsaha, currentPage, itemsPerPage]);
 
   const totalPages = Math.ceil(filteredUsaha.length / itemsPerPage);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setHeroImageError("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setHeroImageError("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        setHeroImageFile(null);
+        return;
+      }
+      setHeroImageFile(file);
+    }
+  };
 
   const handleOpenModal = (usaha?: Usaha) => {
     setEditingUsaha(usaha || {});
@@ -425,13 +458,18 @@ export default function ManageUsahaDesaPage() {
             <Input
               id="hero-image"
               type="file"
-              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              onChange={handleFileChange}
               accept="image/png, image/jpeg, image/jpg"
               disabled={isSavingPage}
             />
             <p className="text-sm text-muted-foreground">
-              Unggah file baru untuk mengganti gambar hero.
+              Unggah file baru untuk mengganti gambar hero. Maks 2MB.
             </p>
+            {heroImageError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription>{heroImageError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <div className="flex justify-end">
             <Button onClick={handleSavePageData} disabled={isSavingPage}>

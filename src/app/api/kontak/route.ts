@@ -1,3 +1,4 @@
+// src/app/api/kontak/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -15,6 +16,7 @@ cloudinary.config({
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "kontak";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 const defaultData: Kontak = {
     hero: {
@@ -89,6 +91,9 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
         const jsonDataString = formData.get('jsonData') as string;

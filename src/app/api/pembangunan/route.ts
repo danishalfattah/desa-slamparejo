@@ -1,3 +1,4 @@
+// src/app/api/pembangunan/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -14,6 +15,7 @@ cloudinary.config({
 });
 
 const COLLECTION_NAME = "pembangunan";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 async function isAuthorized() {
     const session = await getServerSession(authOptions);
@@ -63,6 +65,13 @@ export async function POST(request: Request) {
         const imageBeforeFile = formData.get('imageBeforeFile') as File | null;
         const imageAfterFile = formData.get('imageAfterFile') as File | null;
 
+        if (imageBeforeFile && imageBeforeFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file "Sebelum" tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+        if (imageAfterFile && imageAfterFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file "Sesudah" tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+
         const imageBefore = await handleFileUpload(imageBeforeFile);
         const imageAfter = await handleFileUpload(imageAfterFile);
 
@@ -95,6 +104,13 @@ export async function PUT(request: Request) {
 
         const imageBeforeFile = formData.get('imageBeforeFile') as File | null;
         const imageAfterFile = formData.get('imageAfterFile') as File | null;
+
+        if (imageBeforeFile && imageBeforeFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file "Sebelum" tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+        if (imageAfterFile && imageAfterFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file "Sesudah" tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
 
         const imageBefore = await handleFileUpload(imageBeforeFile);
         const imageAfter = await handleFileUpload(imageAfterFile);

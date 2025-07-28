@@ -16,6 +16,7 @@ cloudinary.config({
 });
 
 const COLLECTION_NAME = "berita";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 async function isAuthorized() {
     const session = await getServerSession(authOptions);
@@ -83,6 +84,9 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const file = formData.get('imageFile') as File | null;
+        if (file && file.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const imageUrl = await handleFileUpload(file);
 
         if (!imageUrl) {
@@ -111,6 +115,9 @@ export async function PUT(request: Request) {
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
         const file = formData.get('imageFile') as File | null;
+        if (file && file.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const imageUrl = await handleFileUpload(file);
 
         const dataToUpdate: Partial<Omit<Berita, 'id' | 'imageUrl'>> = {

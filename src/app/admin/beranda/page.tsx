@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, Edit, Trash2, Save, Loader2 } from "lucide-react";
 
 const FaqFormModal = ({
@@ -116,6 +117,9 @@ export default function ManageBerandaPage() {
   const [launchingImageFile, setLaunchingImageFile] = useState<File | null>(
     null
   );
+  const [heroImageError, setHeroImageError] = useState("");
+  const [launchingImageError, setLaunchingImageError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,10 +149,19 @@ export default function ManageBerandaPage() {
 
   const handleFileChange = (
     e: ChangeEvent<HTMLInputElement>,
-    fileStateSetter: React.Dispatch<React.SetStateAction<File | null>>
+    fileStateSetter: React.Dispatch<React.SetStateAction<File | null>>,
+    errorStateSetter: React.Dispatch<React.SetStateAction<string>>
   ) => {
-    if (e.target.files && e.target.files[0]) {
-      fileStateSetter(e.target.files[0]);
+    const file = e.target.files?.[0];
+    errorStateSetter(""); // Clear previous error
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        errorStateSetter("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = ""; // Reset input file
+        fileStateSetter(null);
+        return;
+      }
+      fileStateSetter(file);
     }
   };
 
@@ -330,13 +343,20 @@ export default function ManageBerandaPage() {
               <Input
                 id="hero-image"
                 type="file"
-                onChange={(e) => handleFileChange(e, setHeroImageFile)}
+                onChange={(e) =>
+                  handleFileChange(e, setHeroImageFile, setHeroImageError)
+                }
                 accept="image/png, image/jpeg, image/jpg"
                 disabled={isSaving}
               />
               <p className="text-sm text-muted-foreground">
-                Unggah file baru untuk mengganti gambar hero.
+                Unggah file baru untuk mengganti gambar hero. Maks 2MB.
               </p>
+              {heroImageError && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertDescription>{heroImageError}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
         </DataCard>
@@ -412,13 +432,24 @@ export default function ManageBerandaPage() {
               <Input
                 id="launching-image"
                 type="file"
-                onChange={(e) => handleFileChange(e, setLaunchingImageFile)}
+                onChange={(e) =>
+                  handleFileChange(
+                    e,
+                    setLaunchingImageFile,
+                    setLaunchingImageError
+                  )
+                }
                 accept="image/png, image/jpeg, image/jpg"
                 disabled={isSaving}
               />
               <p className="text-sm text-muted-foreground">
-                Unggah file baru untuk mengganti gambar saat ini.
+                Unggah file baru untuk mengganti gambar saat ini. Maks 2MB.
               </p>
+              {launchingImageError && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertDescription>{launchingImageError}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
         </DataCard>

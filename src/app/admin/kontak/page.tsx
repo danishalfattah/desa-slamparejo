@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Save, Loader2 } from "lucide-react";
 
 export default function ManageKontakPage() {
@@ -17,6 +18,8 @@ export default function ManageKontakPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [heroImageError, setHeroImageError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,6 +49,20 @@ export default function ManageKontakPage() {
       }));
     } else {
       setData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setHeroImageError("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setHeroImageError("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        setHeroImageFile(null);
+        return;
+      }
+      setHeroImageFile(file);
     }
   };
 
@@ -162,13 +179,18 @@ export default function ManageKontakPage() {
               <Input
                 id="hero-image"
                 type="file"
-                onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+                onChange={handleFileChange}
                 accept="image/png, image/jpeg, image/jpg"
                 disabled={isSaving}
               />
               <p className="text-sm text-muted-foreground">
-                Unggah file baru untuk mengganti gambar hero.
+                Unggah file baru untuk mengganti gambar hero. Maks 2MB.
               </p>
+              {heroImageError && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertDescription>{heroImageError}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
         </DataCard>

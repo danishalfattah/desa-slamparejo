@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -392,6 +393,10 @@ const PembangunanModal = ({
   setImageAfterFile: (file: File | null) => void;
   isSaving: boolean;
 }) => {
+  const [beforeFileError, setBeforeFileError] = useState("");
+  const [afterFileError, setAfterFileError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
   const handleChange = (name: string, value: string | number) => {
     const updatedData = {
       ...data,
@@ -409,12 +414,21 @@ const PembangunanModal = ({
     e: ChangeEvent<HTMLInputElement>,
     type: "before" | "after"
   ) => {
-    if (e.target.files && e.target.files[0]) {
-      if (type === "before") {
-        setImageBeforeFile(e.target.files[0]);
-      } else {
-        setImageAfterFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    const errorSetter =
+      type === "before" ? setBeforeFileError : setAfterFileError;
+    const fileSetter =
+      type === "before" ? setImageBeforeFile : setImageAfterFile;
+
+    errorSetter("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        errorSetter("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        fileSetter(null);
+        return;
       }
+      fileSetter(file);
     }
   };
 
@@ -495,6 +509,11 @@ const PembangunanModal = ({
                   required={!data.id}
                   disabled={isSaving}
                 />
+                {beforeFileError && (
+                  <Alert variant="destructive" className="mt-2 text-xs">
+                    <AlertDescription>{beforeFileError}</AlertDescription>
+                  </Alert>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="imageAfterFile">Foto Sesudah</Label>
@@ -506,6 +525,11 @@ const PembangunanModal = ({
                   required={!data.id && isSelesai}
                   disabled={isSaving || !isSelesai}
                 />
+                {afterFileError && (
+                  <Alert variant="destructive" className="mt-2 text-xs">
+                    <AlertDescription>{afterFileError}</AlertDescription>
+                  </Alert>
+                )}
                 {!isSelesai && (
                   <p className="text-xs text-muted-foreground">
                     {`Hanya bisa diisi jika status "Selesai".`}
@@ -515,8 +539,8 @@ const PembangunanModal = ({
             </div>
             <p className="text-sm text-muted-foreground pt-2">
               {data.id
-                ? "Unggah file baru untuk mengganti gambar."
-                : "Gambar 'Sebelum' wajib diunggah."}
+                ? "Unggah file baru untuk mengganti gambar. Maks 2MB."
+                : "Gambar 'Sebelum' wajib diunggah. Maks 2MB."}
             </p>
           </div>
           <div className="space-y-2">
@@ -595,6 +619,8 @@ export default function ManageProdukPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [heroImageError, setHeroImageError] = useState("");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
   const [isHukumModalOpen, setIsHukumModalOpen] = useState(false);
   const [editingHukum, setEditingHukum] = useState<Partial<ProdukHukum>>({});
@@ -627,6 +653,20 @@ export default function ManageProdukPage() {
     useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [isCategorySaving, setIsCategorySaving] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setHeroImageError("");
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setHeroImageError("Ukuran file tidak boleh melebihi 2MB.");
+        e.target.value = "";
+        setHeroImageFile(null);
+        return;
+      }
+      setHeroImageFile(file);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -1053,13 +1093,18 @@ export default function ManageProdukPage() {
             <Input
               id="hero-image"
               type="file"
-              onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+              onChange={handleFileChange}
               accept="image/png, image/jpeg, image/jpg"
               disabled={isSavingPage}
             />
             <p className="text-sm text-muted-foreground">
-              Unggah file baru untuk mengganti gambar hero.
+              Unggah file baru untuk mengganti gambar hero. Maks 2MB.
             </p>
+            {heroImageError && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertDescription>{heroImageError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <div className="flex justify-end">
             <Button onClick={handleSavePageData} disabled={isSavingPage}>

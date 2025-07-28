@@ -1,3 +1,4 @@
+// src/app/api/profil-desa/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -14,6 +15,7 @@ cloudinary.config({
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "profil";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 async function handleFileUpload(file: File | null): Promise<string | null> {
     if (!file) return null;
@@ -120,11 +122,24 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file hero tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
         const sejarahImageFile1 = formData.get('sejarahImageFile1') as File | null;
         const sejarahImageFile2 = formData.get('sejarahImageFile2') as File | null;
         const sejarahImageFile3 = formData.get('sejarahImageFile3') as File | null;
+
+        if (sejarahImageFile1 && sejarahImageFile1.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file Sejarah 1 tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+        if (sejarahImageFile2 && sejarahImageFile2.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file Sejarah 2 tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
+        if (sejarahImageFile3 && sejarahImageFile3.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file Sejarah 3 tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
 
         const newSejarahImageUrl1 = await handleFileUpload(sejarahImageFile1);
         const newSejarahImageUrl2 = await handleFileUpload(sejarahImageFile2);

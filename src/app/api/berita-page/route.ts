@@ -17,6 +17,7 @@ cloudinary.config({
 
 const COLLECTION_NAME = "konten-halaman";
 const DOCUMENT_ID = "berita";
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 const defaultData: BeritaPageData = {
     hero: {
@@ -71,6 +72,9 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const heroImageFile = formData.get('heroImageFile') as File | null;
+        if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ error: 'Ukuran file tidak boleh lebih dari 2MB.' }, { status: 400 });
+        }
         const newHeroImageUrl = await handleFileUpload(heroImageFile);
 
         const jsonDataString = formData.get('jsonData') as string;
