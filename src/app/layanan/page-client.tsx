@@ -42,7 +42,7 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
           backgroundPosition: "center",
         }}
       >
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-6xl  mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="text-white md:pl-8">
             <h2
               className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
@@ -116,7 +116,7 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
       {/* Persyaratan Layanan Section */}
       {data.persyaratan && data.persyaratan.length > 0 && (
         <section className="bg-white py-16 px-4 md:px-0">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto  items-center">
             <div className="border-b border-black pb-2 sm:pb-4 w-fit mb-12">
               <h1
                 className={`${playfair.className} font-normal text-2xl sm:text-4xl md:text-5xl`}
