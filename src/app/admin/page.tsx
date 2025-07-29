@@ -14,11 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-// --- [START] Perubahan: Impor Ikon ---
 import { Loader2, Shield, Eye, EyeOff } from "lucide-react";
-// --- [END] Perubahan: Impor Ikon ---
 
-// Impor Firebase auth dan fungsi signInWithEmailAndPassword dari sisi klien
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
