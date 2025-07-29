@@ -3,7 +3,6 @@
 "use client";
 import { useState, useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { ProdukHukum, Pembangunan } from "@/lib/types";
 import { Eye, Download, Scale, Construction, FileText, X } from "lucide-react";
@@ -132,6 +131,19 @@ interface ProdukPageClientProps {
   pembangunanData: Pembangunan[];
   kategoriData: Category[];
 }
+
+// --- [START] Perubahan: Fungsi untuk mengubah URL Google Drive menjadi tautan unduh langsung ---
+const getDirectDownloadLink = (link: string) => {
+  const regex =
+    /(?:drive\.google\.com\/(?:file\/d\/|uc\?id=))([a-zA-Z0-9_-]{25,})/;
+  const match = link.match(regex);
+  if (match && match[1]) {
+    const fileId = match[1];
+    return `https://drive.google.com/uc?export=download&id=${fileId}`;
+  }
+  return link; // Fallback ke link asli jika tidak cocok
+};
+// --- [END] Perubahan ---
 
 export default function ProdukPageClient({
   produkHukumData,
@@ -343,17 +355,16 @@ export default function ProdukPageClient({
                             <Eye size={16} />
                             Lihat
                           </button>
-                          <Link
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            passHref
+                          {/* --- [START] Perubahan: Mengganti Link dengan tag <a> dan menambahkan atribut download --- */}
+                          <a
+                            href={getDirectDownloadLink(item.link)}
+                            download
+                            className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2 text-sm"
                           >
-                            <button className="bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2 text-sm">
-                              <Download size={16} />
-                              Unduh
-                            </button>
-                          </Link>
+                            <Download size={16} />
+                            Unduh
+                          </a>
+                          {/* --- [END] Perubahan --- */}
                         </div>
                       </div>
                       <div className="w-full pt-2">
