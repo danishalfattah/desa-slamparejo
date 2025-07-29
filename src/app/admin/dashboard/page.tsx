@@ -30,7 +30,7 @@ export default async function DashboardPage() {
 
   const navigationItems = [
     {
-      title: "Halaman Berandaaa",
+      title: "Halaman Beranda",
       description: "Kelola konten utama website desa",
       icon: Home,
       href: "/admin/beranda",
