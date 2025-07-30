@@ -3,7 +3,8 @@ import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Profil } from "@/lib/types";
 import { Metadata } from "next";
-import PageHero from "@/components/page-hero"; // Impor komponen baru
+import PageHero from "@/components/page-hero";
+import { formatNumber } from "@/lib/utils"; // Impor fungsi formatNumber
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -60,6 +61,21 @@ export default async function ProfilPage() {
       </div>
     );
   }
+
+  const { demografi } = data;
+  const parseAndSum = (
+    dataArray: typeof demografi.tabelData = [],
+    key: keyof (typeof demografi.tabelData)[0]
+  ) => {
+    return dataArray.reduce((acc, current) => {
+      const num = parseInt(String(current[key]).replace(/\D/g, ""), 10) || 0;
+      return acc + num;
+    }, 0);
+  };
+
+  const totalRT = parseAndSum(demografi.tabelData, "rt");
+  const totalRW = parseAndSum(demografi.tabelData, "rw");
+  const totalPendudukFromTable = parseAndSum(demografi.tabelData, "penduduk");
 
   return (
     <main className="m-0 p-0 h-full overflow-x-hidden">
@@ -152,10 +168,8 @@ export default async function ProfilPage() {
               ></iframe>
             </div>
 
-            {/* Container for Responsive Table */}
             <div className="w-full">
               <div className="bg-white/95 backdrop-blur-sm p-2 sm:p-4 rounded-xl shadow-lg">
-                {/* Table for All Screens */}
                 <div>
                   <table
                     className={`${poppins.className} w-full text-center border-separate border-spacing-1 sm:border-spacing-2 text-[11px] sm:text-sm`}
@@ -194,9 +208,11 @@ export default async function ProfilPage() {
                           <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
                             {row.rw}
                           </td>
+                          {/* --- [START] Perubahan: Format angka penduduk di tabel --- */}
                           <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg font-normal">
-                            {row.penduduk}
+                            {formatNumber(row.penduduk)} JIWA
                           </td>
+                          {/* --- [END] Perubahan --- */}
                         </tr>
                       ))}
                       <tr>
@@ -207,13 +223,13 @@ export default async function ProfilPage() {
                           Jumlah
                         </td>
                         <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
-                          37 RT
+                          {totalRT} RT
                         </td>
                         <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
-                          5 RW
+                          {totalRW} RW
                         </td>
                         <td className="p-2 sm:p-3 bg-[#8FA7B5] rounded-md sm:rounded-lg">
-                          5.797 JIWA
+                          {formatNumber(totalPendudukFromTable)} JIWA
                         </td>
                       </tr>
                     </tbody>
@@ -236,6 +252,7 @@ export default async function ProfilPage() {
                 {data.demografi.description}
               </p>
             </div>
+            {/* --- [START] Perubahan: Format angka di kartu demografi --- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-sm font-semibold mt-8">
               <div className="bg-white text-black rounded-md p-3 md:p-4 shadow-lg sm:col-span-2">
                 <p className={`${poppins.className} text-xs mb-1`}>
@@ -244,7 +261,7 @@ export default async function ProfilPage() {
                 <p
                   className={`${poppins.className} text-lg md:text-xl font-bold text-red-800`}
                 >
-                  {data.demografi.totalPenduduk}
+                  {formatNumber(data.demografi.totalPenduduk)} JIWA
                 </p>
               </div>
               <div className="bg-blue-100 text-[#094B72] rounded-md p-3 md:p-4 shadow-lg">
@@ -254,7 +271,7 @@ export default async function ProfilPage() {
                 <p
                   className={`${poppins.className} text-lg md:text-xl font-bold`}
                 >
-                  {data.demografi.lakiLaki}
+                  {formatNumber(data.demografi.lakiLaki)} JIWA
                 </p>
               </div>
               <div className="bg-red-100 text-[#094B72] rounded-md p-3 md:p-4 shadow-lg">
@@ -262,10 +279,11 @@ export default async function ProfilPage() {
                 <p
                   className={`${poppins.className} text-lg md:text-xl font-bold`}
                 >
-                  {data.demografi.perempuan}
+                  {formatNumber(data.demografi.perempuan)} JIWA
                 </p>
               </div>
             </div>
+            {/* --- [END] Perubahan --- */}
           </div>
         </div>
       </section>

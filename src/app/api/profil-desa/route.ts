@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Profil } from '@/lib/types';
 import { v2 as cloudinary } from 'cloudinary';
+import { formatNumber } from '@/lib/utils'; // Impor fungsi formatNumber
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -33,6 +34,7 @@ async function handleFileUpload(file: File | null): Promise<string | null> {
     });
 }
 
+// ... (defaultData dan fungsi lainnya tetap sama) ...
 const defaultData: Profil = {
     hero: {
         subtitle: "Desa Slamparejo tumbuh dari sejarah, arah, dan tekad kuat untuk terus melayani masyarakat secara tulus dan berkelanjutan.",
@@ -87,6 +89,7 @@ function convertYoutubeUrlToEmbed(url: string): string {
     return url;
 }
 
+
 export async function GET() {
   try {
     const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
@@ -121,6 +124,8 @@ export async function POST(request: Request) {
     }
     try {
         const formData = await request.formData();
+        
+        // ... (kode upload gambar tetap sama) ...
         const heroImageFile = formData.get('heroImageFile') as File | null;
         if (heroImageFile && heroImageFile.size > MAX_FILE_SIZE) {
             return NextResponse.json({ error: 'Ukuran file hero tidak boleh lebih dari 2MB.' }, { status: 400 });
@@ -145,28 +150,47 @@ export async function POST(request: Request) {
         const newSejarahImageUrl2 = await handleFileUpload(sejarahImageFile2);
         const newSejarahImageUrl3 = await handleFileUpload(sejarahImageFile3);
 
+
         const jsonDataString = formData.get('jsonData') as string;
         if (!jsonDataString) {
              return NextResponse.json({ error: 'Data JSON tidak ditemukan' }, { status: 400 });
         }
-        const dataToSave: Profil = JSON.parse(jsonDataString);
         
+        const parsedData: Profil = JSON.parse(jsonDataString);
+
+        // --- [START] Perubahan: Format angka demografi sebelum menyimpan ---
+        if (parsedData.demografi) {
+            parsedData.demografi.totalPenduduk = `${formatNumber(parsedData.demografi.totalPenduduk)} JIWA`;
+            parsedData.demografi.lakiLaki = `${formatNumber(parsedData.demografi.lakiLaki)} JIWA`;
+            parsedData.demografi.perempuan = `${formatNumber(parsedData.demografi.perempuan)} JIWA`;
+            if (parsedData.demografi.tabelData) {
+                parsedData.demografi.tabelData = parsedData.demografi.tabelData.map(row => ({
+                    ...row,
+                    penduduk: `${formatNumber(row.penduduk)} JIWA`,
+                    // RT dan RW tidak perlu diformat karena bukan ribuan
+                    rt: `${row.rt.replace(/\D/g, '')} RT`,
+                    rw: `${row.rw.replace(/\D/g, '')} RW`,
+                }));
+            }
+        }
+        // --- [END] Perubahan ---
+
         if (newHeroImageUrl) {
-            dataToSave.hero.heroImage = newHeroImageUrl;
+            parsedData.hero.heroImage = newHeroImageUrl;
+        }
+        
+        if (parsedData.sejarah && parsedData.sejarah.sejarahImages) {
+            if (newSejarahImageUrl1) parsedData.sejarah.sejarahImages[0].src = newSejarahImageUrl1;
+            if (newSejarahImageUrl2) parsedData.sejarah.sejarahImages[1].src = newSejarahImageUrl2;
+            if (newSejarahImageUrl3) parsedData.sejarah.sejarahImages[2].src = newSejarahImageUrl3;
         }
 
-        if (dataToSave.sejarah && dataToSave.sejarah.sejarahImages) {
-            if (newSejarahImageUrl1) dataToSave.sejarah.sejarahImages[0].src = newSejarahImageUrl1;
-            if (newSejarahImageUrl2) dataToSave.sejarah.sejarahImages[1].src = newSejarahImageUrl2;
-            if (newSejarahImageUrl3) dataToSave.sejarah.sejarahImages[2].src = newSejarahImageUrl3;
-        }
-
-        if (dataToSave.video && dataToSave.video.url) {
-            dataToSave.video.url = convertYoutubeUrlToEmbed(dataToSave.video.url);
+        if (parsedData.video && parsedData.video.url) {
+            parsedData.video.url = convertYoutubeUrlToEmbed(parsedData.video.url);
         }
 
         const docRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
-        await setDoc(docRef, dataToSave, { merge: true });
+        await setDoc(docRef, parsedData, { merge: true });
         return NextResponse.json({ message: 'Data profil berhasil disimpan' });
     } catch (error) {
         console.error("Firebase POST Error:", error);
