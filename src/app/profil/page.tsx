@@ -85,17 +85,26 @@ export default async function ProfilPage() {
           subtitle: data.hero.subtitle,
           heroImage: data.hero.heroImage,
         }}
-        descData={{
-          title: data.video.title,
-          description: data.video.description,
-        }}
       />
 
       {/* Video Section */}
-      <section className="relative bg-white text-black py-10">
+      <section className="relative bg-[url('/Achievement.png')] text-white">
+        <div className="absolute inset-0 bg-black/30 z-10"></div>
+        <div className="relative z-20 w-full max-w-[1166px] mx-auto px-5 pt-[40px] md:pt-[60px]">
+          <h1
+            className={`${playfair.className} video-title text-white mb-4 md:mb-6 text-left`}
+          >
+            {data.video.title}
+          </h1>
+          <p
+            className={`${poppins.className} font-normal leading-8 tracking-[1.5px] text-white text-[20px] mb-10 text-left max-w-3xl`}
+          >
+            {data.video.description}
+          </p>
+        </div>
         <div className="relative z-20 w-full max-w-[1166px] mx-auto p-5 clear-both">
           <iframe
-            className="w-full h-[calc(100vw*0.6)] max-h-[696px] border-none block mx-auto mb-[40px] rounded-lg shadow-xl"
+            className="w-full h-[calc(100vw*0.6)] max-h-[696px] border-none block mx-auto mb-[40px]"
             src={data.video.url}
             title="YouTube video player"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
