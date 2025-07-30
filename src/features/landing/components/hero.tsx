@@ -34,7 +34,7 @@ export default function Hero({ data }: { data: Beranda }) {
             {data.hero.title}
           </h1>
           <p
-            className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
+            className={`${poppins.className} text-white text-lg md:text-2xl leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
           >
             {data.hero.subtitle}
           </p>

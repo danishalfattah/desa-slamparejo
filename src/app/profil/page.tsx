@@ -129,7 +129,7 @@ export default async function ProfilPage() {
               <h1
                 className={`${playfair.className} video-title text-black text-left`}
               >
-                Visi Misi
+                Visi dan Misi
               </h1>
             </div>
             <p
