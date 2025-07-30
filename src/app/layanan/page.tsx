@@ -1,7 +1,7 @@
 import { Layanan } from "@/lib/types";
 import type { Metadata } from "next";
 import LayananPageClient from "./page-client";
-import PageHero from "@/components/page-hero"; // Impor komponen baru
+import PageHero from "@/components/page-hero";
 
 async function getLayananData(): Promise<Layanan | null> {
   try {
@@ -50,17 +50,16 @@ export default async function LayananPage() {
 
   return (
     <main className="min-h-screen bg-white">
+      {/* Komponen PageHero hanya akan menampilkan gambar utama */}
       <PageHero
         heroData={{
           title: "Layanan",
           subtitle: data.hero?.subtitle,
           heroImage: data.hero?.heroImage,
         }}
-        descData={{
-          title: data.akses?.title,
-          description: data.akses?.description,
-        }}
       />
+
+      {/* Komponen Client akan menangani tata letak uniknya sendiri */}
       <LayananPageClient data={data} />
     </main>
   );
