@@ -1,3 +1,4 @@
+// src/components/page-hero.tsx
 import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 
@@ -11,18 +12,22 @@ const poppins = Poppins({
   weight: ["100", "400", "700"],
 });
 
+// Mendefinisikan tipe untuk data hero
 interface HeroProps {
   title: string;
   subtitle?: string;
   heroImage?: string;
 }
 
+// Mendefinisikan tipe untuk data deskripsi
 interface DescProps {
   title: string;
   description?: string;
 }
 
-// Ubah di sini: tambahkan tanda tanya (?) pada descData
+// --- [PERUBAHAN 1] ---
+// Properti `descData` dijadikan opsional dengan menambahkan tanda tanya (?)
+// Ini memungkinkan komponen untuk digunakan bahkan jika bagian deskripsi tidak diperlukan.
 interface PageHeroProps {
   heroData: HeroProps;
   descData?: DescProps;
@@ -31,7 +36,7 @@ interface PageHeroProps {
 export default function PageHero({ heroData, descData }: PageHeroProps) {
   return (
     <>
-      {/* Hero Section */}
+      {/* Bagian Hero Utama (Gambar Latar) */}
       <section className="w-full h-screen flex flex-col">
         <div className="relative flex-1 flex flex-col justify-center items-center">
           <Image
@@ -55,7 +60,7 @@ export default function PageHero({ heroData, descData }: PageHeroProps) {
             </div>
             {heroData.subtitle && (
               <p
-                className={`${poppins.className} text-white text-lg md:text-2xl font-thin leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
+                className={`${poppins.className} text-white text-lg md:text-2xl font-normal leading-8 md:leading-10 max-w-2xl mb-10 w-full`}
               >
                 {heroData.subtitle}
               </p>
@@ -64,7 +69,9 @@ export default function PageHero({ heroData, descData }: PageHeroProps) {
         </div>
       </section>
 
-      {/* Ubah di sini: Tambahkan kondisi untuk hanya merender jika descData ada */}
+      {/* --- [PERUBAHAN 2] --- */}
+      {/* Bagian Deskripsi (Biru) hanya akan ditampilkan jika `descData` disediakan. */}
+      {/* Ini membuat komponen lebih fleksibel. */}
       {descData && (
         <section
           className="w-full px-5 py-10 relative flex justify-center"
