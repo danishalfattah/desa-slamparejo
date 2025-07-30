@@ -21,7 +21,7 @@ const dataNav = [
   { id: 4, name: "Usaha Desa", href: "/usaha-desa" },
   { id: 5, name: "Perangkat Desa", href: "/perangkat-desa" },
   { id: 6, name: "Kontak", href: "/kontak" },
-  { id: 7, name: "Produk", href: "/produk-hukum-dan-fisik" },
+  { id: 7, name: "Produk Desa", href: "/produk-hukum-dan-fisik" },
 ];
 
 export default function Footer() {

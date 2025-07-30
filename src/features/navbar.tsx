@@ -33,7 +33,7 @@ const dataNav = [
   { id: 4, name: "USAHA DESA", href: "/usaha-desa" },
   { id: 5, name: "PERANGKAT DESA", href: "/perangkat-desa" },
   { id: 6, name: "KONTAK", href: "/kontak" },
-  { id: 7, name: "PRODUK", href: "/produk-hukum-dan-fisik" },
+  { id: 7, name: "PRODUK DESA", href: "/produk-hukum-dan-fisik" },
 ];
 
 export default function Navbar() {
