@@ -1,8 +1,7 @@
 import { Berita, BeritaPageData } from "@/lib/types";
-import HeroBerita from "@/features/berita/hero";
 import DaftarBerita from "@/features/berita/berita";
-import DescBerita from "@/features/berita/desc";
 import { Metadata } from "next";
+import PageHero from "@/components/page-hero";
 
 async function getPageData(): Promise<{
   beritaList: Berita[];
@@ -60,8 +59,18 @@ export default async function BeritaPage() {
 
   return (
     <>
-      <HeroBerita data={data.pageData.hero} />
-      <DescBerita />
+      <PageHero
+        heroData={{
+          title: data.pageData.hero.title,
+          subtitle: data.pageData.hero.subtitle,
+          heroImage: data.pageData.hero.heroImage,
+        }}
+        descData={{
+          title: "Berita Desa",
+          description:
+            "Berikut adalah kumpulan berita dan informasi terbaru dari Desa Slamparejo.",
+        }}
+      />
       <DaftarBerita dataBerita={data.beritaList} />
     </>
   );

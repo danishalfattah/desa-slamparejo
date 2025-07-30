@@ -1,10 +1,7 @@
-// src/app/perangkat-desa/page.tsx
-
-import HeroPerangkat from "@/features/perangkat-desa/hero";
-import DescPerangkat from "@/features/perangkat-desa/desc";
 import DaftarPerangkat from "@/features/perangkat-desa/perangkat";
 import { PerangkatDesa, PerangkatDesaPageData } from "@/lib/types";
 import type { Metadata } from "next";
+import PageHero from "@/components/page-hero"; // Impor komponen baru
 
 async function getPerangkatDesaData(): Promise<{
   perangkatList: PerangkatDesa[];
@@ -55,8 +52,17 @@ export default async function PerangkatDesaPage() {
 
   return (
     <>
-      <HeroPerangkat data={data.pageData.hero} />
-      <DescPerangkat data={data.pageData} />
+      <PageHero
+        heroData={{
+          title: "Perangkat Desa",
+          subtitle: data.pageData.hero.subtitle,
+          heroImage: data.pageData.hero.heroImage,
+        }}
+        descData={{
+          title: "Perangkat Desa",
+          description: data.pageData.description,
+        }}
+      />
       <DaftarPerangkat dataPerangkat={data.perangkatList} />
     </>
   );

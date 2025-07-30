@@ -1,7 +1,6 @@
 // src/app/kontak/page-client.tsx
 
 "use client";
-import Image from "next/image";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Phone, Mail, Instagram } from "lucide-react";
 import { Card } from "@/features/kontak/components/card";
@@ -34,38 +33,8 @@ export default function KontakPageClient({ data }: KontakPageClientProps) {
 
   return (
     <>
-      <div className="w-full bg-pattern px-5 py-10 relative flex justify-center">
-        <Image
-          src="/Patterns.png"
-          alt="pattern"
-          fill
-          quality={80}
-          className="z-0 object-cover"
-          priority
-        />
-        <div className="max-w-6xl w-full flex flex-col md:flex-row gap-0">
-          <div className="md:w-1/2 flex items-center z-50">
-            <h2
-              className={`${playfair.className} text-white text-2xl md:text-8xl font-normal tracking-[1.5px] mb-4`}
-            >
-              Kontak
-              <br />
-              Desa
-            </h2>
-          </div>
-          <div className="md:w-1/2 flex items-center">
-            <p
-              className={`${poppins.className} text-white text-sm md:text-lg font-normal tracking-wider`}
-            >
-              {data.description}
-            </p>
-          </div>
-        </div>
-      </div>
-
       <section className="bg-[#F9FCFC] py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          {/* MODIFIED a few classes on this div below */}
           <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-8">
             <Card
               title="Email Resmi"

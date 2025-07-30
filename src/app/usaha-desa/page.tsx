@@ -1,10 +1,7 @@
-// src/app/usaha-desa/page.tsx
-
-import HeroUsaha from "@/features/usaha-desa/hero";
-import DescUsaha from "@/features/usaha-desa/desc";
 import DaftarUsaha from "@/features/usaha-desa/usaha";
 import { Usaha, UsahaDesaPageData } from "@/lib/types";
 import type { Metadata } from "next";
+import PageHero from "@/components/page-hero"; // Impor komponen baru
 
 async function getUsahaDesaData(): Promise<{
   usahaList: Usaha[];
@@ -55,8 +52,17 @@ export default async function UsahaDesaPage() {
 
   return (
     <>
-      <HeroUsaha data={data.pageData.hero} />
-      <DescUsaha data={data.pageData} />
+      <PageHero
+        heroData={{
+          title: "Usaha Desa",
+          subtitle: data.pageData.hero.subtitle,
+          heroImage: data.pageData.hero.heroImage,
+        }}
+        descData={{
+          title: "UMKM Desa Slamparejo",
+          description: data.pageData.description,
+        }}
+      />
       <DaftarUsaha dataUsaha={data.usahaList} />
     </>
   );

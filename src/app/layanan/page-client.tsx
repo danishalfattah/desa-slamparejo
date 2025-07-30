@@ -4,13 +4,7 @@
 import Link from "next/link";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { Layanan } from "@/lib/types";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+
 import {
   Accordion,
   AccordionContent,
@@ -31,88 +25,6 @@ interface LayananPageClientProps {
 export default function LayananPageClient({ data }: LayananPageClientProps) {
   return (
     <>
-      {/* Akses Layanan */}
-      <section
-        className="relative w-full py-16 px-4 md:px-0"
-        style={{
-          backgroundColor: "#0B4973",
-          backgroundImage: "url('/Patterns.png')",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="max-w-6xl  mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="text-white md:pl-8">
-            <h2
-              className={`${playfair.className} text-3xl md:text-5xl font-normal mb-4`}
-            >
-              {data.akses?.title || "Akses Layanan"}
-            </h2>
-            <p
-              className={`${poppins.className} text-base md:text-lg font-normal leading-relaxed whitespace-pre-line`}
-            >
-              {data.akses?.description ||
-                "Pilih layanan yang anda butuhkan, Pengajuan akan di proses secara online melalui formulir resmi"}
-            </p>
-          </div>
-          <div className="w-full max-w-md mx-auto">
-            {data.forms && data.forms.length > 0 ? (
-              <Carousel
-                opts={{ align: "start", loop: data.forms.length > 1 }}
-                className="w-full"
-              >
-                <CarouselContent>
-                  {data.forms.map((form) => (
-                    <CarouselItem key={form.id}>
-                      <div className="p-1">
-                        <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-h-[220px]">
-                          <div>
-                            <h3
-                              className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
-                            >
-                              {form.title}
-                            </h3>
-                            <p
-                              className={`${poppins.className} text-gray-700 text-sm`}
-                            >
-                              {form.description}
-                            </p>
-                          </div>
-                          <Link
-                            href={form.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-4"
-                          >
-                            <button
-                              type="button"
-                              className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
-                            >
-                              Isi Formulir
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                {data.forms.length > 1 && (
-                  <>
-                    <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
-                    <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
-                  </>
-                )}
-              </Carousel>
-            ) : (
-              <div className="bg-white rounded-xl shadow p-6 text-center">
-                <p>Belum ada layanan yang tersedia.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Persyaratan Layanan Section */}
       {data.persyaratan && data.persyaratan.length > 0 && (
         <section className="bg-white py-16 px-4 md:px-0">
@@ -148,11 +60,65 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
         </section>
       )}
 
-      <section className="bg-gray-50 py-10 px-4 md:px-0">
+      {/* Formulir Section */}
+      <section className="bg-gray-50 py-16 px-4 md:px-0">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2
+              className={`${playfair.className} text-3xl md:text-4xl font-semibold`}
+            >
+              Formulir Layanan
+            </h2>
+            <p className={`${poppins.className} text-gray-600 mt-2`}>
+              Pilih dan isi formulir sesuai kebutuhan Anda.
+            </p>
+          </div>
+          {data.forms && data.forms.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data.forms.map((form) => (
+                <div
+                  key={form.id}
+                  className="bg-white rounded-xl shadow p-6 flex flex-col justify-between min-h-[220px]"
+                >
+                  <div>
+                    <h3
+                      className={`${playfair.className} text-lg font-semibold text-[#0B4973] mb-1`}
+                    >
+                      {form.title}
+                    </h3>
+                    <p className={`${poppins.className} text-gray-700 text-sm`}>
+                      {form.description}
+                    </p>
+                  </div>
+                  <Link
+                    href={form.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4"
+                  >
+                    <button
+                      type="button"
+                      className="w-full bg-[#0B4973] text-white rounded px-4 py-2 font-semibold hover:bg-[#09395a] transition"
+                    >
+                      Isi Formulir
+                    </button>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl shadow p-6 text-center">
+              <p>Belum ada formulir layanan yang tersedia.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="bg-white py-10 px-4 md:px-0">
         <div
           className={`max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 ${poppins.className}`}
         >
-          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
+          <div className="flex flex-col items-center bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +143,7 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
               Pengajuan diproses dan diverifikasi dengan cepat
             </p>
           </div>
-          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
+          <div className="flex flex-col items-center bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -200,7 +166,7 @@ export default function LayananPageClient({ data }: LayananPageClientProps) {
               Data dan informasi Anda dijamin aman dan terlindungi
             </p>
           </div>
-          <div className="flex flex-col items-center bg-white rounded-lg shadow p-6">
+          <div className="flex flex-col items-center bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <div className="bg-[#0B4973] text-white rounded-full p-3 mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
